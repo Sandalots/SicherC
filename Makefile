@@ -1,5 +1,5 @@
-CC=gcc # Or your preferred C compiler
-CXX=g++ # Or your preferred C++ compiler
+CC=gcc
+CXX=g++
 
 CFLAGS=-Wall -Wextra -pedantic -std=c99 -Iinclude 
 CXXFLAGS=-Wall -Wextra -pedantic -std=c++11 -Iinclude 
