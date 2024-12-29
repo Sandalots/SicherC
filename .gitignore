@@ -1,0 +1,36 @@
+# Compiled object files
+*.o
+*.a
+*.so
+*.lib
+
+# Executables
+*.exe
+*.out
+
+# Debug files
+*.dSYM 
+.DS_Store 
+
+# IDE/Editor files
+.vscode/
+.idea/
+*.suo
+*.sln
+*.vcxproj
+*.user
+
+# Build files
+Makefile 
+CMakeLists.txt
+build/ 
+obj/ 
+bin/ 
+
+# Generated files
+*.log
+*.txt 
+*.dat 
+
+# Temporary files
+*~ 
