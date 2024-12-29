@@ -17,7 +17,7 @@ OBJ_TESTS=$(TESTS_SRC:.c=.o)
 all: main
 
 main: $(OBJ_SRC) 
-	$(CC) $(OBJ_SRC) -o main 
+	$(CC) $(OBJ_SRC) -o mammy
 
 $(OBJ_SRC): %.o : %.c 
 	$(CC) $(CFLAGS) -c $< -o $@
