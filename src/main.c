@@ -1,7 +1,7 @@
 #include "tokeniser.h"
 #include "parser.h"
 #include "analyser.h"
-#include "code_generation.h"
+#include "code_generator.h"
 #include "compiler_fabric.h"
 
 int main() {
