@@ -29,4 +29,4 @@ $(OBJ_TESTS): %.o : %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(OBJ_SRC) $(OBJ_TESTS) main tests
+	rm -rf $(OBJ_SRC) $(OBJ_TESTS) mammy
