@@ -2,9 +2,9 @@
 #include <vector> 
 #include <string> 
 
-#include "compiler_fabric.h" 
+#include "../include/compiler_fabric.h" 
 
-int main() {%
+int main() {
     std::vector<MemoryAllocation> allocations; 
 
     getAllocationInformation(&allocations); 

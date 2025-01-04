@@ -4,15 +4,19 @@
 #include "code_generator.h"
 #include "compiler_fabric.h"
 
+#include <stdio.h>
+
 int main() {
-  return 0;
-
   // tokenise input
-
 
   // parse into ast
 
-  // declarations/type/ memory safety
+  // declarations/ type / memory safety
 
   // output memory safe code
+
+  printf("Starting compilation.");
+
+  return 0;
+  
 }
