@@ -15,8 +15,8 @@ Token tokenise(char* filename) {
         exit(1);
     }
 
-    printf("%d", get_lines(fp));
+    // ... (Tokenization logic here) 
 
     fclose(fp);
-    return (Token){.type = TOKEN_TYPE_UNKNOWN, .value[0] = '\0'}; 
+    return token; // Return the identified token
 }

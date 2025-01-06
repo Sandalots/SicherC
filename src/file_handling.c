@@ -18,5 +18,6 @@ int get_lines(FILE *fp) {
     }
   }
 
+  rewind(fp);
   return count;
 }
