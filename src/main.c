@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
     }
 
     char* filename = argv[1];
-    tokenise(filename); 
+    writeContents(filename); 
 
     return 0;
 }
