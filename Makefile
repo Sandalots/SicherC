@@ -17,16 +17,11 @@ OBJ_TESTS=$(TESTS_SRC:.c=.o)
 all: main
 
 main: $(OBJ_SRC) 
-	$(CC) $(OBJ_SRC) -o mammy
+	$(CC) $(OBJ_SRC) -o sicher
 
 $(OBJ_SRC): %.o : %.c 
 	$(CC) $(CFLAGS) -c $< -o $@
 
-tests: $(OBJ_TESTS)
-	$(CC) $(CFLAGS) $(OBJ_TESTS) -o tests -lgtest 
-
-$(OBJ_TESTS): %.o : %.c 
-	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(OBJ_SRC) $(OBJ_TESTS) mammy
+	rm -rf $(OBJ_SRC) $(OBJ_TESTS) sicher
