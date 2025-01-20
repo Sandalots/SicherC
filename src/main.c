@@ -3,7 +3,6 @@
 #include "analyser.h"
 #include "code_generator.h"
 #include "compiler_fabric.h"
-
 #include <stdio.h>
 
 // Entry-point of the Sicher C Compiler
@@ -16,6 +15,9 @@ int main(int argc, char* argv[]) {
 
     // Get filename
     char* filename = argv[1];
+
+
+    printf("The contents of %s \n", filename);
 
     // Tokenise the source file
     writeContents(filename); 

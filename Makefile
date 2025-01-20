@@ -22,6 +22,5 @@ main: $(OBJ_SRC)
 $(OBJ_SRC): %.o : %.c 
 	$(CC) $(CFLAGS) -c $< -o $@
 
-
 clean:
 	rm -rf $(OBJ_SRC) $(OBJ_TESTS) sicher
