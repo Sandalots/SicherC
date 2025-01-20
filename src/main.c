@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 
+// Entry-point of the Sicher C Compiler
 int main(int argc, char* argv[]) {
     // Check if user has given an input source file.
     if (argc != 2) {
@@ -18,7 +19,6 @@ int main(int argc, char* argv[]) {
 
     // Tokenise the source file
     writeContents(filename); 
-
 
     // parse the tokens
 

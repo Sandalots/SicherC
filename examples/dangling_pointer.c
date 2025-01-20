@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+// A Dangling Pointer Test.
 int* create_dangling_pointer() {
     int local_var = 10;
     return &local_var; // Returning the address of a local variable

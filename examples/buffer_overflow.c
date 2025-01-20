@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <string.h>
 
+// A Buffer Overflow Test
 int main() {
-    char buffer[10];
-    char large_input[50] = "This input is too long!";
+    char init_buffer[15];
+    char much_larger_buffer[7788] = "This is a much larger buffer than the initial one! I wonder what could possibly go wrong? A Buffer Overflow, perhaps???";
 
-    strcpy(buffer, large_input); // No bounds checking, potential buffer overflow
+    strcpy(init_buffer, much_larger_buffer); // copying a larger bugger from a smaller one
 
-    printf("Buffer contents: %s\n", buffer); 
+    printf("Buffer contents: %s\n", init_buffer);
 
     return 0;
 }

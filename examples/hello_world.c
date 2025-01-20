@@ -1,4 +1,6 @@
 #include <stdio.h>
+
+// Simple Hello World Test.
 int main() {
    // printf() displays the string inside quotation
    printf("Hello, World!");

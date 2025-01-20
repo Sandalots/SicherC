@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// A Double Free Test
 int main() {
     int* ptr = (int*)malloc(sizeof(int));
     *ptr = 42;

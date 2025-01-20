@@ -1,9 +1,10 @@
 #include <stdio.h>
 
+// Uninitialised Variable Test
 int main() {
-    int x; 
+    int oneWithoutValue;
 
-    printf("The value of x is: %d\n", x); 
+    printf("Let's see what the totally real value of oneWithoutValue is!: %d\n", oneWithoutValue);
 
     return 0;
 }

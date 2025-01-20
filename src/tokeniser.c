@@ -1,10 +1,9 @@
 #include "tokeniser.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 
 
-#define MAX_LINE_LENGTH 255
+#define MAX_LINE_LENGTH 255*1024
 
 int writeContents(char* filename) {
     FILE* fp = fopen(filename, "r");
