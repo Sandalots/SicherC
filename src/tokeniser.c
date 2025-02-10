@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX_LINE_LENGTH 255*1024 // debug max-line source file length for the tokeniser to perform on.
+#define MAX_LINE_LENGTH 255*1024
 
 const char* TokenTypeStrings[] = {
   "Keyword",
