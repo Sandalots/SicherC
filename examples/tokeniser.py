@@ -1,8 +1,9 @@
 import re
+import argparse
 
 # Define the keywords and symbols
-keywords = {'int', 'char', 'return', 'printf', 'strcpy'}
-symbols = {'(', ')', '{', '}', '[', ']', ';', ',', '=', '!', '?', ':', '%', '\\'}
+keywords = {'int', 'char', 'return', 'printf', 'strcpy', 'malloc', 'sizeof', 'free'}
+symbols = {'(', ')', '{', '}', '[', ']', ';', ',', '=', '!', '?', ':', '%', '\\', '&', '*'}
 
 # Token types
 KEYWORD = 'KEYWORD'
@@ -47,13 +48,21 @@ def tokenize(code):
                 tokens.append((UNKNOWN, word))
     return tokens
 
-# Read the C source file
-with open('/Users/sandymacdonald/Clones/SicherC/examples/buffer_overflow.c', 'r') as file:
-    code = file.read()
+def main():
+    parser = argparse.ArgumentParser(description='Tokenize a C source file.')
+    parser.add_argument('filename', type=str, help='The C source file to tokenize')
+    args = parser.parse_args()
 
-# Tokenize the code
-tokens = tokenize(code)
+    # Read the C source file
+    with open(args.filename, 'r') as file:
+        code = file.read()
 
-# Print the tokens
-for token in tokens:
-    print(token)
+    # Tokenize the code
+    tokens = tokenize(code)
+
+    # Print the tokens
+    for token in tokens:
+        print(token)
+
+if __name__ == '__main__':
+    main()
