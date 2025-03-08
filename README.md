@@ -15,6 +15,16 @@ Sicher C State as of 05/04/2025.
 4. Code Generator
 5. Visualiser
 
+
+### Sub-Modules
+1.1. Testing Language Pack
+2.1. Testing Syntax Set
+3.1. Seek & Destroy
+4.1. amd64 Linux Target Set
+4.2. arm64 macOS Target Set
+4.3. amd64 Microsoft Windows Set
+5.1. GUI Front-you-liser
+
 ### Building Instructions
 ```
 cd SicherC/
