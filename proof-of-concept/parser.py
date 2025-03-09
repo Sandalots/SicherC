@@ -16,12 +16,12 @@ class Parser:
     def parse_function(self):
         self.expect('KEYWORD', 'int')
         self.expect('IDENTIFIER')
-        self.expect('DELIMITER', '(')
-        self.expect('DELIMITER', ')')
-        self.expect('DELIMITER', '{')
+        self.expect('SYMBOL', '(')
+        self.expect('SYMBOL', ')')
+        self.expect('SYMBOL', '{')
         while self.tokens[self.current_token][1] != '}':
             self.current_token += 1
-        self.expect('DELIMITER', '}')
+        self.expect('SYMBOL', '}')
 
     def expect(self, token_type, token_value=None):
         if self.current_token >= len(self.tokens):

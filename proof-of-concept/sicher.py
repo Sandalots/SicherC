@@ -1,7 +1,9 @@
+# Sicher Command & Control Center Dependencies
 import os
 from parser import parse_code
 import sys
 from tokeniser import tokenize
+
 
 # Get the root directory of the SicherC project
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -17,9 +19,6 @@ def main():
         '''
     filename = source_file
 
-    # Invoke the tokeniser
-    os.system(f'python3 {tokenize} {source_file}')
-
     # Parser
     with open(filename, 'r') as file:
         code = file.read()
@@ -29,7 +28,7 @@ def main():
             print("Code is syntactically correct")
         except SyntaxError as e:
             print(f"Syntax error: {e}")
+            sys.exit(1)
             
-
 if __name__ == '__main__':
     main()
