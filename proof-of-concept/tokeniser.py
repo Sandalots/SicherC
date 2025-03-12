@@ -1,9 +1,9 @@
 import re
-import argparse
 
 # Define the keywords and symbols
 keywords = {'int', 'char', 'return', 'printf', 'strcpy', 'malloc', 'sizeof', 'free'}
-symbols = {'(', ')', '{', '}', '[', ']', ';', ',', '=', '!', '?', ':', '%', '\\', '&', '*'}
+symbols = {'(', ')', '{', '}', '[', ']', ';', ',', '=', '!', '?', ':', '%', '\\', '&', '*'
+           , '+', '-', '/', '<', '>', '==', '!=', '<=', '>=', '&&', '||', '++', '--'}
 
 # Token types
 KEYWORD = 'KEYWORD'
@@ -15,12 +15,13 @@ COMMENT = 'COMMENT'
 PREPROCESSOR = 'PREPROCESSOR'
 UNKNOWN = 'UNKNOWN'
 
-def tokenize(code, debug=False):
+def tokenise(code, debug=False):
     tokens = []
-    # Remove multi-line comments
+    # Remove comments from source code
     code = re.sub(r'/\*.*?\*/', '', code, flags=re.DOTALL)
+    
     if debug:
-        print("Removed multi-line comments")
+        print("Removed comments from source code")
     # Handle string literals
     string_literals = re.findall(r'"(.*?)"', code)
     for string_literal in string_literals:
@@ -65,23 +66,3 @@ def tokenize(code, debug=False):
                 if debug:
                     print("Found unknown token:", word)
     return tokens
-
-def main():
-    parser = argparse.ArgumentParser(description='Tokenize a C source file.')
-    parser.add_argument('filename', type=str, help='The C source file to tokenize')
-    parser.add_argument('--debug', action='store_true', help='Enable debug output')
-    args = parser.parse_args()
-
-    # Read the C source file
-    with open(args.filename, 'r') as file:
-        code = file.read()
-
-    # Tokenize the code
-    tokens = tokenize(code, debug=args.debug)
-
-    # Print the tokens
-    for token in tokens:
-        print(token)
-
-if __name__ == '__main__':
-    main()

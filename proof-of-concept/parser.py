@@ -66,6 +66,8 @@ class Parser:
                 self.expect('SYMBOL', '=')
                 if self.tokens[self.current_token][0] == 'STRING':
                     self.expect('STRING')
+                elif self.tokens[self.current_token][0] == 'NUMBER':
+                    self.expect('NUMBER')
                 else:
                     self.expect('IDENTIFIER')
             if self.tokens[self.current_token][1] == ',':
@@ -82,20 +84,30 @@ class Parser:
         if self.tokens[self.current_token][1] == '*':
             self.expect('SYMBOL', '*')
         identifier = self.expect('IDENTIFIER')
-        self.expect('SYMBOL', '(')
-        while self.tokens[self.current_token][1] != ')':
-            if self.tokens[self.current_token][0] == 'IDENTIFIER':
-                self.expect('IDENTIFIER')
-            elif self.tokens[self.current_token][0] == 'STRING':
-                self.expect('STRING')
-            elif self.tokens[self.current_token][0] == 'NUMBER':
-                self.expect('NUMBER')
-            if self.tokens[self.current_token][1] == ',':
-                self.expect('SYMBOL', ',')
-        self.expect('SYMBOL', ')')
-        self.expect('SYMBOL', ';')
+        if self.tokens[self.current_token][1] == '(':
+            self.expect('SYMBOL', '(')
+            while self.tokens[self.current_token][1] != ')':
+                if self.tokens[self.current_token][0] == 'IDENTIFIER':
+                    self.expect('IDENTIFIER')
+                elif self.tokens[self.current_token][0] == 'STRING':
+                    self.expect('STRING')
+                elif self.tokens[self.current_token][0] == 'NUMBER':
+                    self.expect('NUMBER')
+                if self.tokens[self.current_token][1] == ',':
+                    self.expect('SYMBOL', ',')
+            self.expect('SYMBOL', ')')
+        else:
+            while self.tokens[self.current_token][1] not in {';', ')', ','}:
+                if self.tokens[self.current_token][0] == 'IDENTIFIER':
+                    self.expect('IDENTIFIER')
+                elif self.tokens[self.current_token][0] == 'NUMBER':
+                    self.expect('NUMBER')
+                elif self.tokens[self.current_token][0] == 'SYMBOL':
+                    self.expect('SYMBOL')
+        if self.tokens[self.current_token][1] == ';':
+            self.expect('SYMBOL', ';')
         if self.debug:
-            print(f"Function call: {identifier}")
+            print(f"Expression: {identifier}")
 
     def parse_if(self):
         if self.debug:
@@ -114,16 +126,61 @@ class Parser:
             print("Parsing for loop")
         self.expect('IDENTIFIER', 'for')
         self.expect('SYMBOL', '(')
-        self.parse_declaration()  # Handle the initialization part
+        self.parse_for_initialization()  # Handle the initialization part
         self.expect('SYMBOL', ';')
         self.parse_expression()  # Handle the condition part
-        self.expect('SYMBOL', ';')
-        self.parse_expression()  # Handle the increment part
+        self.parse_for_increment()  # Handle the increment part
         self.expect('SYMBOL', ')')
         self.expect('SYMBOL', '{')
         while self.tokens[self.current_token][1] != '}':
             self.parse_statement()
         self.expect('SYMBOL', '}')
+
+    def parse_for_initialization(self):
+        token_type, token_value = self.tokens[self.current_token]
+        if token_type == 'KEYWORD' and token_value in {'char', 'int'}:
+            self.parse_declaration(for_loop=True)
+        else:
+            self.parse_expression()
+
+    def parse_for_increment(self):
+        if self.debug:
+            print("Parsing for increment")
+        while self.tokens[self.current_token][1] != ')':
+            self.parse_expression()
+            if self.tokens[self.current_token][1] == ',':
+                self.expect('SYMBOL', ',')
+        if self.debug:
+            print("Finished parsing for increment")
+
+    def parse_declaration(self, for_loop=False):
+        if self.debug:
+            print("Parsing declaration")
+        self.expect('KEYWORD')
+        while True:
+            if self.tokens[self.current_token][1] == '*':
+                self.expect('SYMBOL', '*')
+            identifier = self.expect('IDENTIFIER')
+            if self.tokens[self.current_token][1] == '[':
+                self.expect('SYMBOL', '[')
+                self.expect('NUMBER')
+                self.expect('SYMBOL', ']')
+            if self.tokens[self.current_token][1] == '=':
+                self.expect('SYMBOL', '=')
+                if self.tokens[self.current_token][0] == 'STRING':
+                    self.expect('STRING')
+                elif self.tokens[self.current_token][0] == 'NUMBER':
+                    self.expect('NUMBER')
+                else:
+                    self.expect('IDENTIFIER')
+            if self.tokens[self.current_token][1] == ',':
+                self.expect('SYMBOL', ',')
+            else:
+                break
+        if not for_loop:
+            self.expect('SYMBOL', ';')
+        if self.debug:
+            print(f"Declared variable: {identifier}")
 
     def expect(self, token_type, token_value=None):
         if self.current_token >= len(self.tokens):
