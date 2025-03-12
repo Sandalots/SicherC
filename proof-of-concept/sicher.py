@@ -6,7 +6,8 @@ import sys
 import argparse
 from tokeniser import tokenise
 from parser import parse_tokens
-
+from analyser import create_ast_from_tokens
+from visualiser import main as visualiser
 
 def main():
     parser = argparse.ArgumentParser(description='Parse a C source file.')
@@ -36,10 +37,26 @@ def main():
         sys.exit(1)
         
     # Analyser Module
+    try:
+        ast = create_ast_from_tokens(tokens, debug=args.debug)
+        print("AST created successfully\n")
+        if args.debug:
+            print(ast.pretty_print())
+    except Exception as e:
+        print(f"Error creating AST: {e}")
+        sys.exit(1)
+    
     
     # Code Generator Module
     
     # Visualiser Module
+    try:
+        visualiser()
+    except Exception as e:
+        print(f"Error running visualiser: {e}")
+        sys.exit(1)
 
+
+# Run the Sicher (entry point) if run as a script
 if __name__ == '__main__':
     main()

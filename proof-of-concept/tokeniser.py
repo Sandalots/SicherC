@@ -1,7 +1,7 @@
 import re
 
 # Define the keywords and symbols
-keywords = {'int', 'char', 'return', 'printf', 'strcpy', 'malloc', 'sizeof', 'free'}
+keywords = {'int', 'char', 'return', 'printf', 'strcpy', 'malloc', 'sizeof', 'free', 'if', 'else', 'for', 'while', 'do', 'break', 'continue'}
 symbols = {'(', ')', '{', '}', '[', ']', ';', ',', '=', '!', '?', ':', '%', '\\', '&', '*'
            , '+', '-', '/', '<', '>', '==', '!=', '<=', '>=', '&&', '||', '++', '--'}
 
