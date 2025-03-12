@@ -1,34 +1,28 @@
-# Sicher Command & Control Center Dependencies
-import os
-from parser import parse_code
 import sys
+import argparse
 from tokeniser import tokenize
-
-
-# Get the root directory of the SicherC project
-root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-
-# Path to the source file in the root directory
-source_file = os.path.join(root_dir, 'examples/buffer_overflow.c')
-
+from parser import parse_tokens
 
 def main():
-    '''if len(sys.argv) != 2:
-        print("Usage: python sicher.py <filename>")
-        sys.exit(1)
-        '''
-    filename = source_file
+    parser = argparse.ArgumentParser(description='Parse a C source file.')
+    parser.add_argument('filename', type=str, help='The C source file to parse')
+    parser.add_argument('--debug', action='store_true', help='Enable debug output')
+    args = parser.parse_args()
 
-    # Parser
+    filename = args.filename
+
+    # Tokenizer
     with open(filename, 'r') as file:
         code = file.read()
-        
-        try:
-            parse_code(code)
-            print("Code is syntactically correct")
-        except SyntaxError as e:
-            print(f"Syntax error: {e}")
-            sys.exit(1)
-            
+        tokens = tokenize(code, debug=args.debug)
+    
+    # Parser
+    try:
+        parse_tokens(tokens, debug=args.debug)
+        print("Code is syntactically correct")
+    except SyntaxError as e:
+        print(f"Syntax error: {e}")
+        sys.exit(1)
+
 if __name__ == '__main__':
     main()
