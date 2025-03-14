@@ -1,5 +1,4 @@
 import subprocess
-import os
 
 class CodeGenerator:
     def __init__(self, ast):
@@ -38,8 +37,29 @@ class CodeGenerator:
                 self.code += f"add x0, x0, :lo12:.LC0\n"
                 self.code += f"bl _printf\n"  # Use _printf for macOS
         elif node.node_type == "Return":
-            self.code += f"mov w0, #{node.value}\n"
+            self.code += f"mov w0, #{node.children[0].value}\n"
             self.code += "ret\n"
+        elif node.node_type == "String":
+            # Handle string literals if needed
+            pass
+        elif node.node_type == "Number":
+            # Handle numbers if needed
+            pass
+        elif node.node_type == "Identifier":
+            # Handle identifiers if needed
+            pass
+        elif node.node_type == "ArrayAccess":
+            # Handle array access if needed
+            pass
+        elif node.node_type == "Condition":
+            # Handle conditions if needed
+            pass
+        elif node.node_type == "Operator":
+            # Handle operators if needed
+            pass
+        elif node.node_type == "Increment":
+            # Handle increments if needed
+            pass
 
     def save_code_to_file(self, filename):
         with open(filename, 'w') as file:

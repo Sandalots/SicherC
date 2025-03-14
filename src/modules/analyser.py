@@ -69,9 +69,11 @@ def create_ast_from_tokens(tokens, debug=False):
                     current_node.add_child(for_node)
                     stack.append(current_node)
                     current_node = for_node
-                else:
-                    id_node = ASTNode("Identifier", token_value)
-                    current_node.add_child(id_node)
+                elif token_value == 'printf':
+                    func_call_node = ASTNode("FunctionCall", token_value)
+                    current_node.add_child(func_call_node)
+                    stack.append(current_node)
+                    current_node = func_call_node
         elif token_type == 'SYMBOL':
             if token_value == '{':
                 block_node = ASTNode("Block")
@@ -87,8 +89,16 @@ def create_ast_from_tokens(tokens, debug=False):
                 current_node = assign_node
             elif token_value == ';':
                 current_node = stack[-1]
-                if current_node.node_type == "Return":
+                if current_node.node_type == "Return" or current_node.node_type == "FunctionCall":
                     current_node = stack.pop()
+            elif token_value == '(':
+                if current_node.node_type == "Identifier" and current_node.value == "printf":
+                    # Handle function call
+                    func_call_node = ASTNode("FunctionCall", current_node.value)
+                    current_node = stack.pop()
+                    current_node.add_child(func_call_node)
+                    stack.append(current_node)
+                    current_node = func_call_node
             elif token_value == '[':
                 array_access_node = ASTNode("ArrayAccess", current_node.children[-1].value)
                 current_node.children[-1] = array_access_node
