@@ -69,11 +69,14 @@ def create_ast_from_tokens(tokens, debug=False):
                     current_node.add_child(for_node)
                     stack.append(current_node)
                     current_node = for_node
-                elif token_value == 'printf':
-                    func_call_node = ASTNode("FunctionCall", token_value)
-                    current_node.add_child(func_call_node)
-                    stack.append(current_node)
-                    current_node = func_call_node
+                else:
+                    id_node = ASTNode("Identifier", token_value)
+                    current_node.add_child(id_node)
+                    if token_value == 'printf':
+                        func_call_node = ASTNode("FunctionCall", token_value)
+                        current_node.add_child(func_call_node)
+                        stack.append(current_node)
+                        current_node = func_call_node
         elif token_type == 'SYMBOL':
             if token_value == '{':
                 block_node = ASTNode("Block")
