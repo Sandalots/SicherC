@@ -13,8 +13,10 @@ class ASTNode:
     def pretty_print(self, indent=0):
         value_str = f": {self.value}" if self.value is not None else ""
         result = "  " * indent + f"{self.node_type}{value_str}\n"
+        
         for child in self.children:
             result += child.pretty_print(indent + 1)
+            
         return result
 
 class AST:
@@ -30,6 +32,7 @@ class AST:
     def pretty_print(self):
         if self.root:
             return self.root.pretty_print()
+        
         else:
             return "Empty AST"
 
@@ -40,6 +43,7 @@ def create_ast_from_tokens(tokens, debug=False):
 
     for token in tokens:
         token_type, token_value = token
+        
         if debug:
             print(f"Processing token: {token_type}, {token_value}")
 
@@ -96,7 +100,6 @@ def create_ast_from_tokens(tokens, debug=False):
                     current_node = stack.pop()
             elif token_value == '(':
                 if current_node.node_type == "FunctionCall":
-                    # Handle function call parameters
                     stack.append(current_node)
             elif token_value == '[':
                 array_access_node = ASTNode("ArrayAccess", current_node.children[-1].value)

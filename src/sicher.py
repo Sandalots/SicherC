@@ -29,6 +29,7 @@ def main():
         try:
             tokens = tokenise(code, debug=args.debug)
             print("Source code is lexically correct\n")
+            
         except SyntaxError as e:
             print(f"Lexical error: {e}")
             sys.exit(1)
@@ -37,6 +38,7 @@ def main():
     try:
         parse_tokens(tokens, debug=args.debug)
         print("Source code is syntactically correct\n")
+        
     except SyntaxError as e:
         print(f"Syntax error: {e}")
         sys.exit(1)
@@ -44,9 +46,10 @@ def main():
     # Analyser Module
     try:
         ast = create_ast_from_tokens(tokens, debug=args.debug)
-        print("AST created successfully\n")
+        print("\nAST created successfully\n")
         if args.debug:
             print(ast.pretty_print())
+            
     except Exception as e:
         print(f"Error creating AST: {e}")
         sys.exit(1)
@@ -55,7 +58,7 @@ def main():
     try:
         code_generator = CodeGenerator(ast)
         generated_code = code_generator.generate_code()
-        print("Generated Code:\n")
+        print("Generated Code:")
         print(generated_code)
         
         # Save generated code to a file
@@ -65,6 +68,7 @@ def main():
         # Compile to ARM64 binary
         output_filename = args.output
         code_generator.compile_to_arm64(source_filename, output_filename)
+        
     except Exception as e:
         print(f"Error generating code: {e}")
         sys.exit(1)
@@ -73,6 +77,7 @@ def main():
     if args.gui:
         try:
             visualiser()
+            
         except Exception as e:
             print(f"Error running visualiser: {e}")
             sys.exit(1)

@@ -80,13 +80,16 @@ def main():
     app = wx.App()
     app.SetAppName("Sicher")
 
+    # Create the frame
     frame = CompilerFrame(None)
+    # Show the frame
     frame.Show()
 
-    # Bring the window to the front
+    # Bring the Sicher window to the front
     wx.CallAfter(frame.Raise)
 
     app.MainLoop()
 
+# Run the main function
 if __name__ == '__main__':
     main()
