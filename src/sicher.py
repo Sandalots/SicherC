@@ -4,10 +4,11 @@
 # Sicher Dependencies
 import sys
 import argparse
-from tokeniser import tokenise
-from parser import parse_tokens
-from analyser import create_ast_from_tokens
-from visualiser import main as visualiser
+
+from modules.tokeniser import tokenise
+from modules.parser import parse_tokens
+from modules.analyser import create_ast_from_tokens
+from modules.visualiser import main as visualiser
 
 def main():
     parser = argparse.ArgumentParser(description='Parse a C source file.')
