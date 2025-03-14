@@ -26,7 +26,7 @@ class CompilerFrame(wx.Frame):
         self.compile_button.SetBackgroundColour("#FAD000")
         self.compile_button.SetForegroundColour("#2D2B55")
         self.compile_button.Bind(wx.EVT_BUTTON, self.OnCompile)
-        vbox.Add(self.compile_button, flag=wx.ALIGN_CENTER | wx.BOTTOM, border=20)
+        vbox.Add(self.compile_button, flag=wx.ALIGN_CENTER | wx.TOP | wx.BOTTOM, border=20)
 
         # Output tab
         self.notebook = wx.Notebook(panel)
@@ -39,13 +39,6 @@ class CompilerFrame(wx.Frame):
         self.notebook.AddPage(self.output_tab, 'Output')
         self.notebook.AddPage(self.countermeasures_tab, 'Countermeasures')
         vbox.Add(self.notebook, proportion=1, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=10)
-
-        # Make binary button
-        self.make_binary_button = wx.Button(panel, label='Make Binary')
-        self.make_binary_button.SetBackgroundColour("#FAD000")
-        self.make_binary_button.SetForegroundColour("#2D2B55")
-        self.make_binary_button.Bind(wx.EVT_BUTTON, self.OnMakeBinary)
-        vbox.Add(self.make_binary_button, flag=wx.ALIGN_CENTER | wx.TOP | wx.BOTTOM, border=10)
 
         panel.SetSizer(vbox)
 
@@ -82,9 +75,6 @@ class CompilerFrame(wx.Frame):
 
         except Exception as e:
             wx.MessageBox(f"Error: {e}", 'Error', wx.OK | wx.ICON_ERROR)
-
-    def OnMakeBinary(self, event):
-        wx.MessageBox('Make Binary functionality is not implemented yet', 'Info', wx.OK | wx.ICON_INFORMATION)
 
 def main():
     app = wx.App()
