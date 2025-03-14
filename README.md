@@ -23,16 +23,10 @@ Sicher C State as of 05/04/2025.
 4.1. amd64 Linux Target Set
 4.2. arm64 macOS Target Set
 4.3. amd64 Microsoft Windows Set
-5.1. GUI Front-you-liser
+5.1. GUI
 
-### Building Instructions
-```
-cd SicherC/
-make
-```
 ### Usage
 
 ### Acknowledgements
-
 
 ### Licence
