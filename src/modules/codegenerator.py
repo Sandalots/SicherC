@@ -9,10 +9,10 @@ class CodeGenerator:
     def generate_code(self):
         self.code += ".data\n"
         self.code += ".LC0:\n"
-        self.code += ".string \"Hello, World!\"\n"
+        self.code += "    .string \"Hello, World!\"\n"
         self.code += ".text\n"
-        self.code += ".global main\n"
-        self.code += "main:\n"
+        self.code += ".global _main\n"
+        self.code += "_main:\n"
         self._traverse(self.ast.root)
         return self.code
 
@@ -34,12 +34,12 @@ class CodeGenerator:
             pass
         elif node.node_type == "FunctionCall":
             if node.value == "printf":
-                self.code += f"adrp x0, .LC0\n"
-                self.code += f"add x0, x0, :lo12:.LC0\n"
-                self.code += f"bl _printf\n"  # Use _printf for macOS
+                self.code += "    adrp x0, .LC0\n"
+                self.code += "    add x0, x0, :lo12:.LC0\n"
+                self.code += "    bl _printf\n"  # Use _printf for macOS
         elif node.node_type == "Return":
-            self.code += f"mov w0, #{node.children[0].value}\n"
-            self.code += "ret\n"
+            self.code += f"    mov w0, #{node.children[0].value}\n"
+            self.code += "    ret\n"
         elif node.node_type == "String":
             # Handle string literals if needed
             pass
