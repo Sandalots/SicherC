@@ -1,5 +1,7 @@
-import wx
+# Visualiser Module
 
+# Visualiser Module Dependencies
+import wx
 from modules.tokeniser import tokenise
 from modules.parser import parse_tokens
 from modules.analyser import create_ast_from_tokens

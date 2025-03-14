@@ -12,42 +12,61 @@ from modules.analyser import create_ast_from_tokens
 from modules.visualiser import main as visualiser
 from modules.codegenerator import CodeGenerator
 
+# Sicher Main Function
 def main():
+    # Command Line Arguments
     parser = argparse.ArgumentParser(description='Parse a C source file.')
     parser.add_argument('filename', type=str, help='The C source file to parse')
     parser.add_argument('--debug', action='store_true', help='Enable debug output')
     parser.add_argument('--gui', action='store_true', help='Run the GUI visualizer')
     parser.add_argument('--output', type=str, help='Output binary filename', default='output_binary')
+    
+    # Parse the command-line arguments
     args = parser.parse_args()
 
+    # Get the input source code filename
     filename = args.filename
 
     # Tokeniser Module
     with open(filename, 'r') as file:
+        # read the source code
         code = file.read()
         
         try:
+            # tokenise the source code
             tokens = tokenise(code, debug=args.debug)
+            
+            # tell the user the tokenisation was successful
             print("Source code is lexically correct\n")
             
+        # raise a syntax error if there is a problem with the tokenisation
         except SyntaxError as e:
             print(f"Lexical error: {e}")
             sys.exit(1)
     
     # Parser Module
     try:
+        # parse the source code
         parse_tokens(tokens, debug=args.debug)
+        
+        # tell the user the parsing was successful
         print("Source code is syntactically correct\n")
         
+    # raise a syntax error if there is a problem with the parsing
     except SyntaxError as e:
         print(f"Syntax error: {e}")
         sys.exit(1)
         
     # Analyser Module
     try:
+        # create the AST from the tokens
         ast = create_ast_from_tokens(tokens, debug=args.debug)
+        
+        # tell the user the AST was created successfully
         print("\nAST created successfully\n")
+        
         if args.debug:
+            # output the ast prettily
             print(ast.pretty_print())
             
     except Exception as e:
@@ -56,19 +75,29 @@ def main():
     
     # Code Generator Module
     try:
+        # run the code generator on the ast
         code_generator = CodeGenerator(ast)
+        
+        # generate the code
         generated_code = code_generator.generate_code()
+        
+        # output the generated code
         print("Generated Code:")
         print(generated_code)
         
-        # Save generated code to a file
+        # set the source output filename
         source_filename = 'output.s'
+        
+        # save the generated code to a file
         code_generator.save_code_to_file(source_filename)
         
-        # Compile to ARM64 binary
+        # set the output filename
         output_filename = args.output
+        
+        # compile the generated code to arm64
         code_generator.compile_to_arm64(source_filename, output_filename)
         
+    # raise an error if there is a problem with the code generation
     except Exception as e:
         print(f"Error generating code: {e}")
         sys.exit(1)
@@ -76,8 +105,10 @@ def main():
     # Visualiser Module
     if args.gui:
         try:
+            # show the GUI
             visualiser()
             
+        # raise an error if there is a problem with the visualiser
         except Exception as e:
             print(f"Error running visualiser: {e}")
             sys.exit(1)

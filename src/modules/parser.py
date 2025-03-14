@@ -1,3 +1,5 @@
+# Parser Module
+
 class Parser:
     def __init__(self, tokens, debug=False):
         self.tokens = tokens

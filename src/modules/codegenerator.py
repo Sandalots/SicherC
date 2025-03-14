@@ -1,3 +1,6 @@
+# Code Generator Module
+
+# Code Generator Dependencies
 import subprocess
 
 class CodeGenerator:

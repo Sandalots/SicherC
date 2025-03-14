@@ -1,3 +1,5 @@
+# Analyser Module
+
 class ASTNode:
     def __init__(self, node_type, value=None):
         self.node_type = node_type
