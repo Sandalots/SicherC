@@ -19,7 +19,7 @@ UNKNOWN = 'UNKNOWN'
 
 def tokenise(code, debug=False):
     tokens = []
-    # Remove comments from source code
+    # Remove any comments from source code
     code = re.sub(r'/\*.*?\*/', '', code, flags=re.DOTALL)
     
     if debug:

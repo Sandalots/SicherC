@@ -37,7 +37,7 @@ def main():
             tokens = tokenise(code, debug=args.debug)
             
             # tell the user the tokenisation was successful
-            print("Source code is lexically correct\n")
+            print("\nSource code is lexically correct\n")
             
         # raise a syntax error if there is a problem with the tokenisation
         except SyntaxError as e:
@@ -50,7 +50,7 @@ def main():
         parse_tokens(tokens, debug=args.debug)
         
         # tell the user the parsing was successful
-        print("Source code is syntactically correct\n")
+        print("\nSource code is syntactically correct\n")
         
     # raise a syntax error if there is a problem with the parsing
     except SyntaxError as e:
@@ -69,6 +69,7 @@ def main():
             # output the ast prettily
             print(ast.pretty_print())
             
+    # raise an error if there is a problem with the AST creation
     except Exception as e:
         print(f"Error creating AST: {e}")
         sys.exit(1)
