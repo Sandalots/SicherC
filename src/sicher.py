@@ -18,7 +18,6 @@ def main():
     parser.add_argument('--debug', action='store_true', help='Enable debug output')
     parser.add_argument('--gui', action='store_true', help='Run the GUI visualizer')
     parser.add_argument('--output', type=str, help='Output binary filename', default='output_binary')
-
     args = parser.parse_args()
 
     filename = args.filename
@@ -52,7 +51,7 @@ def main():
         print(f"Error creating AST: {e}")
         sys.exit(1)
     
-        # Code Generator Module
+    # Code Generator Module
     try:
         code_generator = CodeGenerator(ast)
         generated_code = code_generator.generate_code()
@@ -60,7 +59,7 @@ def main():
         print(generated_code)
         
         # Save generated code to a file
-        source_filename = 'output.c'
+        source_filename = 'output.s'
         code_generator.save_code_to_file(source_filename)
         
         # Compile to ARM64 binary
