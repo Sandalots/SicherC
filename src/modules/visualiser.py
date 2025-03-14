@@ -15,16 +15,18 @@ class CompilerFrame(wx.Frame):
 
         vbox = wx.BoxSizer(wx.VERTICAL)
 
-        # File upload and compile button
+        # File upload
         hbox1 = wx.BoxSizer(wx.HORIZONTAL)
         self.file_picker = wx.FilePickerCtrl(panel)
         hbox1.Add(self.file_picker, proportion=1, flag=wx.EXPAND)
+        vbox.Add(hbox1, flag=wx.EXPAND | wx.ALL, border=10)
+
+        # Compile button
         self.compile_button = wx.Button(panel, label='Compile')
         self.compile_button.SetBackgroundColour("#FAD000")
         self.compile_button.SetForegroundColour("#2D2B55")
         self.compile_button.Bind(wx.EVT_BUTTON, self.OnCompile)
-        hbox1.Add(self.compile_button, flag=wx.LEFT, border=5)
-        vbox.Add(hbox1, flag=wx.EXPAND | wx.ALL, border=10)
+        vbox.Add(self.compile_button, flag=wx.ALIGN_CENTER | wx.BOTTOM, border=20)
 
         # Output tab
         self.notebook = wx.Notebook(panel)
@@ -90,8 +92,10 @@ def main():
 
     frame = CompilerFrame(None)
     frame.Show()
-    
-    wx.MessageBox('Welcome to Sicher C Compiler', 'Info', wx.OK | wx.ICON_INFORMATION)
+
+    # Bring the window to the front
+    wx.CallAfter(frame.Raise)
+
     app.MainLoop()
 
 if __name__ == '__main__':
