@@ -126,3 +126,9 @@ cython_debug/
 # add .o and .s ignore
 *.o
 *.s
+
+# DS Store
+.DS_Store
+
+#.git
+.git
