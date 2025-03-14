@@ -36,7 +36,7 @@ class CodeGenerator:
             if node.value == "printf":
                 self.code += f"adrp x0, .LC0\n"
                 self.code += f"add x0, x0, :lo12:.LC0\n"
-                self.code += f"bl printf\n"
+                self.code += f"bl _printf\n"  # Use _printf for macOS
         elif node.node_type == "Return":
             self.code += f"mov w0, #{node.value}\n"
             self.code += "ret\n"
@@ -48,16 +48,9 @@ class CodeGenerator:
     def compile_to_arm64(self, source_filename, output_filename):
         try:
             # Assemble the assembly code
-            subprocess.run(['as', '-o', 'output.o', source_filename], check=True)
+            subprocess.run(['as', '-arch', 'arm64', '-o', 'output.o', source_filename], check=True)
             # Link the object file to create the binary using clang
             subprocess.run(['clang', '-o', output_filename, 'output.o', '-target', 'arm64-apple-macos11'], check=True)
             print(f"Successfully compiled to {output_filename}")
         except subprocess.CalledProcessError as e:
             print(f"Compilation failed: {e}")
-
-# Example usage:
-# ast = create_ast_from_tokens(tokens, debug=True)
-# code_generator = CodeGenerator(ast)
-# generated_code = code_generator.generate_code()
-# code_generator.save_code_to_file('output.s')
-# code_generator.compile_to_arm64('output.s', 'output')

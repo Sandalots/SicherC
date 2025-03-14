@@ -43,19 +43,25 @@ def create_ast_from_tokens(tokens, debug=False):
         if debug:
             print(f"Processing token: {token_type}, {token_value}")
 
-        if token_type == 'KEYWORD' and token_value == 'int':
-            if current_node is None:
-                current_node = ASTNode("Function", "main")
-                ast.set_root(current_node)
-                block_node = ASTNode("Block")
-                current_node.add_child(block_node)
+        if token_type == 'KEYWORD':
+            if token_value == 'int':
+                if current_node is None:
+                    current_node = ASTNode("Function", "main")
+                    ast.set_root(current_node)
+                    block_node = ASTNode("Block")
+                    current_node.add_child(block_node)
+                    stack.append(current_node)
+                    current_node = block_node
+                else:
+                    var_node = ASTNode("VariableDeclaration", token_value)
+                    current_node.add_child(var_node)
+                    stack.append(current_node)
+                    current_node = var_node
+            elif token_value == 'return':
+                return_node = ASTNode("Return")
+                current_node.add_child(return_node)
                 stack.append(current_node)
-                current_node = block_node
-            else:
-                var_node = ASTNode("VariableDeclaration", token_value)
-                current_node.add_child(var_node)
-                stack.append(current_node)
-                current_node = var_node
+                current_node = return_node
         elif token_type == 'IDENTIFIER':
             if current_node is not None:
                 if token_value == 'for':
@@ -81,6 +87,8 @@ def create_ast_from_tokens(tokens, debug=False):
                 current_node = assign_node
             elif token_value == ';':
                 current_node = stack[-1]
+                if current_node.node_type == "Return":
+                    current_node = stack.pop()
             elif token_value == '[':
                 array_access_node = ASTNode("ArrayAccess", current_node.children[-1].value)
                 current_node.children[-1] = array_access_node
