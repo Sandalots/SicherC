@@ -10,12 +10,15 @@ from modules.tokeniser import tokenise
 from modules.parser import parse_tokens
 from modules.analyser import create_ast_from_tokens
 from modules.visualiser import main as visualiser
+from modules.codegenerator import CodeGenerator
 
 def main():
     parser = argparse.ArgumentParser(description='Parse a C source file.')
     parser.add_argument('filename', type=str, help='The C source file to parse')
     parser.add_argument('--debug', action='store_true', help='Enable debug output')
     parser.add_argument('--gui', action='store_true', help='Run the GUI visualizer')
+    parser.add_argument('--output', type=str, help='Output binary filename', default='output_binary')
+
     args = parser.parse_args()
 
     filename = args.filename
@@ -49,7 +52,23 @@ def main():
         print(f"Error creating AST: {e}")
         sys.exit(1)
     
-    # Code Generator Module
+        # Code Generator Module
+    try:
+        code_generator = CodeGenerator(ast)
+        generated_code = code_generator.generate_code()
+        print("Generated Code:\n")
+        print(generated_code)
+        
+        # Save generated code to a file
+        source_filename = 'output.c'
+        code_generator.save_code_to_file(source_filename)
+        
+        # Compile to ARM64 binary
+        output_filename = args.output
+        code_generator.compile_to_arm64(source_filename, output_filename)
+    except Exception as e:
+        print(f"Error generating code: {e}")
+        sys.exit(1)
     
     # Visualiser Module
     if args.gui:
