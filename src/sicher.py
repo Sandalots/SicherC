@@ -74,31 +74,23 @@ def main():
         print(f"Error creating AST: {e}")
         sys.exit(1)
     
-    # Code Generator Module
+   # Code Generator Module
     try:
-        # run the code generator on the ast
+        # Run the code generator on the AST
         code_generator = CodeGenerator(ast)
         
-        # generate the code
+        # Generate the code
         generated_code = code_generator.generate_code()
         
-        # output the generated code
+        # Output the generated code
         print("Generated Code:")
         print(generated_code)
         
-        # set the source output filename
-        source_filename = 'output.s'
+        # Save the generated code to a file
+        code_generator.save_code_to_file('output.ll')
         
-        # save the generated code to a file
-        code_generator.save_code_to_file(source_filename)
-        
-        # set the output filename
-        output_filename = args.output
-        
-        # compile the generated code to arm64
-        code_generator.compile_to_arm64(source_filename, output_filename)
-        
-    # raise an error if there is a problem with the code generation
+        # Compile the generated code to an ARM64 binary
+        code_generator.compile_to_arm64('output.ll', 'output_binary')
     except Exception as e:
         print(f"Error generating code: {e}")
         sys.exit(1)
