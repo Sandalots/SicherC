@@ -15,7 +15,6 @@ Sicher C State as of 05/04/2025.
 4. Code Generator
 5. Visualiser
 
-
 ### Sub-Modules
 1.1. Testing Language Pack
 2.1. Testing Syntax Set
@@ -27,6 +26,4 @@ Sicher C State as of 05/04/2025.
 
 ### Usage
 
-### Acknowledgements
-
-### Licence
+### Features
