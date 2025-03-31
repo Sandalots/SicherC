@@ -7,11 +7,13 @@ Through a modular approach, forming from the lexical analysis to the code-genera
 
 ### State
 Sicher C State as of 05/04/2025.
+<br><br>
+Sicher contains 5 core modules that perform the complete workings of the Sicher Compiler, as-well as optional extendable submodules.
 
 ### Modules
 1. Tokeniser (Scanner)
 2. Parser
-3. Analyser (Legal Sicher C IR)
+3. Analyser
 4. Code Generator
 5. Visualiser
 
