@@ -1,4 +1,8 @@
 # Sicher C Runtime (Sicher.py)
+# Sandy MacDonald
+# 2003619
+# 2025
+
 # For my Sicher C Compiler, this is the runtime program that is the mother of all modules, runs the 5 modules sequentially and form which the GUI eventually calls.
 
 # Sicher Dependencies
@@ -12,7 +16,9 @@ from modules.analyser import create_ast_from_tokens
 from modules.visualiser import main as visualiser
 from modules.codegenerator import CodeGenerator
 
-# Sicher Main Function
+# Sicher Submodules
+
+# Sicher Main Function (Entry Point)
 def main():
     # Command Line Arguments
     parser = argparse.ArgumentParser(description='Parse a C source file.')

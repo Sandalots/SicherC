@@ -1,4 +1,7 @@
-# Tokeniser Module
+# Tokeniser Module for Sicher
+# Sandy MacDonald
+# 2003619
+# 2025
 
 # Tokeniser Dependencies
 import re # for matching regular expressions

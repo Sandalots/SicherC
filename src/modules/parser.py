@@ -1,4 +1,7 @@
-# Parser Module
+# Parser Module for Sicher
+# Sandy MacDonald
+# 2003619
+# 2025
 
 class Parser:
     def __init__(self, tokens, debug=False):

@@ -1,4 +1,7 @@
-# Code Generator Module
+# Code Generator Module for Sicher
+# Sandy MacDonald
+# 2003619
+# 2025
 
 # Code Generator Dependencies
 import llvmlite.ir as ir

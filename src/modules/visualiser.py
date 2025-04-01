@@ -1,4 +1,7 @@
-# Visualiser Module
+# Visualiser Module for Sicher
+# Sandy MacDonald
+# 2003619
+# 2025
 
 # Visualiser Module Dependencies
 import wx

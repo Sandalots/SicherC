@@ -1,5 +1,9 @@
-# Analyser Module
+# Analyser Module for Sicher
+# Sandy MacDonald
+# 2003619
+# 2025
 
+# Defines a ASTNode class for the AST (abstract syntax tree)
 class ASTNode:
     def __init__(self, node_type, value=None):
         self.node_type = node_type
