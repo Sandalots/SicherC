@@ -20,7 +20,16 @@ class CompilerFrame(wx.Frame):
 
         vbox = wx.BoxSizer(wx.VERTICAL)
 
-        # File upload
+        # File upload 
+        file_label = wx.StaticText(panel, label='Select a C Source File:')
+        file_label.SetForegroundColour("#FAD000")
+        font = file_label.GetFont()
+        font.PointSize += 10
+        font = font.Bold()
+        file_label.SetFont(font)
+        vbox.Add(file_label, flag=wx.ALIGN_CENTER | wx.TOP, border=10)
+        file_label.SetBackgroundColour("#2D2B55")
+        
         hbox1 = wx.BoxSizer(wx.HORIZONTAL)
         self.file_picker = wx.FilePickerCtrl(panel)
         hbox1.Add(self.file_picker, proportion=1, flag=wx.EXPAND)
@@ -30,6 +39,11 @@ class CompilerFrame(wx.Frame):
         self.compile_button = wx.Button(panel, label='Compile')
         self.compile_button.SetBackgroundColour("#FAD000")
         self.compile_button.SetForegroundColour("#2D2B55")
+        font = self.compile_button.GetFont()
+        font = font.Bold()
+        self.compile_button.SetFont(font)
+        
+        
         self.compile_button.Bind(wx.EVT_BUTTON, self.OnCompile)
         vbox.Add(self.compile_button, flag=wx.ALIGN_CENTER | wx.TOP | wx.BOTTOM, border=20)
 
