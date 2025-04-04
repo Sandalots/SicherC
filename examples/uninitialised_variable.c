@@ -1,3 +1,7 @@
+/* Description: A Simple C Program that initialises a variable
+*  Author: Sandalots
+*  Date: 12/03/2025 */
+
 #include <stdio.h>
 
 // Uninitialised Variable Test

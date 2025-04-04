@@ -1,3 +1,7 @@
+/* Description: A Simple C Hello World Program
+*  Author: Sandalots
+*  Date: 12/03/2025 */
+
 #include <stdio.h>
 
 // Simple Hello World Test.

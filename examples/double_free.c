@@ -1,3 +1,7 @@
+/* Description: A Simple C Program to create a double free  
+*  Author: Sandalots
+*  Date: 12/03/2025 */
+
 #include <stdio.h>
 #include <stdlib.h>
 

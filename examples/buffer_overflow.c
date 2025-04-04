@@ -2,7 +2,7 @@
 *  Author: Sandalots
 *  Date: 12/03/2025 */
 
-// use the stanrd io library
+// use the standard io library
 #include <stdio.h>
 
 // A Buffer Overflow Test

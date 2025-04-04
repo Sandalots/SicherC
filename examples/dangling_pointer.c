@@ -1,3 +1,7 @@
+/* Description: A Simple C Program to create a dangling pointer
+*  Author: Sandalots
+*  Date: 12/03/2025 */
+
 #include <stdio.h>
 
 // A Dangling Pointer Test.
