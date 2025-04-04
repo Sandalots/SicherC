@@ -36,7 +36,6 @@ class CompilerFrame(wx.Frame):
         font.PointSize += 5
         font = font.Bold()
         file_label.SetFont(font)
-        # make the file label align to the left and add some padding
         vbox.Add(file_label, flag=wx.ALIGN_LEFT | wx.TOP | wx.LEFT, border=10)
         file_label.SetBackgroundColour("#2D2B55")
         
@@ -55,17 +54,12 @@ class CompilerFrame(wx.Frame):
         self.compile_button.Bind(wx.EVT_BUTTON, self.OnCompile)
         vbox.Add(self.compile_button, flag=wx.ALIGN_CENTER | wx.TOP | wx.BOTTOM, border=20)
 
-        # Output tab
-        self.notebook = wx.Notebook(panel)
-        self.output_tab = wx.TextCtrl(self.notebook, style=wx.TE_MULTILINE | wx.TE_READONLY)
-        self.output_tab.SetBackgroundColour("#1E1E3F")
-        self.output_tab.SetForegroundColour("#FAD000")
-        self.countermeasures_tab = wx.TextCtrl(self.notebook, style=wx.TE_MULTILINE | wx.TE_READONLY)
-        self.countermeasures_tab.SetBackgroundColour("#1E1E3F")
-        self.countermeasures_tab.SetForegroundColour("#FAD000")
-        self.notebook.AddPage(self.output_tab, 'Output')
-        self.notebook.AddPage(self.countermeasures_tab, 'Countermeasures')
-        vbox.Add(self.notebook, proportion=1, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=10)
+        # Output panel for collapsible sections
+        self.output_panel = wx.Panel(panel)
+        self.output_panel.SetBackgroundColour("#1E1E3F")
+        self.output_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.output_panel.SetSizer(self.output_sizer)
+        vbox.Add(self.output_panel, proportion=1, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=10)
 
         panel.SetSizer(vbox)
 
@@ -78,8 +72,8 @@ class CompilerFrame(wx.Frame):
             wx.MessageBox('Please select a file to compile', 'Error', wx.OK | wx.ICON_ERROR)
             return
 
-        # Clear the output box
-        self.output_tab.Clear()
+        # Clear the output panel
+        self.output_panel.DestroyChildren()
 
         try:
             with open(filepath, 'r') as file:
@@ -87,21 +81,59 @@ class CompilerFrame(wx.Frame):
 
             # Tokenization
             tokens = tokenise(code, debug=True)
-            self.output_tab.AppendText("Tokenization:\n")
-            self.output_tab.AppendText(str(tokens) + "\n\n")
+            self.add_collapsible_section("Tokenization", str(tokens))
 
             # Parsing
             parse_tokens(tokens, debug=True)
-            self.output_tab.AppendText("Parsing:\n")
-            self.output_tab.AppendText("Source code is syntactically correct\n\n")
+            self.add_collapsible_section("Parsing", "Source code is syntactically correct")
 
             # Analyzing
             ast = create_ast_from_tokens(tokens, debug=True)
-            self.output_tab.AppendText("Analyzing:\n")
-            self.output_tab.AppendText(ast.pretty_print() + "\n")
+            self.add_collapsible_section("Analyzing", ast.pretty_print())
 
         except Exception as e:
             wx.MessageBox(f"Error: {e}", 'Error', wx.OK | wx.ICON_ERROR)
+
+    def add_collapsible_section(self, title, content):
+         # Create a collapsible pane
+        collapsible_pane = wx.CollapsiblePane(
+            self.output_panel,
+            label=title,
+            style=wx.CP_DEFAULT_STYLE | wx.CP_NO_TLW_RESIZE
+        )
+        collapsible_pane.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.on_collapsible_pane_changed)
+
+        # Set the arrow color to yellow (same as buttons)
+        collapsible_pane.SetForegroundColour("#FAD000")
+        collapsible_pane.SetBackgroundColour("#1E1E3F")
+
+        # Make the collapsible pane visible by default
+        collapsible_pane.Collapse(False)
+
+        # Add content to the collapsible pane
+        pane = collapsible_pane.GetPane()
+        text_ctrl = wx.TextCtrl(
+            pane,
+            value=content,
+            style=wx.TE_MULTILINE | wx.TE_READONLY | wx.BORDER_NONE
+        )
+        text_ctrl.SetBackgroundColour("#1E1E3F")
+        text_ctrl.SetForegroundColour("#FAD000")
+
+        # Adjust the height of the collapsible boxes
+        text_ctrl.SetMinSize((-1, 150))  # Set a minimum height of 150 pixels
+
+        # Layout for the collapsible pane
+        pane_sizer = wx.BoxSizer(wx.VERTICAL)
+        pane_sizer.Add(text_ctrl, proportion=1, flag=wx.EXPAND)
+        pane.SetSizer(pane_sizer)
+
+        # Add the collapsible pane to the output panel
+        self.output_sizer.Add(collapsible_pane, flag=wx.EXPAND | wx.ALL, border=5)
+        self.output_panel.Layout()
+
+    def on_collapsible_pane_changed(self, event):
+        self.output_panel.Layout()
 
 def main():
     app = wx.App()
