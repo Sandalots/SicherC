@@ -90,6 +90,10 @@ class CompilerFrame(wx.Frame):
             # Analyzing
             ast = create_ast_from_tokens(tokens, debug=True)
             self.add_collapsible_section("Analyzing", ast.pretty_print())
+            
+            # Code Generation
+            
+            # Top Level Viz
 
         except Exception as e:
             wx.MessageBox(f"Error: {e}", 'Error', wx.OK | wx.ICON_ERROR)
