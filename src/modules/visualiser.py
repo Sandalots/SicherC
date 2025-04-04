@@ -4,6 +4,7 @@
 # 2025
 
 # Visualiser Module Dependencies
+import os
 import wx
 from modules.tokeniser import tokenise
 from modules.parser import parse_tokens
@@ -40,7 +41,11 @@ class CompilerFrame(wx.Frame):
         file_label.SetBackgroundColour("#2D2B55")
         
         hbox1 = wx.BoxSizer(wx.HORIZONTAL)
-        self.file_picker = wx.FilePickerCtrl(panel)
+        
+        # Set default path for the file picker using a relative path
+        base_dir = os.path.dirname(os.path.abspath(__file__))  # Get the directory of the current script
+        default_path = os.path.join(base_dir, "../../examples/hello_world.c")  # Construct the relative path
+        self.file_picker = wx.FilePickerCtrl(panel, path=default_path)
         hbox1.Add(self.file_picker, proportion=1, flag=wx.EXPAND)
         vbox.Add(hbox1, flag=wx.EXPAND | wx.ALL, border=10)
 
