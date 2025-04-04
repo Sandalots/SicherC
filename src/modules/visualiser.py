@@ -9,6 +9,8 @@ import wx
 from modules.tokeniser import tokenise
 from modules.parser import parse_tokens
 from modules.analyser import create_ast_from_tokens
+from modules.codegenerator import CodeGenerator
+
 
 class CompilerFrame(wx.Frame):
     def __init__(self, *args, **kw):
@@ -96,6 +98,9 @@ class CompilerFrame(wx.Frame):
             self.add_collapsible_section("Analyzing", ast.pretty_print())
             
             # Code Generation
+            codegen = CodeGenerator(ast)
+            generated_code = codegen.generate_code()
+            self.add_collapsible_section("Code Generation", generated_code)
             
             # Top Level Viz
 
