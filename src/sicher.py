@@ -47,7 +47,10 @@ def main():
             
         # raise a syntax error if there is a problem with the tokenisation
         except SyntaxError as e:
+            # prompt the lexical error
             print(f"Lexical error: {e}")
+            
+            # exit the program to avoid further errors
             sys.exit(1)
     
     # Parser Module
@@ -60,7 +63,10 @@ def main():
         
     # raise a syntax error if there is a problem with the parsing
     except SyntaxError as e:
+        # prompt the syntax error
         print(f"Syntax error: {e}")
+        
+        # exit the program to avoid further errors
         sys.exit(1)
         
     # Analyser Module
@@ -77,7 +83,10 @@ def main():
             
     # raise an error if there is a problem with the AST creation
     except Exception as e:
+        # prompt the AST creation error
         print(f"Error creating AST: {e}")
+        
+        # exit the program to avoid further errors
         sys.exit(1)
     
    # Code Generator Module
@@ -97,8 +106,13 @@ def main():
         
         # Compile the generated code to an ARM64 binary
         code_generator.compile_to_arm64('output.ll', 'output_binary')
+    
+    # raise an error if there is a problem with the code generation     
     except Exception as e:
+        # prompt the code generation error
         print(f"Error generating code: {e}")
+        
+        # exit the program to avoid further errors
         sys.exit(1)
     
     # Visualiser Module
@@ -109,7 +123,10 @@ def main():
             
         # raise an error if there is a problem with the visualiser
         except Exception as e:
+            # prompt the visualiser error
             print(f"Error running visualiser: {e}")
+            
+            # exit the program to avoid further errors
             sys.exit(1)
 
 # Run the Sicher (entry point) if run as a script
