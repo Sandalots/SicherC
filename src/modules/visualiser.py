@@ -87,11 +87,10 @@ class CompilerFrame(wx.Frame):
             # Tokenization
             tokens = tokenise(code, debug=True)
             self.add_collapsible_section("Tokenization", str(tokens))
-
+            
             # Parsing
-            parse_tokens(tokens, debug=True)
-            self.add_collapsible_section("Parsing", "Source code is syntactically correct")
-
+            parsing_debug_output = parse_tokens(tokens, debug=True)
+            self.add_collapsible_section("Parsing", parsing_debug_output)
             # Analyzing
             ast = create_ast_from_tokens(tokens, debug=True)
             self.add_collapsible_section("Analyzing", ast.pretty_print())

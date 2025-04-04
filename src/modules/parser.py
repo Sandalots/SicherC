@@ -3,6 +3,9 @@
 # 2003619
 # 2025
 
+import io
+import sys
+
 class Parser:
     def __init__(self, tokens, debug=False):
         self.tokens = tokens
@@ -199,5 +202,28 @@ class Parser:
         return token[1]
 
 def parse_tokens(tokens, debug=False):
+    """
+    Parses the tokens and optionally returns debug output.
+
+    Args:
+        tokens: The list of tokens to parse.
+        debug: Whether to enable debug mode.
+
+    Returns:
+        str: The debug output if debug=True, otherwise an empty string.
+    """
     parser = Parser(tokens, debug=debug)
-    parser.parse()
+    
+    if debug:
+        # Redirect stdout to capture debug output
+        old_stdout = sys.stdout
+        sys.stdout = io.StringIO()
+        try:
+            parser.parse()
+            debug_output = sys.stdout.getvalue()  # Capture the debug output
+        finally:
+            sys.stdout = old_stdout  # Restore original stdout
+        return debug_output
+    else:
+        parser.parse()
+        return ""
