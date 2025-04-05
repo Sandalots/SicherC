@@ -10,7 +10,8 @@ from modules.tokeniser import tokenise
 from modules.parser import parse_tokens
 from modules.analyser import create_ast_from_tokens
 from modules.codegenerator import CodeGenerator
-
+import time
+import psutil
 
 class CompilerFrame(wx.Frame):
     def __init__(self, *args, **kw):
@@ -60,7 +61,15 @@ class CompilerFrame(wx.Frame):
         self.compile_button.SetFont(font)
         self.compile_button.Bind(wx.EVT_BUTTON, self.OnCompile)
         vbox.Add(self.compile_button, flag=wx.ALIGN_CENTER | wx.TOP | wx.BOTTOM, border=20)
-
+        
+        # Time/Space complexity Label
+        self.complexity_label = wx.StaticText(panel, label="")
+        self.complexity_label.SetForegroundColour("#FAD000")
+        font = self.complexity_label.GetFont()
+        font.PointSize += 2
+        self.complexity_label.SetFont(font)
+        vbox.Add(self.complexity_label, flag=wx.ALIGN_CENTER | wx.TOP, border=5)
+        
         # Output panel for collapsible sections
         self.output_panel = wx.Panel(panel)
         self.output_panel.SetBackgroundColour("#1E1E3F")
@@ -85,6 +94,11 @@ class CompilerFrame(wx.Frame):
         try:
             with open(filepath, 'r') as file:
                 code = file.read()
+                
+            # Measure start time
+            start_time = time.time()
+            process = psutil.Process()
+            initial_memory = process.memory_info().rss  # Memory usage in bytes
 
             ## Tokenization
             tokens, tokeniser_log = tokenise(code, debug=True)
@@ -102,6 +116,21 @@ class CompilerFrame(wx.Frame):
             codegen = CodeGenerator(ast)
             generated_code = codegen.generate_code()
             self.add_collapsible_section("Code Generation", generated_code)
+            
+            # end time
+            end_time = time.time()
+            final_memory = process.memory_info().rss  # Memory usage in bytes
+            
+            # Calculate time complexity
+            time_complexity = end_time - start_time
+            
+            # Calculate memory usage (RAM usage)
+            memory_usage = (final_memory - initial_memory) / (1024 * 1024)  # Convert to MB
+            
+             # Update the combined complexity label
+            self.complexity_label.SetLabel(
+                f"Time Complexity: {time_complexity:.4f} seconds | Memory Usage: {memory_usage:.2f} MB"
+            )
 
             # Top Level Viz
             self.add_top_level_viz(ast)
