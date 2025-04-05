@@ -16,7 +16,7 @@ class Parser:
         while self.current_token < len(self.tokens):
             token_type, token_value = self.tokens[self.current_token]
             if self.debug:
-                print(f"Parsing token: {token_type}, {token_value}")
+                print(f"Line {self.current_token + 1}: Parsing token: {token_type}, {token_value}")
             if token_type == 'KEYWORD' and token_value == 'int':
                 self.parse_function()
             else:
@@ -24,7 +24,7 @@ class Parser:
 
     def parse_function(self):
         if self.debug:
-            print("Parsing function")
+            print(f"Line {self.current_token + 1}: Parsing function")
         self.expect('KEYWORD', 'int')
         self.expect('IDENTIFIER')
         self.expect('SYMBOL', '(')
@@ -37,7 +37,7 @@ class Parser:
     def parse_statement(self):
         token_type, token_value = self.tokens[self.current_token]
         if self.debug:
-            print(f"Parsing statement: {token_type}, {token_value}")
+            print(f"Line {self.current_token + 1}: Parsing statement: {token_type}, {token_value}")
         if token_type == 'KEYWORD' and token_value == 'return':
             self.parse_return()
         elif token_type == 'KEYWORD' and token_value in {'char', 'int'}:
@@ -53,14 +53,14 @@ class Parser:
 
     def parse_return(self):
         if self.debug:
-            print("Parsing return statement")
+            print(f"Line {self.current_token + 1}: Parsing return statement")
         self.expect('KEYWORD', 'return')
         self.expect('NUMBER')
         self.expect('SYMBOL', ';')
 
     def parse_declaration(self):
         if self.debug:
-            print("Parsing declaration")
+            print(f"Line {self.current_token + 1}: Parsing declaration")
         self.expect('KEYWORD')
         while True:
             if self.tokens[self.current_token][1] == '*':
@@ -84,11 +84,11 @@ class Parser:
                 break
         self.expect('SYMBOL', ';')
         if self.debug:
-            print(f"Declared variable: {identifier}")
+            print(f"Line {self.current_token + 1}: Declared variable: {identifier}")
 
     def parse_expression(self):
         if self.debug:
-            print("Parsing expression")
+            print(f"Line {self.current_token + 1}: Parsing expression")
         if self.tokens[self.current_token][1] == '*':
             self.expect('SYMBOL', '*')
         identifier = self.expect('IDENTIFIER')
@@ -115,11 +115,11 @@ class Parser:
         if self.tokens[self.current_token][1] == ';':
             self.expect('SYMBOL', ';')
         if self.debug:
-            print(f"Expression: {identifier}")
+            print(f"Line {self.current_token + 1}: Expression: {identifier}")
 
     def parse_if(self):
         if self.debug:
-            print("Parsing if statement")
+            print(f"Line {self.current_token + 1}: Parsing if statement")
         self.expect('KEYWORD', 'if')
         self.expect('SYMBOL', '(')
         self.parse_expression()
@@ -131,7 +131,7 @@ class Parser:
 
     def parse_for(self):
         if self.debug:
-            print("Parsing for loop")
+            print(f"Line {self.current_token + 1}: Parsing for loop")
         self.expect('IDENTIFIER', 'for')
         self.expect('SYMBOL', '(')
         self.parse_for_initialization()  # Handle the initialization part
@@ -147,57 +147,28 @@ class Parser:
     def parse_for_initialization(self):
         token_type, token_value = self.tokens[self.current_token]
         if token_type == 'KEYWORD' and token_value in {'char', 'int'}:
-            self.parse_declaration(for_loop=True)
+            self.parse_declaration()
         else:
             self.parse_expression()
 
     def parse_for_increment(self):
         if self.debug:
-            print("Parsing for increment")
+            print(f"Line {self.current_token + 1}: Parsing for increment")
         while self.tokens[self.current_token][1] != ')':
             self.parse_expression()
             if self.tokens[self.current_token][1] == ',':
                 self.expect('SYMBOL', ',')
         if self.debug:
-            print("Finished parsing for increment")
-
-    def parse_declaration(self, for_loop=False):
-        if self.debug:
-            print("Parsing declaration")
-        self.expect('KEYWORD')
-        while True:
-            if self.tokens[self.current_token][1] == '*':
-                self.expect('SYMBOL', '*')
-            identifier = self.expect('IDENTIFIER')
-            if self.tokens[self.current_token][1] == '[':
-                self.expect('SYMBOL', '[')
-                self.expect('NUMBER')
-                self.expect('SYMBOL', ']')
-            if self.tokens[self.current_token][1] == '=':
-                self.expect('SYMBOL', '=')
-                if self.tokens[self.current_token][0] == 'STRING':
-                    self.expect('STRING')
-                elif self.tokens[self.current_token][0] == 'NUMBER':
-                    self.expect('NUMBER')
-                else:
-                    self.expect('IDENTIFIER')
-            if self.tokens[self.current_token][1] == ',':
-                self.expect('SYMBOL', ',')
-            else:
-                break
-        if not for_loop:
-            self.expect('SYMBOL', ';')
-        if self.debug:
-            print(f"Declared variable: {identifier}")
+            print(f"Line {self.current_token + 1}: Finished parsing for increment")
 
     def expect(self, token_type, token_value=None):
         if self.current_token >= len(self.tokens):
             raise SyntaxError("Unexpected end of input")
         token = self.tokens[self.current_token]
         if token[0] != token_type or (token_value is not None and token[1] != token_value):
-            raise SyntaxError(f"Expected {token_type} {token_value}, got {token}")
+            raise SyntaxError(f"Line {self.current_token + 1}: Expected {token_type} {token_value}, got {token}")
         if self.debug:
-            print(f"Matched {token_type} {token[1]}")
+            print(f"Line {self.current_token + 1}: Matched {token_type} {token[1]}")
         self.current_token += 1
         return token[1]
 
