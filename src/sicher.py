@@ -40,7 +40,7 @@ def main():
         
         try:
             # tokenise the source code
-            tokens = tokenise(code, debug=args.debug)
+            tokens, _ = tokenise(code, debug=args.debug)
             
             # tell the user the tokenisation was successful
             print("\nSource code is lexically correct\n")

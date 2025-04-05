@@ -86,10 +86,10 @@ class CompilerFrame(wx.Frame):
             with open(filepath, 'r') as file:
                 code = file.read()
 
-            # Tokenization
-            tokens = tokenise(code, debug=True)
-            self.add_collapsible_section("Tokenization", str(tokens))
-
+            ## Tokenization
+            tokens, tokeniser_log = tokenise(code, debug=True)
+            self.add_collapsible_section("Tokenization Log", tokeniser_log)  # Display the debug output
+            
             # Parsing
             parsing_debug_output = parse_tokens(tokens, debug=True)
             self.add_collapsible_section("Parsing", parsing_debug_output)
