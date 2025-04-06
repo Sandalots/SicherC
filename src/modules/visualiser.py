@@ -69,6 +69,7 @@ class CompilerFrame(wx.Frame):
         font.PointSize += 2
         self.complexity_label.SetFont(font)
         vbox.Add(self.complexity_label, flag=wx.ALIGN_CENTER | wx.TOP, border=5)
+        # add error count
         
         # Output panel for collapsible sections
         self.output_panel = wx.Panel(panel)
