@@ -13,6 +13,7 @@ from modules.codegenerator import CodeGenerator
 import time
 import psutil
 
+
 class CompilerFrame(wx.Frame):
     def __init__(self, *args, **kw):
         super(CompilerFrame, self).__init__(*args, **kw, size=(800, 600 * 2))
@@ -23,7 +24,7 @@ class CompilerFrame(wx.Frame):
         panel.SetBackgroundColour("#2D2B55")
 
         vbox = wx.BoxSizer(wx.VERTICAL)
-        
+
         # Sicher Title
         title = wx.StaticText(panel, label='Sicher C Compiler')
         title.SetForegroundColour("#FAD000")
@@ -33,7 +34,7 @@ class CompilerFrame(wx.Frame):
         title.SetFont(font)
         vbox.Add(title, flag=wx.ALIGN_CENTER | wx.TOP, border=10)
 
-        # File upload 
+        # File upload
         file_label = wx.StaticText(panel, label='Select a C Source File:')
         file_label.SetForegroundColour("#FAD000")
         font = file_label.GetFont()
@@ -42,9 +43,9 @@ class CompilerFrame(wx.Frame):
         file_label.SetFont(font)
         vbox.Add(file_label, flag=wx.ALIGN_LEFT | wx.TOP | wx.LEFT, border=10)
         file_label.SetBackgroundColour("#2D2B55")
-        
+
         hbox1 = wx.BoxSizer(wx.HORIZONTAL)
-        
+
         # Set default path for the file picker using a relative path
         base_dir = os.path.dirname(os.path.abspath(__file__))  # Get the directory of the current script
         default_path = os.path.join(base_dir, "../../examples/hello_world.c")  # Construct the relative path
@@ -61,16 +62,21 @@ class CompilerFrame(wx.Frame):
         self.compile_button.SetFont(font)
         self.compile_button.Bind(wx.EVT_BUTTON, self.OnCompile)
         vbox.Add(self.compile_button, flag=wx.ALIGN_CENTER | wx.TOP | wx.BOTTOM, border=20)
-        
-        # Time/Space complexity Label
+
+        # Time/Space Complexity Labels
+        hbox_complexity = wx.BoxSizer(wx.HORIZONTAL)  # Horizontal box sizer for centering
         self.complexity_label = wx.StaticText(panel, label="")
         self.complexity_label.SetForegroundColour("#FAD000")
         font = self.complexity_label.GetFont()
         font.PointSize += 2
         self.complexity_label.SetFont(font)
-        vbox.Add(self.complexity_label, flag=wx.ALIGN_CENTER | wx.TOP, border=5)
-        # add error count
-        
+
+        # Add the label to the horizontal sizer and center it
+        hbox_complexity.Add(self.complexity_label, flag=wx.ALIGN_CENTER)
+
+        # Add the horizontal sizer to the main vertical sizer
+        vbox.Add(hbox_complexity, flag=wx.ALIGN_CENTER | wx.TOP, border=5)
+
         # Output panel for collapsible sections
         self.output_panel = wx.Panel(panel)
         self.output_panel.SetBackgroundColour("#1E1E3F")
@@ -95,16 +101,16 @@ class CompilerFrame(wx.Frame):
         try:
             with open(filepath, 'r') as file:
                 code = file.read()
-                
+
             # Measure start time
             start_time = time.time()
             process = psutil.Process()
             initial_memory = process.memory_info().rss  # Memory usage in bytes
 
-            ## Tokenization
+            # Tokenization
             tokens, tokeniser_log = tokenise(code, debug=True)
-            self.add_collapsible_section("Tokenization Log", tokeniser_log)  # Display the debug output
-            
+            self.add_collapsible_section("Tokenisation", tokeniser_log)  # Display the debug output
+
             # Parsing
             parsing_debug_output = parse_tokens(tokens, debug=True)
             self.add_collapsible_section("Parsing", parsing_debug_output)
@@ -112,23 +118,23 @@ class CompilerFrame(wx.Frame):
             # Analyzing
             ast = create_ast_from_tokens(tokens, debug=True)
             self.add_collapsible_section("Analyzing", ast.pretty_print())
-            
+
             # Code Generation
             codegen = CodeGenerator(ast)
             generated_code = codegen.generate_code()
             self.add_collapsible_section("Code Generation", generated_code)
-            
-            # end time
+
+            # End time
             end_time = time.time()
             final_memory = process.memory_info().rss  # Memory usage in bytes
-            
+
             # Calculate time complexity
             time_complexity = end_time - start_time
-            
+
             # Calculate memory usage (RAM usage)
             memory_usage = (final_memory - initial_memory) / (1024 * 1024)  # Convert to MB
-            
-             # Update the combined complexity label
+
+            # Update the combined complexity label
             self.complexity_label.SetLabel(
                 f"Time Complexity: {time_complexity:.4f} seconds | Memory Usage: {memory_usage:.2f} MB"
             )
@@ -193,8 +199,8 @@ class CompilerFrame(wx.Frame):
             style=wx.CP_DEFAULT_STYLE | wx.CP_NO_TLW_RESIZE
         )
         collapsible_pane.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.on_collapsible_pane_changed)
-        
-        # make the collapsible pane visible by default
+
+        # Make the collapsible pane visible by default
         collapsible_pane.Collapse(False)
 
         # Create the visualization panel
@@ -211,15 +217,30 @@ class CompilerFrame(wx.Frame):
         self.output_panel.Layout()
 
 
-class ASTVisualizerPanel(wx.Panel):
+class ASTVisualizerPanel(wx.ScrolledWindow):
     def __init__(self, parent, ast):
         super(ASTVisualizerPanel, self).__init__(parent)
         self.ast = ast
         self.SetBackgroundColour("#1E1E3F")
+
+        # Enable scrolling
+        self.SetScrollbars(20, 20, 50, 50)  # Scroll step size and virtual size
+        self.virtual_size = (2000, 2000)  # Set a large virtual size for the canvas
+        self.SetVirtualSize(self.virtual_size)
+
+        # Variables for panning
+        self.is_panning = False
+        self.last_mouse_position = None
+
+        # Bind events
         self.Bind(wx.EVT_PAINT, self.OnPaint)
+        self.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDown)
+        self.Bind(wx.EVT_LEFT_UP, self.OnLeftUp)
+        self.Bind(wx.EVT_MOTION, self.OnMouseMove)
 
     def OnPaint(self, event):
         dc = wx.PaintDC(self)
+        self.PrepareDC(dc)  # Adjust for scrolling
         gc = wx.GraphicsContext.Create(dc)
 
         if gc:
@@ -227,7 +248,7 @@ class ASTVisualizerPanel(wx.Panel):
             gc.SetPen(wx.Pen("#FAD000", 2))  # Yellow border
 
             # Start drawing the AST
-            self.draw_node(gc, self.ast.root, 400, 50, 200, 100)
+            self.draw_node(gc, self.ast.root, 1000, 50, 200, 100)  # Centered in the virtual space
 
     def draw_node(self, gc, node, x, y, x_offset, y_offset):
         if not node:
@@ -258,6 +279,31 @@ class ASTVisualizerPanel(wx.Panel):
                 # Recursively draw the child node
                 self.draw_node(gc, child, child_x, child_y, x_offset // 2, y_offset)
 
+    def OnLeftDown(self, event):
+        # Start panning
+        self.is_panning = True
+        self.last_mouse_position = event.GetPosition()
+        self.CaptureMouse()
+
+    def OnLeftUp(self, event):
+        # Stop panning
+        if self.is_panning:
+            self.is_panning = False
+            self.ReleaseMouse()
+
+    def OnMouseMove(self, event):
+        if self.is_panning and event.Dragging() and event.LeftIsDown():
+            current_position = event.GetPosition()
+            dx = self.last_mouse_position.x - current_position.x
+            dy = self.last_mouse_position.y - current_position.y
+
+            # Scroll the window
+            self.Scroll(self.GetScrollPos(wx.HORIZONTAL) + dx // 20,
+                        self.GetScrollPos(wx.VERTICAL) + dy // 20)
+
+            self.last_mouse_position = current_position
+
+
 def main():
     app = wx.App()
     app.SetAppName("Sicher")
@@ -271,6 +317,7 @@ def main():
     wx.CallAfter(frame.Raise)
 
     app.MainLoop()
+
 
 # Run the main function
 if __name__ == '__main__':
