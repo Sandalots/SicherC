@@ -70,12 +70,24 @@ class CompilerFrame(wx.Frame):
         font = self.complexity_label.GetFont()
         font.PointSize += 2
         self.complexity_label.SetFont(font)
-
+        
         # Add the label to the horizontal sizer and center it
         hbox_complexity.Add(self.complexity_label, flag=wx.ALIGN_CENTER)
 
         # Add the horizontal sizer to the main vertical sizer
         vbox.Add(hbox_complexity, flag=wx.ALIGN_CENTER | wx.TOP, border=5)
+        
+        # Output Header
+        output_label = wx.StaticText(panel, label='Sicher Output:')
+        output_label.SetForegroundColour("#FAD000")
+        font = output_label.GetFont()
+        font.PointSize += 5
+        font = font.Bold()
+        output_label.SetFont(font)
+        vbox.Add(output_label, flag=wx.ALIGN_LEFT | wx.TOP | wx.LEFT, border=10)
+        output_label.SetBackgroundColour("#2D2B55")
+        vbox.AddSpacer(10)  # Add some space between the label and the output panel
+        
 
         # Output panel for collapsible sections
         self.output_panel = wx.Panel(panel)
@@ -136,7 +148,7 @@ class CompilerFrame(wx.Frame):
 
             # Update the combined complexity label
             self.complexity_label.SetLabel(
-                f"Time Complexity: {time_complexity:.4f} seconds | Memory Usage: {memory_usage:.2f} MB"
+                f"Time to Compile: {time_complexity:.4f} seconds | Memory Usage: {memory_usage:.2f} MB"
             )
 
             # Top Level Viz
