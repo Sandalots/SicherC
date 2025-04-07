@@ -266,7 +266,7 @@ class ASTVisualizerPanel(wx.ScrolledWindow):
         # Calculate positions for child nodes
         num_children = len(node.children)
         if num_children > 0:
-            child_y = y + y_offset
+            child_y = y + y_offset + 20  # Add extra vertical padding
             child_x_start = x - (x_offset * (num_children - 1)) // 2
 
             for i, child in enumerate(node.children):
@@ -277,7 +277,7 @@ class ASTVisualizerPanel(wx.ScrolledWindow):
                 gc.StrokeLine(x, y + rect_height, child_x, child_y)
 
                 # Recursively draw the child node
-                self.draw_node(gc, child, child_x, child_y, x_offset // 2, y_offset)
+                self.draw_node(gc, child, child_x, child_y, x_offset, y_offset)
 
     def OnLeftDown(self, event):
         # Start panning
