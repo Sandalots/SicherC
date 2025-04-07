@@ -19,6 +19,14 @@ class CompilerFrame(wx.Frame):
         super(CompilerFrame, self).__init__(*args, **kw, size=(800, 600 * 2))
         self.InitUI()
 
+    def OnGenerateVisualisations(self, event):
+        """
+        Handles the Generate Visualisations button click.
+        Currently, it clears the collapsible sections below the button.
+        """
+        self.output_panel.DestroyChildren()
+        self.output_panel.Layout()
+
     def InitUI(self):
         panel = wx.Panel(self)
         panel.SetBackgroundColour("#2D2B55")
@@ -53,6 +61,9 @@ class CompilerFrame(wx.Frame):
         hbox1.Add(self.file_picker, proportion=1, flag=wx.EXPAND)
         vbox.Add(hbox1, flag=wx.EXPAND | wx.ALL, border=10)
 
+        # Buttons (Compile and Generate Visualisations)
+        hbox_buttons = wx.BoxSizer(wx.HORIZONTAL)
+
         # Compile button
         self.compile_button = wx.Button(panel, label='Compile')
         self.compile_button.SetBackgroundColour("#FAD000")
@@ -61,7 +72,19 @@ class CompilerFrame(wx.Frame):
         font = font.Bold()
         self.compile_button.SetFont(font)
         self.compile_button.Bind(wx.EVT_BUTTON, self.OnCompile)
-        vbox.Add(self.compile_button, flag=wx.ALIGN_CENTER | wx.TOP | wx.BOTTOM, border=20)
+        hbox_buttons.Add(self.compile_button, flag=wx.RIGHT, border=10)
+
+        # Generate Visualisations button
+        self.visualise_button = wx.Button(panel, label='Generate Visualisations')
+        self.visualise_button.SetBackgroundColour("#FAD000")
+        self.visualise_button.SetForegroundColour("#2D2B55")
+        font = self.visualise_button.GetFont()
+        font = font.Bold()
+        self.visualise_button.SetFont(font)
+        self.visualise_button.Bind(wx.EVT_BUTTON, self.OnGenerateVisualisations)
+        hbox_buttons.Add(self.visualise_button, flag=wx.LEFT, border=10)
+
+        vbox.Add(hbox_buttons, flag=wx.ALIGN_CENTER | wx.TOP | wx.BOTTOM, border=20)
 
         # Time/Space Complexity Labels
         hbox_complexity = wx.BoxSizer(wx.HORIZONTAL)  # Horizontal box sizer for centering
@@ -70,13 +93,13 @@ class CompilerFrame(wx.Frame):
         font = self.complexity_label.GetFont()
         font.PointSize += 2
         self.complexity_label.SetFont(font)
-        
+
         # Add the label to the horizontal sizer and center it
         hbox_complexity.Add(self.complexity_label, flag=wx.ALIGN_CENTER)
 
         # Add the horizontal sizer to the main vertical sizer
         vbox.Add(hbox_complexity, flag=wx.ALIGN_CENTER | wx.TOP, border=5)
-        
+
         # Output Header
         output_label = wx.StaticText(panel, label='Sicher Output:')
         output_label.SetForegroundColour("#FAD000")
@@ -87,7 +110,6 @@ class CompilerFrame(wx.Frame):
         vbox.Add(output_label, flag=wx.ALIGN_LEFT | wx.TOP | wx.LEFT, border=10)
         output_label.SetBackgroundColour("#2D2B55")
         vbox.AddSpacer(10)  # Add some space between the label and the output panel
-        
 
         # Output panel for collapsible sections
         self.output_panel = wx.Panel(panel)
