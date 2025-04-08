@@ -4,10 +4,10 @@
 # 2025
 
 # Analyser Module Dependencies
+import sys # for setting the path
+import os # for getting the parent src dir to the below appending to the path
 
-# set the path to the src directory
-import sys
-import os
+# set the path to include the src path to access and import the submodules
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # import the submodules
@@ -16,7 +16,6 @@ from submodules.unused_remover import remove_unused
 from submodules.prevent_use_after_free import prevent_use_after_free
 from submodules.prevent_double_free import prevent_double_free
 from submodules.remove_dangling_pointers import remove_dangling_pointers
-
 
 # Encapsulates a child (node) of the AST
 class ASTNode:
