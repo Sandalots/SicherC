@@ -16,8 +16,6 @@ from modules.analyser import create_ast_from_tokens # for modelling the given c 
 from modules.codegenerator import CodeGenerator # for generating actual assembly code from the AST
 from modules.visualiser import main as visualiser # for visualising the AST through the sicher GUI
 
-# Sicher Submodules
-
 # Sicher Main Function (Entry Point)
 def main():
     # Command Line Arguments

@@ -7,6 +7,11 @@
 import llvmlite.ir as ir
 import llvmlite.binding as llvm
 import subprocess
+import sys # for setting the path
+import os # for getting the parent src dir to the below appending to the path
+
+# Code Generator Submodules
+
 
 class CodeGenerator:
     def __init__(self, ast):

@@ -26,14 +26,15 @@ Sicher contains 5 core modules that perform the complete workings of the Sicher 
 5. Unused Remover
 
 ### Usage
-python3 src/sicher.py examples/hello_world.c --debug --gui
+In the root directory of SicherC run the following:
+
+```python3 src/sicher.py examples/hello_world.c --debug --gui```
 
 ### Features
+All 5 main sicher modules fully implemented.
 * Tokeniser
 * Parser
 * Analyser
 * Code Generator
 * Visualiser
 * Countermeasures
-
-### How to Run Compiled Programs
