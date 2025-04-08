@@ -143,20 +143,20 @@ class CompilerFrame(wx.Frame):
 
             # Tokenization
             tokens, tokeniser_log = tokenise(code, debug=True)
-            self.add_collapsible_section("Tokenisation", tokeniser_log)  # Display the debug output
+            self.add_collapsible_section("Tokenisation Module", tokeniser_log)  # Display the debug output
 
             # Parsing
             parsing_debug_output = parse_tokens(tokens, debug=True)
-            self.add_collapsible_section("Parsing", parsing_debug_output)
+            self.add_collapsible_section("Parser Module", parsing_debug_output)
 
             # Analyzing
             ast = create_ast_from_tokens(tokens, debug=True)
-            self.add_collapsible_section("Analyzing", ast.pretty_print())
+            self.add_collapsible_section("Analyser Module", ast.pretty_print())
 
             # Code Generation
             codegen = CodeGenerator(ast)
             generated_code = codegen.generate_code()
-            self.add_collapsible_section("Code Generation", generated_code)
+            self.add_collapsible_section("Code Generator Module", generated_code)
 
             # End time
             end_time = time.time()
@@ -229,7 +229,7 @@ class CompilerFrame(wx.Frame):
         """
         collapsible_pane = wx.CollapsiblePane(
             self.output_panel,
-            label="Top Level Viz",
+            label="Top Level Visualisation",
             style=wx.CP_DEFAULT_STYLE | wx.CP_NO_TLW_RESIZE
         )
         collapsible_pane.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.on_collapsible_pane_changed)

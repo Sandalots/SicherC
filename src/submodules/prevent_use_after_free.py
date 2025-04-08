@@ -1,3 +1,8 @@
+# prevent use after free Submodule for Sicher
+# Sandy MacDonald
+# 2003619
+# 2025
+
 def prevent_use_after_free(node):
     """
     Prevents use-after-free errors in an AST by removing or flagging invalid memory accesses.

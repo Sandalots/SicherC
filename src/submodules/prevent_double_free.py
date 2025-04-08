@@ -1,3 +1,8 @@
+# prevent double free Submodule for Sicher
+# Sandy MacDonald
+# 2003619
+# 2025
+
 def prevent_double_free(node):
     """
     Prevents double free errors in an AST by removing redundant deallocation nodes.

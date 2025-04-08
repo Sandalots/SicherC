@@ -1,3 +1,8 @@
+# remove dangling pointer Submodule for Sicher
+# Sandy MacDonald
+# 2003619
+# 2025
+
 def remove_dangling_pointers(node):
     """
     Removes dangling pointers from an AST.

@@ -1,3 +1,8 @@
+# buffer sizer Submodule for Sicher
+# Sandy MacDonald
+# 2003619
+# 2025
+
 def resize_array(array, target_size, default_value=0):
     """
     Resizes an array to match the target size.

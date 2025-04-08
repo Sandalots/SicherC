@@ -1,3 +1,8 @@
+# unused remover Submodule for Sicher
+# Sandy MacDonald
+# 2003619
+# 2025
+
 def remove_unused(node):
     """
     Removes unused variables from an AST.
