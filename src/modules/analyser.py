@@ -3,6 +3,21 @@
 # 2003619
 # 2025
 
+# Analyser Module Dependencies
+
+# set the path to the src directory
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# import the submodules
+from submodules.buffer_sizer import resize_array
+from submodules.unused_remover import remove_unused
+from submodules.prevent_use_after_free import prevent_use_after_free
+from submodules.prevent_double_free import prevent_double_free
+from submodules.remove_dangling_pointers import remove_dangling_pointers
+
+
 # Encapsulates a child (node) of the AST
 class ASTNode:
     def __init__(self, node_type, value=None):
