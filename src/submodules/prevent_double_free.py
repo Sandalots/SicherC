@@ -1,4 +1,4 @@
-# prevent double free Submodule for Sicher
+# Prevent Double Free Submodule for Sicher
 # Sandy MacDonald
 # 2003619
 # 2025

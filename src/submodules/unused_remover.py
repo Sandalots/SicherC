@@ -1,4 +1,4 @@
-# unused remover Submodule for Sicher
+# Unused Remover Submodule for Sicher
 # Sandy MacDonald
 # 2003619
 # 2025

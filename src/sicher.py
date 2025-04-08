@@ -6,15 +6,15 @@
 # For my Sicher C Compiler, this is the runtime program that is the mother of all modules, runs the 5 modules sequentially and form which the GUI eventually calls.
 
 # Sicher Dependencies
-import sys
-import argparse
+import sys # for exiting the sicher program
+import argparse # for parsing given command line arguments to the sicher program
 
 # Sicher Modules
-from modules.tokeniser import tokenise
-from modules.parser import parse_tokens
-from modules.analyser import create_ast_from_tokens
-from modules.visualiser import main as visualiser
-from modules.codegenerator import CodeGenerator
+from modules.tokeniser import tokenise # for tokenising the given c source code
+from modules.parser import parse_tokens # for parsing the tokenised c source code
+from modules.analyser import create_ast_from_tokens # for modelling the given c source code as an sicher AST
+from modules.codegenerator import CodeGenerator # for generating actual assembly code from the AST
+from modules.visualiser import main as visualiser # for visualising the AST through the sicher GUI
 
 # Sicher Submodules
 
@@ -99,6 +99,8 @@ def main():
         
         # Output the generated code
         print("Generated Code:")
+        
+        # the actual generated code
         print(generated_code)
         
         # Save the generated code to a file
@@ -118,7 +120,7 @@ def main():
     # Visualiser Module
     if args.gui:
         try:
-            # show the GUI
+            # show the sicher GUI
             visualiser()
             
         # raise an error if there is a problem with the visualiser

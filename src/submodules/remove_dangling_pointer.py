@@ -1,4 +1,4 @@
-# remove dangling pointer Submodule for Sicher
+# Remove Dangling Pointer Submodule for Sicher
 # Sandy MacDonald
 # 2003619
 # 2025

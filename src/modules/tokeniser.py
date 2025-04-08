@@ -3,7 +3,7 @@
 # 2003619
 # 2025
 
-# Tokeniser Dependencies
+# Tokeniser Module Dependencies
 import re # for matching regular expressions
 import sys
 import io

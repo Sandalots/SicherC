@@ -3,7 +3,7 @@
 # 2003619
 # 2025
 
-# Defines a ASTNode class for the AST (abstract syntax tree)
+# Encapsulates a child (node) of the AST
 class ASTNode:
     def __init__(self, node_type, value=None):
         self.node_type = node_type
@@ -25,6 +25,7 @@ class ASTNode:
             
         return result
 
+# Models the actual AST (Abstract Syntax Tree)
 class AST:
     def __init__(self):
         self.root = None

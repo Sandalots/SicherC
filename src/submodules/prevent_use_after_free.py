@@ -1,4 +1,4 @@
-# prevent use after free Submodule for Sicher
+# Prevent Use After Free Submodule for Sicher
 # Sandy MacDonald
 # 2003619
 # 2025

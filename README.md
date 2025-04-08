@@ -35,3 +35,5 @@ python3 src/sicher.py examples/hello_world.c --debug --gui
 * Code Generator
 * Visualiser
 * Countermeasures
+
+### How to Run Compiled Programs

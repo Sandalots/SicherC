@@ -1,4 +1,4 @@
-# buffer sizer Submodule for Sicher
+# Buffer Sizer Submodule for Sicher
 # Sandy MacDonald
 # 2003619
 # 2025

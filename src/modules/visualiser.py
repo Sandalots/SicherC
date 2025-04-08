@@ -4,16 +4,18 @@
 # 2025
 
 # Visualiser Module Dependencies
-import os
-import wx
-from modules.tokeniser import tokenise
-from modules.parser import parse_tokens
-from modules.analyser import create_ast_from_tokens
-from modules.codegenerator import CodeGenerator
-import time
-import psutil
+import os # for handling the path of given c source files
+import wx # the actual GUI library, I am using wxPython for the GUI
+import time # for measuring the time to compile 
+import psutil # for measuing memory usage of sicher
 
+# Sicher Module Dependencies
+from modules.tokeniser import tokenise # for tokenising the given c source code
+from modules.parser import parse_tokens # for parsing the tokenised c source code
+from modules.analyser import create_ast_from_tokens # for modelling the given c source code as an sicher AST
+from modules.codegenerator import CodeGenerator # for generating actual assembly code from the AST
 
+# Models the Compiler Frame to the GUI
 class CompilerFrame(wx.Frame):
     def __init__(self, *args, **kw):
         super(CompilerFrame, self).__init__(*args, **kw, size=(800, 600 * 2))
@@ -337,19 +339,24 @@ class ASTVisualizerPanel(wx.ScrolledWindow):
 
             self.last_mouse_position = current_position
 
-
+# Main loop to run the GUI
 def main():
+    # create the wx GUI application
     app = wx.App()
-    app.SetAppName("Sicher")
+    
+    # set the name of the application to the Sicher C Compiler
+    app.SetAppName("Sicher C Compiler")
 
     # Create the frame
     frame = CompilerFrame(None)
+    
     # Show the frame
     frame.Show()
 
     # Bring the Sicher window to the front
     wx.CallAfter(frame.Raise)
 
+    # Keep the GUI running
     app.MainLoop()
 
 
