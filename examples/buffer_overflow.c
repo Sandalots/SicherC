@@ -13,6 +13,7 @@ int main() {
 
     // Manually copy the contents of the larger buffer to the smaller buffer
     for (int i = 0; i < 7788; i++) {
+        // set the contents of the smaller buffer to the contents of the larger buffer
         init_buffer[i] = much_larger_buffer[i];
     }
 

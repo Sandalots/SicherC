@@ -2,7 +2,8 @@
 *  Author: Sandalots
 *  Date: 12/03/2025 */
 
-#include <stdio.h>
+// import the standard io library
+#include <stdio.h> // for printf
 
 // Simple Hello World Test.
 int main() {

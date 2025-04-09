@@ -6,16 +6,19 @@
 #include <stdio.h>
 
 int main() {
+    // I will create 3 int variables, one to sum the next two numbers to show Sicher can add two integer numbers
     int num1, num2, sum;
 
+    // Defone the values of the two numbers
     num1 = 2;
     num2 = 3;
 
     // Calculate the sum
     sum = num1 + num2;
 
-    // Display the result
+    // Display the result, note the special format specifier %d for integers
     printf("The sum of %d and %d is %d.\n", num1, num2, sum);
 
+    // return 0 to end the program
     return 0;
 }

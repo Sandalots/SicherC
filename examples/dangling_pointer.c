@@ -11,6 +11,7 @@ int* create_dangling_pointer() {
 }
 
 int main() {
+    // define the dangling pointer
     int* dangling_ptr = create_dangling_pointer();
 
     // This will likely lead to undefined behavior, as local_var is no longer valid

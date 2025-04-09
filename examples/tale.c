@@ -8,5 +8,7 @@
 int main() {
    // printf() displays the string inside quotation
    printf("A fools' thought.\n");
+
+   // end of the program
    return 0;
 }
