@@ -4,9 +4,9 @@
 # 2025
 
 # Code Generator Dependencies
-import llvmlite.ir as ir
-import llvmlite.binding as llvm
-import subprocess
+import llvmlite.ir as ir # for converting the AST to LLVM IR
+import llvmlite.binding as llvm # for compiling the above IR for the target architecture/system (the OS/CPU)
+import subprocess # for generating subprocess calls in the code generation
 import sys # for setting the path
 import os # for getting the parent src dir to the below appending to the path
 

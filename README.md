@@ -32,9 +32,11 @@ In the root directory of SicherC run the following:
 
 ### Features
 All 5 main sicher modules fully implemented.
-* Tokeniser
-* Parser
-* Analyser
-* Code Generator
-* Visualiser
-* Countermeasures
+* Tokeniser Module
+* Parser Module
+* Analyser Module
+* Code Generator Module
+* Visualiser Module
+* Countermeasures Submodules
+
+A testing suite consiting of several c source files for which the Sicher C Compiler is to be tested on is provided in the examples directory.

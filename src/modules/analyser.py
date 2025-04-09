@@ -11,11 +11,11 @@ import os # for getting the parent src dir to the below appending to the path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # import the submodules
-from submodules.buffer_sizer import resize_array
-from submodules.unused_remover import remove_unused
-from submodules.prevent_use_after_free import prevent_use_after_free
-from submodules.prevent_double_free import prevent_double_free
-from submodules.remove_dangling_pointers import remove_dangling_pointers
+from submodules.buffer_sizer import resize_array # buffer sizer submodule
+from submodules.unused_remover import remove_unused # remove unused objects submodule
+from submodules.prevent_use_after_free import prevent_use_after_free # prevent use after free submodule
+from submodules.prevent_double_free import prevent_double_free # prevent double free submodule
+from submodules.remove_dangling_pointers import remove_dangling_pointers # remove dangling pointers submodule
 
 # Encapsulates a child (node) of the AST
 class ASTNode:

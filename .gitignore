@@ -133,5 +133,5 @@ cython_debug/
 #.git
 .git
 
-# any file starting with output
+# any file starting with output (the actual code generations that I do not want to version control, as it is specific to a sicher compilation and does not need to be version controlled.)
 output*
