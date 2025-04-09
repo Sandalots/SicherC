@@ -8,6 +8,7 @@
 # Sicher Dependencies
 import sys # for exiting the sicher program
 import argparse # for parsing given command line arguments to the sicher program
+import os # for checking if the given source code file exists and is a c source code file
 
 # Sicher Modules
 from modules.tokeniser import tokenise # for tokenising the given c source code
@@ -30,12 +31,38 @@ def main():
 
     # Get the input source code filename
     filename = args.filename
+    
+    # Check if the source file exists
+    try:
+        with open(filename, 'r') as file:
+            pass
+        
+    # raise an error if the file does not exist
+    except FileNotFoundError:
+        print(f"File {filename} not found.")
+        sys.exit(1)
+        
+    # raise an error if the file is not readable
+    except IOError:
+        print(f"Error reading file {filename}.")
+        sys.exit(1)
+        
+    # Check if the file is empty
+    if os.path.getsize(filename) == 0:
+        print(f"File {filename} is empty.")
+        sys.exit(1)
+        
+    # Check if the file is a C source file
+    if not filename.endswith('.c'):
+        print(f"File {filename} is not a C source file.")
+        sys.exit(1)
 
     # Tokeniser Module
     with open(filename, 'r') as file:
         # read the source code
         code = file.read()
         
+        # attempt to tokenise the given c source file
         try:
             # tokenise the source code
             tokens, _ = tokenise(code, debug=args.debug)

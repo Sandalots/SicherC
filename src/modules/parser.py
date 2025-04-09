@@ -7,6 +7,7 @@
 import io
 import sys
 
+# Class to model the Sicher Parser
 class Parser:
     def __init__(self, tokens, debug=False):
         self.tokens = tokens

@@ -127,8 +127,29 @@ class CompilerFrame(wx.Frame):
 
     def OnCompile(self, event):
         filepath = self.file_picker.GetPath()
+        
         if not filepath:
             wx.MessageBox('Please select a file to compile', 'Error', wx.OK | wx.ICON_ERROR)
+            return
+        
+        # Check if the file exists
+        if not os.path.isfile(filepath):
+            wx.MessageBox('File does not exist', 'Error', wx.OK | wx.ICON_ERROR)
+            return
+        # Check if the file is a C source file
+        if not filepath.endswith('.c'):
+            wx.MessageBox('File is not a C source file', 'Error', wx.OK | wx.ICON_ERROR)
+            return
+        # Check if the file is empty
+        if os.path.getsize(filepath) == 0:
+            wx.MessageBox('File is empty', 'Error', wx.OK | wx.ICON_ERROR)
+            return
+        # Check if the file is readable
+        try:
+            with open(filepath, 'r') as file:
+                pass
+        except IOError:
+            wx.MessageBox('Error reading file', 'Error', wx.OK | wx.ICON_ERROR)
             return
 
         # Clear the output panel

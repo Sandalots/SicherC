@@ -12,7 +12,7 @@ import io
 keywords = {'int', 'char', 'return', 'printf', 'strcpy', 'malloc', 'sizeof', 'free', 'if', 'else', 'for', 'while', 'do', 'break', 'continue'}
 symbols = {'(', ')', '{', '}', '[', ']', ';', ',', '=', '!', '?', ':', '%', '\\', '&', '*', '+', '-', '/', '<', '>', '==', '!=', '<=', '>=', '&&', '||', '++', '--'}
 
-# Token Types
+# C Token Types
 KEYWORD = 'KEYWORD'
 SYMBOL = 'SYMBOL'
 IDENTIFIER = 'IDENTIFIER'
@@ -22,6 +22,7 @@ COMMENT = 'COMMENT'
 PREPROCESSOR = 'PREPROCESSOR'
 UNKNOWN = 'UNKNOWN'
 
+# Method to tokenise a given c source file
 def tokenise(code, debug=False):
     """
     Tokenises the given C code.
@@ -33,6 +34,8 @@ def tokenise(code, debug=False):
     Returns:
         tuple: A tuple containing the list of tokens and the debug output as a string.
     """
+    
+    # create a empty list to store the eventual tokens
     tokens = []
 
     # Redirect stdout to capture debug output
@@ -43,13 +46,16 @@ def tokenise(code, debug=False):
     try:
         # Remove any comments from source code
         code = re.sub(r'/\*.*?\*/', '', code, flags=re.DOTALL)
+        
         if debug:
             print("Removed comments from the source code.")
 
         # Handle string literals
         string_literals = re.findall(r'"(.*?)"', code)
+        
         for string_literal in string_literals:
             code = code.replace(f'"{string_literal}"', 'STRING_LITERAL_PLACEHOLDER', 1)
+            
         if debug:
             print("Handled string literals:", string_literals)
 
@@ -58,8 +64,10 @@ def tokenise(code, debug=False):
             # Handle preprocessor directives
             if line.startswith('#'):
                 tokens.append((PREPROCESSOR, line.strip()))
+                
                 if debug:
                     print(f"Line {line_number}: Found preprocessor directive: {line.strip()}")
+                    
                 continue
 
             # Remove single-line comments
