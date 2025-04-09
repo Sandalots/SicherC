@@ -4,16 +4,17 @@
 # 2025
 
 # Visualiser Module Dependencies
-import os # for handling the path of given c source files
-import wx # the actual GUI library, I am using wxPython for the GUI
-import time # for measuring the time to compile 
-import psutil # for measuing memory usage of sicher
+import os  # for handling the path of given C source files
+import wx  # the actual GUI library, I am using wxPython for the GUI
+import time  # for measuring the time to compile
+import psutil  # for measuring memory usage of Sicher
 
 # Sicher Module Dependencies
-from modules.tokeniser import tokenise # for tokenising the given c source code
-from modules.parser import parse_tokens # for parsing the tokenised c source code
-from modules.analyser import create_ast_from_tokens # for modelling the given c source code as an sicher AST
-from modules.codegenerator import CodeGenerator # for generating actual assembly code from the AST
+from modules.tokeniser import tokenise  # for tokenising the given C source code
+from modules.parser import parse_tokens  # for parsing the tokenised C source code
+from modules.analyser import create_ast_from_tokens  # for modelling the given C source code as an Sicher AST
+from modules.codegenerator import CodeGenerator  # for generating actual assembly code from the AST
+
 
 # Models the Compiler Frame to the GUI
 class CompilerFrame(wx.Frame):
@@ -24,6 +25,14 @@ class CompilerFrame(wx.Frame):
     def OnGenerateVisualisations(self, event):
         """
         Handles the Generate Visualisations button click.
+        Currently, it clears the collapsible sections below the button.
+        """
+        self.output_panel.DestroyChildren()
+        self.output_panel.Layout()
+
+    def OnShowDiagnostics(self, event):
+        """
+        Handles the Show Diagnostics button click.
         Currently, it clears the collapsible sections below the button.
         """
         self.output_panel.DestroyChildren()
@@ -63,8 +72,10 @@ class CompilerFrame(wx.Frame):
         hbox1.Add(self.file_picker, proportion=1, flag=wx.EXPAND)
         vbox.Add(hbox1, flag=wx.EXPAND | wx.ALL, border=10)
 
-        # Buttons (Compile and Generate Visualisations)
+        # Buttons (Compile, Generate Visualisations, Show Diagnostics)
         hbox_buttons = wx.BoxSizer(wx.HORIZONTAL)
+
+        hbox_buttons.AddStretchSpacer(1)  # Add a stretchable space before the buttons
 
         # Compile button
         self.compile_button = wx.Button(panel, label='Compile')
@@ -76,6 +87,9 @@ class CompilerFrame(wx.Frame):
         self.compile_button.Bind(wx.EVT_BUTTON, self.OnCompile)
         hbox_buttons.Add(self.compile_button, flag=wx.RIGHT, border=10)
 
+        # Add a spacer between Compile and Generate Visualisations buttons
+        hbox_buttons.AddSpacer(20)  # Add 20 pixels of horizontal space
+
         # Generate Visualisations button
         self.visualise_button = wx.Button(panel, label='Generate Visualisations')
         self.visualise_button.SetBackgroundColour("#FAD000")
@@ -84,7 +98,20 @@ class CompilerFrame(wx.Frame):
         font = font.Bold()
         self.visualise_button.SetFont(font)
         self.visualise_button.Bind(wx.EVT_BUTTON, self.OnGenerateVisualisations)
-        hbox_buttons.Add(self.visualise_button, flag=wx.LEFT, border=10)
+        hbox_buttons.Add(self.visualise_button, flag=wx.RIGHT, border=10)
+
+        # Add a spacer between Generate Visualisations and Show Diagnostics buttons
+        hbox_buttons.AddSpacer(10)  # Add 10 pixels of horizontal space
+
+        # Show Diagnostics button
+        self.diagnostics_button = wx.Button(panel, label='Show Diagnostics')
+        self.diagnostics_button.SetBackgroundColour("#FAD000")
+        self.diagnostics_button.SetForegroundColour("#2D2B55")
+        font = self.diagnostics_button.GetFont()
+        font = font.Bold()
+        self.diagnostics_button.SetFont(font)
+        self.diagnostics_button.Bind(wx.EVT_BUTTON, self.OnShowDiagnostics)
+        hbox_buttons.Add(self.diagnostics_button, flag=wx.LEFT, border=10)
 
         vbox.Add(hbox_buttons, flag=wx.ALIGN_CENTER | wx.TOP | wx.BOTTOM, border=20)
 
@@ -127,11 +154,11 @@ class CompilerFrame(wx.Frame):
 
     def OnCompile(self, event):
         filepath = self.file_picker.GetPath()
-        
+
         if not filepath:
             wx.MessageBox('Please select a file to compile', 'Error', wx.OK | wx.ICON_ERROR)
             return
-        
+
         # Check if the file exists
         if not os.path.isfile(filepath):
             wx.MessageBox('File does not exist', 'Error', wx.OK | wx.ICON_ERROR)
@@ -174,7 +201,7 @@ class CompilerFrame(wx.Frame):
 
             # Analyzing
             ast = create_ast_from_tokens(tokens, debug=True)
-            self.add_collapsible_section("Analyser Module", ast.pretty_print())
+            self.add_collapsible_section("Analyser Module (Abstract Syntax Tree)", ast.pretty_print())
 
             # Code Generation
             codegen = CodeGenerator(ast)
@@ -360,17 +387,18 @@ class ASTVisualizerPanel(wx.ScrolledWindow):
 
             self.last_mouse_position = current_position
 
+
 # Main loop to run the GUI
 def main():
     # create the wx GUI application
     app = wx.App()
-    
+
     # set the name of the application to the Sicher C Compiler
     app.SetAppName("Sicher C Compiler")
 
     # Create the frame
     frame = CompilerFrame(None)
-    
+
     # Show the frame
     frame.Show()
 
