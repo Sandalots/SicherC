@@ -19,14 +19,17 @@ from submodules.remove_dangling_pointers import remove_dangling_pointers
 
 # Encapsulates a child (node) of the AST
 class ASTNode:
+    # Constructor for ASTNode
     def __init__(self, node_type, value=None):
         self.node_type = node_type
         self.value = value
         self.children = []
 
+    # Method to add new child nodes
     def add_child(self, child):
         self.children.append(child)
 
+    # Method to output the ASTnode with type, values and the children
     def __repr__(self):
         return f"ASTNode({self.node_type}, {self.value}, {self.children})"
 
@@ -169,4 +172,5 @@ def create_ast_from_tokens(tokens, debug=False):
             number_node = ASTNode("Number", token_value)
             current_node.add_child(number_node)
 
+    # Return the entire constructed Sicher AST
     return ast

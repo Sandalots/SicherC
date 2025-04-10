@@ -5,12 +5,12 @@
 
 # Tokeniser Module Dependencies
 import re # for matching regular expressions
-import sys
-import io
+import sys # for checking if the user is running in debug mode
+import io # for capturing the debug output and redirecting the output so the visualiser can see and read it
 
 # Defining C keywords and symbols
-keywords = {'int', 'char', 'return', 'printf', 'strcpy', 'malloc', 'sizeof', 'free', 'if', 'else', 'for', 'while', 'do', 'break', 'continue'}
-symbols = {'(', ')', '{', '}', '[', ']', ';', ',', '=', '!', '?', ':', '%', '\\', '&', '*', '+', '-', '/', '<', '>', '==', '!=', '<=', '>=', '&&', '||', '++', '--'}
+keywords = {'int', 'char', 'return', 'printf', 'strcpy', 'malloc', 'sizeof', 'free', 'if', 'else', 'for', 'while', 'do', 'break', 'continue'} # the keywords Sicher will be able to recognise in given C source files
+symbols = {'(', ')', '{', '}', '[', ']', ';', ',', '=', '!', '?', ':', '%', '\\', '&', '*', '+', '-', '/', '<', '>', '==', '!=', '<=', '>=', '&&', '||', '++', '--'} # the symbols/punctuation Sicher will be able to recognise in given C source files
 
 # C Token Types
 KEYWORD = 'KEYWORD'
@@ -101,11 +101,13 @@ def tokenise(code, debug=False):
                     if debug:
                         print(f"Line {line_number}: Found unknown token: {word}")
 
+        # if the tokenisation has completed without error, tell the user the Tokeniser has completed its work
         if debug:
             print("Tokenisation complete.")
 
         # Capture the debug output
         if debug:
+            # define the debug output
             debug_output = sys.stdout.getvalue()
 
     finally:
@@ -113,4 +115,5 @@ def tokenise(code, debug=False):
         if debug:
             sys.stdout = old_stdout
 
+    # Returns the list of tokens the tokeniser has generated, and the debug workings if we are in debug mode either just set an empty debug outpput
     return tokens, debug_output if debug else ""

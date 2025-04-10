@@ -96,5 +96,6 @@ class CodeGenerator:
             
             print(f"Successfully compiled to {output_filename}")
             
+        # Error handling any subprocess errors
         except subprocess.CalledProcessError as e:
-            print(f"Compilation failed: {e}")
+            print(f"Compilation failed: {e}") # tell the end user that the compilation has failed along with the error trace

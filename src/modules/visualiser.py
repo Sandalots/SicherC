@@ -18,10 +18,12 @@ from modules.codegenerator import CodeGenerator  # for generating actual assembl
 
 # Models the Compiler Frame to the GUI
 class CompilerFrame(wx.Frame):
+    ## Constructs the Compiler Frame
     def __init__(self, *args, **kw):
-        super(CompilerFrame, self).__init__(*args, **kw, size=(800, 600 * 2))
-        self.InitUI()
+        super(CompilerFrame, self).__init__(*args, **kw, size=(800, 600 * 2)) # Declares the size of the window
+        self.InitUI() # Populates the GUI with the initial elements
 
+    # Generate Visualisations button logix
     def OnGenerateVisualisations(self, event):
         """
         Handles the Generate Visualisations button click.
@@ -29,7 +31,8 @@ class CompilerFrame(wx.Frame):
         """
         self.output_panel.DestroyChildren()
         self.output_panel.Layout()
-
+    
+    # Show Diagnostics button logic
     def OnShowDiagnostics(self, event):
         """
         Handles the Show Diagnostics button click.
@@ -38,6 +41,7 @@ class CompilerFrame(wx.Frame):
         self.output_panel.DestroyChildren()
         self.output_panel.Layout()
 
+    # Initialise the GUI elements
     def InitUI(self):
         panel = wx.Panel(self)
         panel.SetBackgroundColour("#2D2B55")
@@ -149,9 +153,13 @@ class CompilerFrame(wx.Frame):
 
         panel.SetSizer(vbox)
 
+        # Gives the GUI window the Sicher C Compiler title
         self.SetTitle('Sicher C Compiler')
+        
+        # Centers the GUI window on the screen
         self.Centre()
 
+    # Compile button logic
     def OnCompile(self, event):
         filepath = self.file_picker.GetPath()
 
@@ -229,6 +237,7 @@ class CompilerFrame(wx.Frame):
         except Exception as e:
             wx.MessageBox(f"Error: {e}", 'Error', wx.OK | wx.ICON_ERROR)
 
+    # Defines a method to add collapsable sections housing each of the Sicher Modules work plus the additional top level viz
     def add_collapsible_section(self, title, content):
         # Create a collapsible pane
         collapsible_pane = wx.CollapsiblePane(

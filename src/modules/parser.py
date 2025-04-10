@@ -4,8 +4,8 @@
 # 2025
 
 # Parser Module Dependencies
-import io
-import sys
+import io # for allowing the visualiser to see the debug output
+import sys # checking if we are in debug mode, client can also not be in debug mode
 
 # Class to model the Sicher Parser
 class Parser:
