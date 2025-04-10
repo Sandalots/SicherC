@@ -20,11 +20,11 @@ from modules.visualiser import main as visualiser # for visualising the AST thro
 # Sicher Main Function (Entry Point)
 def main():
     # Command Line Arguments
-    parser = argparse.ArgumentParser(description='Parse a C source file.')
-    parser.add_argument('filename', type=str, help='The C source file to parse')
-    parser.add_argument('--debug', action='store_true', help='Enable debug output')
-    parser.add_argument('--gui', action='store_true', help='Run the GUI visualizer')
-    parser.add_argument('--output', type=str, help='Output binary filename', default='output_binary')
+    parser = argparse.ArgumentParser(description='Parse a C source file.') # give the parser a description
+    parser.add_argument('filename', type=str, help='The C source file to parse') # get the input c source code file
+    parser.add_argument('--debug', action='store_true', help='Enable debug output') # get the optional debug flag
+    parser.add_argument('--gui', action='store_true', help='Run the GUI visualizer') # get the optional GUI flag
+    parser.add_argument('--output', type=str, help='Output binary filename', default='output_binary') # get the oprional output filename
     
     # Parse the command-line arguments
     args = parser.parse_args()
@@ -34,27 +34,39 @@ def main():
     
     # Check if the source file exists
     try:
+        # if sicher can read the given input filename
         with open(filename, 'r') as file:
+            # move on to the tokeniser module
             pass
         
     # raise an error if the file does not exist
     except FileNotFoundError:
+        # Tell the user the file cannot be found
         print(f"File {filename} not found.")
+        
+        # exit sicher to prevent additional errors
         sys.exit(1)
         
     # raise an error if the file is not readable
     except IOError:
+        # Tell the user there was some issue reading the file and or it is not readable, maybe due to missing permissions?
         print(f"Error reading file {filename}.")
         sys.exit(1)
         
     # Check if the file is empty
     if os.path.getsize(filename) == 0:
+        # Tell the user the file is empty and is not valid
         print(f"File {filename} is empty.")
+        
+        # exit sicher to prevent additional errors
         sys.exit(1)
         
     # Check if the file is a C source file
     if not filename.endswith('.c'):
+        # Tell the user the file is not a c source file
         print(f"File {filename} is not a C source file.")
+        
+        # exit sicher to prevent additional errors
         sys.exit(1)
 
     # Tokeniser Module
