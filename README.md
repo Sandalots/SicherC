@@ -49,3 +49,7 @@ Generated binaries will usually be in the root dir here.
 Modules found in src/modules.
 Submodules found in src/submodules.
 src/sicher.py is the entry point to sicher.
+
+### Shell Scripts
+A shell script is given to install python dependencies for Sicher.
+A shell script is given to check if all testing suite expected source files are present and accounted for.

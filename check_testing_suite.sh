@@ -10,6 +10,7 @@
 # - uninitialised_variable.c
 # - use_after_free.c
 
+#!/bin/bash
 
 # The testing suite files
 FILES=(
