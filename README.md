@@ -40,3 +40,12 @@ All 5 main sicher modules fully implemented.
 * Countermeasures Submodules
 
 A testing suite consiting of several c source files for which the Sicher C Compiler is to be tested on is provided in the examples directory.
+
+### Strucuture
+Testing Suite in examples/ directory.
+Sicher Source Code in src/ directory.
+Dependencies installation shell script in /requirements.sh.
+Generated binaries will usually be in the root dir here.
+Modules found in src/modules.
+Submodules found in src/submodules.
+src/sicher.py is the entry point to sicher.
