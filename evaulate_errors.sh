@@ -2,4 +2,6 @@
 
 #!/bin/bash
 
-python3 src/sicher.py examples/add_two_ints.c --DEBUG > add_two_ints_log.txt
+# The testing suite files
+python src/sicher.py examples/hello_world.c --debug > hello_world_log.txt
+python3 src/sicher.py examples/add_two_ints.c --debug > add_two_ints_log.txt

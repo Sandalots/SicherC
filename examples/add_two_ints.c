@@ -5,6 +5,7 @@
 // use the standard io library
 #include <stdio.h>
 
+// main method to add two integers and sum them and display the result
 int main() {
     // I will create 3 int variables, one to sum the next two numbers to show Sicher can add two integer numbers
     int num1, num2, sum;
