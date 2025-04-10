@@ -51,6 +51,8 @@ def main():
     except IOError:
         # Tell the user there was some issue reading the file and or it is not readable, maybe due to missing permissions?
         print(f"Error reading file {filename}.")
+        
+        # exit sicher to prevent additional errors
         sys.exit(1)
         
     # Check if the file is empty
@@ -114,6 +116,7 @@ def main():
         # tell the user the AST was created successfully
         print("\nAST created successfully\n")
         
+        # check if the debug flag is set
         if args.debug:
             # output the ast prettily
             print(ast.pretty_print())
@@ -156,6 +159,7 @@ def main():
     
     # Visualiser Module
     if args.gui:
+        # try and show the visualiser/GUI
         try:
             # show the sicher GUI
             visualiser()
@@ -170,4 +174,4 @@ def main():
 
 # Run the Sicher (entry point) if run as a script
 if __name__ == '__main__':
-    main()
+    main() # run sicher

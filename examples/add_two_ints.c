@@ -10,11 +10,11 @@ int main() {
     int num1, num2, sum;
 
     // Defone the values of the two numbers
-    num1 = 2;
-    num2 = 3;
+    num1 = 2; // first number
+    num2 = 3; // second number
 
     // Calculate the sum
-    sum = num1 + num2;
+    sum = num1 + num2; // add the two numbers to get the sum
 
     // Display the result, note the special format specifier %d for integers
     printf("The sum of %d and %d is %d.\n", num1, num2, sum);

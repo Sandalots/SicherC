@@ -3,7 +3,7 @@
 *  Date: 12/03/2025 */
 
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h> // for malloc and free mm functions
 
 // A Double Free Test
 int main() {
@@ -18,7 +18,6 @@ int main() {
 
     // Double free: Freeing the same memory block twice, should prompt a double free error
     free(ptr); 
-
 
     // return 0 to end the program
     return 0;
