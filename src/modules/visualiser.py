@@ -5,7 +5,7 @@
 
 # Visualiser Module Dependencies
 import os  # for handling the path of given C source files
-import wx  # the actual GUI library, I am using wxPython for the GUI
+import wx  # the actual GUI library, I am using wxPython for the GUI so I need to import the wxpython library to create the GUI and the GUI components
 import time  # for measuring the time to compile
 import psutil  # for measuring memory usage of Sicher
 
@@ -14,7 +14,6 @@ from modules.tokeniser import tokenise  # for tokenising the given C source code
 from modules.parser import parse_tokens  # for parsing the tokenised C source code
 from modules.analyser import create_ast_from_tokens  # for modelling the given C source code as an Sicher AST
 from modules.codegenerator import CodeGenerator  # for generating actual assembly code from the AST
-
 
 # Models the Compiler Frame to the GUI
 class CompilerFrame(wx.Frame):
