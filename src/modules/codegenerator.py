@@ -104,7 +104,7 @@ class CodeGenerator:
             # Assemble the assembly code
             subprocess.run(["as", "-arch", "arm64", "-o", "output.o", "output.s"], check=True)
 
-            # Link the object file to create the binary using clang
+            # Link the object file to create the binary using clang for arm64 macOS platform
             subprocess.run(
                 ["clang", "-o", output_filename, "output.o", "-target", "arm64-apple-macos15"],
                 check=True,
