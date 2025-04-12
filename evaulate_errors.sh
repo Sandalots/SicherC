@@ -2,7 +2,7 @@
 
 #!/bin/bash
 
-# The testing suite files
+# The testing suite files, shoukd output the compiler results to the piped file
 python3 src/sicher.py examples/hello_world.c --debug > hello_world_log.txt
 python3 src/sicher.py examples/add_two_ints.c --debug > add_two_ints_log.txt
 python3 src/sicher.py examples/buffer_overflow.c --debug > buffer_overflow_log.txt

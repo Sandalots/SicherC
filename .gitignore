@@ -136,5 +136,5 @@ cython_debug/
 # any file starting with output (the actual code generations that I do not want to version control, as it is specific to a sicher compilation and does not need to be version controlled.)
 output*
 
-# .txt log files
+# .txt log files (from evaluate_errors.sh)
 *.txt

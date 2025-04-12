@@ -92,7 +92,7 @@ class CodeGenerator:
             subprocess.run(['as', '-arch', 'arm64', '-o', 'output.o', 'output.s'], check=True)
             
             # Link the object file to create the binary using clang
-            subprocess.run(['clang', '-o', output_filename, 'output.o', '-target', 'arm64-apple-macos11'], check=True)
+            subprocess.run(['clang', '-o', output_filename, 'output.o', '-target', 'arm64-apple-macos15'], check=True)
             
             print(f"Successfully compiled to {output_filename}")
             
