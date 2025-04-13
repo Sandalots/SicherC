@@ -12,7 +12,7 @@ then
     exit
 fi
 
-# run the reqiurements.sh
+# run the reqiurements.sh to install the external python packages if need be
 ./requirements.sh
 
 # run the sicher compiler with hello world testing suite file as input

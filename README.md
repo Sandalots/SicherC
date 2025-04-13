@@ -6,7 +6,7 @@ The Sicher C Compiler is an attempt to rectify many of the common-place Memory-s
 Through a modular approach, forming from the lexical analysis to the code-generation, modules are therein easily extendable to provide additional features to the Sicher C Compiler.
 
 ### State
-Sicher C State as of 06/04/2025.
+Sicher C State as of 13/04/2025.
 
 <br><br>
 Sicher contains 5 core modules that perform the complete workings of the Sicher Compiler, as-well as optional extendable submodules. A GUI visualiser is included to present all the workings of the Sicher C Compiler and allow for easy compilations.
@@ -51,5 +51,10 @@ Submodules found in src/submodules.
 src/sicher.py is the entry point to sicher.
 
 ### Shell Scripts
-A shell script is given to install python dependencies for Sicher.
-A shell script is given to check if all testing suite expected source files are present and accounted for.
+A shell script is given to install python dependencies for Sicher. ```requirements.sh```
+A shell script is given to check if all testing suite expected source files are present and accounted for. ```check_testing_suite.sh```
+A shell script will also be provided to collect debug output for each of the default testing suite files. ```evaluate_errors.sh```
+A shell script is also given to both allow for installing dependencies and running the program from the root dir. ```run.sh```
+
+### Usage
+```run.sh```

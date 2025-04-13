@@ -15,6 +15,7 @@ def resize_array(array, target_size, default_value=0):
     Returns:
         list: The resized array.
     """
+    
     current_size = len(array)
 
     if current_size > target_size:

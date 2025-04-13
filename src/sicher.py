@@ -19,6 +19,10 @@ from modules.visualiser import main as visualiser # for visualising the AST thro
 
 # Sicher Main Function (Entry Point)
 def main():
+    """
+    Entry point for my Sicher C Compiler.
+    """
+    
     # Command Line Arguments
     parser = argparse.ArgumentParser(description='Parse a C source file.') # give the parser a description
     parser.add_argument('filename', type=str, help='The C source file to parse') # get the input c source code file
