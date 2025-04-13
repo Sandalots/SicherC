@@ -10,6 +10,7 @@ import time  # for measuring the time to compile
 import psutil  # for measuring memory and CPU usage of Sicher
 import sys  # for getting the Python version
 import matplotlib.pyplot as plt  # For sicher visualisations
+from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
 
 # Sicher Module Dependencies
 from modules.tokeniser import tokenise  # for tokenising the given C source code
@@ -96,35 +97,86 @@ class CompilerFrame(wx.Frame):
         except Exception as e:
             wx.MessageBox(f"Error during compilation: {e}", 'Error', wx.OK | wx.ICON_ERROR)
             
+
     def generate_plots(self, compile_times, memory_usages, cpu_usages):
         """
-        Generates and displays plots for time to compile, memory usage, and CPU usage.
+        Generates and embeds scaled-down plots for time to compile, memory usage, and CPU usage
+        into a collapsible section in the GUI.
         """
-        # Create a figure with 3 subplots
-        fig, axs = plt.subplots(3, 1, figsize=(8, 12))
+        fig, axs = plt.subplots(3, 1, figsize=(6, 8)) 
 
         # Plot time to compile
         axs[0].plot(range(1, 11), compile_times, marker='o', color='blue')
-        axs[0].set_title('Time to Compile (seconds)')
-        axs[0].set_xlabel('Iteration')
-        axs[0].set_ylabel('Time (s)')
+        axs[0].set_title('Time to Compile (seconds)', fontsize=10)
+        axs[0].set_xlabel('Iteration', fontsize=8)
+        axs[0].set_ylabel('Time (s)', fontsize=8)
+        axs[0].tick_params(axis='both', labelsize=8)
 
         # Plot memory usage
         axs[1].plot(range(1, 11), memory_usages, marker='o', color='green')
-        axs[1].set_title('Memory Usage (MB)')
-        axs[1].set_xlabel('Iteration')
-        axs[1].set_ylabel('Memory (MB)')
+        axs[1].set_title('Memory Usage (MB)', fontsize=10)
+        axs[1].set_xlabel('Iteration', fontsize=8)
+        axs[1].set_ylabel('Memory (MB)', fontsize=8)
+        axs[1].tick_params(axis='both', labelsize=8)
 
         # Plot CPU usage
         axs[2].plot(range(1, 11), cpu_usages, marker='o', color='red')
-        axs[2].set_title('CPU Usage (%)')
-        axs[2].set_xlabel('Iteration')
-        axs[2].set_ylabel('CPU Usage (%)')
+        axs[2].set_title('CPU Usage (%)', fontsize=10)
+        axs[2].set_xlabel('Iteration', fontsize=8)
+        axs[2].set_ylabel('CPU Usage (%)', fontsize=8)
+        axs[2].tick_params(axis='both', labelsize=8)
 
-        # Adjust layout and show the plots
-        plt.tight_layout()
-        plt.show()
+        # Adjust layout to reduce spacing
+        fig.subplots_adjust(hspace=0.8, top=0.9)
+        fig.suptitle('Sicher Compiler Performance Metrics', fontsize=12, fontweight='bold')
 
+        # Embed the figure into a collapsible section
+        self.add_visualisation_section(fig)
+            
+    def add_visualisation_section(self, figure):
+        """
+        Adds a collapsible section to display the scaled-down visualisation plots.
+        """
+        # Create a collapsible pane for the visualisations
+        collapsible_pane = wx.CollapsiblePane(
+            self.output_panel,
+            label="Visualisation Plots",
+            style=wx.CP_DEFAULT_STYLE | wx.CP_NO_TLW_RESIZE
+        )
+        collapsible_pane.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.on_collapsible_pane_changed)
+
+        # Set the arrow color to yellow (same as buttons)
+        collapsible_pane.SetForegroundColour("#FAD000")
+        collapsible_pane.SetBackgroundColour("#1E1E3F")
+
+        # Make the collapsible pane visible by default
+        collapsible_pane.Collapse(False)
+
+        # Add a panel to hold the matplotlib figure
+        pane = collapsible_pane.GetPane()
+        plot_panel = wx.Panel(pane)
+        plot_panel.SetBackgroundColour("#1E1E3F")
+
+        # Embed the matplotlib figure into the panel
+        canvas = FigureCanvas(plot_panel, -1, figure)
+
+        # Set a fixed size for the plot panel to scale down the plots
+        plot_panel.SetMinSize((600, 1000))  # Width: 600px, Height: 400px
+
+        # Layout for the plot panel
+        plot_sizer = wx.BoxSizer(wx.VERTICAL)
+        plot_sizer.Add(canvas, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
+        plot_panel.SetSizer(plot_sizer)
+
+        # Layout for the collapsible pane
+        pane_sizer = wx.BoxSizer(wx.VERTICAL)
+        pane_sizer.Add(plot_panel, proportion=1, flag=wx.EXPAND)
+        pane.SetSizer(pane_sizer)
+
+        # Add the collapsible pane to the output panel
+        self.output_sizer.Add(collapsible_pane, flag=wx.EXPAND | wx.ALL, border=5)
+        self.output_panel.Layout()
+        
     # Show Diagnostics button logic
     def OnShowDiagnostics(self, event):
         """
