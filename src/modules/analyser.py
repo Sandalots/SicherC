@@ -4,18 +4,18 @@
 # 2025
 
 # Analyser Module Dependencies
-import sys # for setting the path
-import os # for getting the parent src dir to the below appending to the path
+import sys  # for setting the path
+import os  # for getting the parent src dir to the below appending to the path
 
 # set the path to include the src path to access and import the submodules
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # import the submodules
-from submodules.buffer_sizer import resize_array # buffer sizer submodule
-from submodules.unused_remover import remove_unused # remove unused objects submodule
-from submodules.prevent_use_after_free import prevent_use_after_free # prevent use after free submodule
-from submodules.prevent_double_free import prevent_double_free # prevent double free submodule
-from submodules.remove_dangling_pointers import remove_dangling_pointers # remove dangling pointers submodule
+from submodules.buffer_sizer import resize_array  # buffer sizer submodule
+from submodules.unused_remover import remove_unused  # remove unused objects submodule
+from submodules.prevent_use_after_free import prevent_use_after_free  # prevent use after free submodule
+from submodules.prevent_double_free import prevent_double_free  # prevent double free submodule
+from submodules.remove_dangling_pointers import remove_dangling_pointers  # remove dangling pointers submodule
 
 # Encapsulates a child (node) of the AST
 class ASTNode:
@@ -172,5 +172,20 @@ def create_ast_from_tokens(tokens, debug=False):
             number_node = ASTNode("Number", token_value)
             current_node.add_child(number_node)
 
+    # Apply memory safety submodules to the AST
+    # apply_memory_safety_measures(ast)
+
     # Return the entire constructed Sicher AST
     return ast
+
+# def apply_memory_safety_measures(ast):
+#     """
+#     Applies memory safety measures to the AST using submodules.
+#     """
+#     if ast.root:
+#         # Apply each submodule to the AST
+#         resize_array(ast)
+#         remove_unused(ast)
+#         prevent_use_after_free(ast)
+#         prevent_double_free(ast)
+#         remove_dangling_pointers(ast)

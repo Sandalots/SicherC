@@ -8,3 +8,6 @@ pip install llvmlite
 
 # install wxpython for the visualiser module, the actual gui is with wxpython so I need to import it here.
 pip install wxPython
+
+# for the visualisation plots
+pip install matplotlib
