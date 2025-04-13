@@ -5,9 +5,10 @@
 
 # Visualiser Module Dependencies
 import os  # for handling the path of given C source files
-import wx  # the actual GUI library, I am using wxPython for the GUI so I need to import the wxpython library to create the GUI and the GUI components
+import wx  # the actual GUI library, I am using wxPython for the GUI
 import time  # for measuring the time to compile
-import psutil  # for measuring memory usage of Sicher
+import psutil  # for measuring memory and CPU usage of Sicher
+import sys  # for getting the Python version
 
 # Sicher Module Dependencies
 from modules.tokeniser import tokenise  # for tokenising the given C source code
@@ -15,14 +16,15 @@ from modules.parser import parse_tokens  # for parsing the tokenised C source co
 from modules.analyser import create_ast_from_tokens  # for modelling the given C source code as an Sicher AST
 from modules.codegenerator import CodeGenerator  # for generating actual assembly code from the AST
 
+
 # Models the Compiler Frame to the GUI
 class CompilerFrame(wx.Frame):
     ## Constructs the Compiler Frame
     def __init__(self, *args, **kw):
-        super(CompilerFrame, self).__init__(*args, **kw, size=(800, 600 * 2)) # Declares the size of the window
-        self.InitUI() # Populates the GUI with the initial elements
+        super(CompilerFrame, self).__init__(*args, **kw, size=(800, 600 * 2))  # Declares the size of the window
+        self.InitUI()  # Populates the GUI with the initial elements
 
-    # Generate Visualisations button logix
+    # Generate Visualisations button logic
     def OnGenerateVisualisations(self, event):
         """
         Handles the Generate Visualisations button click.
@@ -30,15 +32,50 @@ class CompilerFrame(wx.Frame):
         """
         self.output_panel.DestroyChildren()
         self.output_panel.Layout()
-    
+
     # Show Diagnostics button logic
     def OnShowDiagnostics(self, event):
         """
         Handles the Show Diagnostics button click.
-        Currently, it clears the collapsible sections below the button.
+        Displays system and compilation diagnostics.
         """
+        # Clear the output panel
         self.output_panel.DestroyChildren()
-        self.output_panel.Layout()
+
+        # Gather system information
+        os_info = os.uname() if hasattr(os, "uname") else "Unknown OS"
+        cpu_info = os.cpu_count()
+        process = psutil.Process()
+
+        # Gather diagnostic data
+        diagnostics = {
+            "Operating System": os_info.sysname if hasattr(os_info, "sysname") else os_info,
+            "OS Version": os_info.release if hasattr(os_info, "release") else "Unknown",
+            "CPU Cores": cpu_info,
+            "CPU Frequency": f"{psutil.cpu_freq().current} MHz" if psutil.cpu_freq() else "Unknown",
+            "Memory Usage": f"{process.memory_info().rss / (1024 * 1024):.2f} MB",
+            "CPU Usage": f"{process.cpu_percent(interval=1)}%",
+            "Python Version": f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
+            "Sicher Version": "1.0.0",  # Placeholder for Sicher version
+            "Sicher Path": os.path.abspath(__file__),
+            "Number of Threads": process.num_threads(),
+            "Process Name": process.name(),
+            "Process Status": process.status(),
+            "Process Creation Time": time.ctime(process.create_time()),
+            "Process Memory Usage": f"{process.memory_info().rss / (1024 * 1024):.2f} MB",
+            "Process CPU Time": f"{process.cpu_times().user + process.cpu_times().system:.2f} seconds",
+            "Process Command Line": " ".join(process.cmdline()),
+            "Process Working Directory": process.cwd(),
+            "Process Environment Variables": dict(process.environ()),
+            "Process ID": process.pid,
+            "Executable Path": process.exe(),
+        }
+
+        # Format diagnostics as a string
+        diagnostics_text = "\n".join(f"{key}: {value}" for key, value in diagnostics.items())
+
+        # Add diagnostics to the output panel
+        self.add_collapsible_section("Diagnostics", diagnostics_text)
 
     # Initialise the GUI elements
     def InitUI(self):
@@ -154,7 +191,7 @@ class CompilerFrame(wx.Frame):
 
         # Gives the GUI window the Sicher C Compiler title
         self.SetTitle('Sicher C Compiler')
-        
+
         # Centers the GUI window on the screen
         self.Centre()
 
@@ -193,10 +230,11 @@ class CompilerFrame(wx.Frame):
             with open(filepath, 'r') as file:
                 code = file.read()
 
-            # Measure start time
+            # Measure start time and CPU usage
             start_time = time.time()
             process = psutil.Process()
             initial_memory = process.memory_info().rss  # Memory usage in bytes
+            initial_cpu_times = process.cpu_times()  # Start measuring CPU times
 
             # Tokenization
             tokens, tokeniser_log = tokenise(code, debug=True)
@@ -215,9 +253,10 @@ class CompilerFrame(wx.Frame):
             generated_code = codegen.generate_code()
             self.add_collapsible_section("Code Generator Module", generated_code)
 
-            # End time
+            # End time and CPU usage
             end_time = time.time()
             final_memory = process.memory_info().rss  # Memory usage in bytes
+            final_cpu_times = process.cpu_times()  # End measuring CPU times
 
             # Calculate time complexity
             time_complexity = end_time - start_time
@@ -225,9 +264,18 @@ class CompilerFrame(wx.Frame):
             # Calculate memory usage (RAM usage)
             memory_usage = (final_memory - initial_memory) / (1024 * 1024)  # Convert to MB
 
+            # Calculate CPU usage
+            cpu_time_used = (
+                (final_cpu_times.user - initial_cpu_times.user) +
+                (final_cpu_times.system - initial_cpu_times.system)
+            )
+            cpu_usage_percentage = (cpu_time_used / time_complexity) * 100 if time_complexity > 0 else 0
+
             # Update the combined complexity label
             self.complexity_label.SetLabel(
-                f"Time to Compile: {time_complexity:.4f} seconds | Memory Usage: {memory_usage:.2f} MB"
+                f"Time to Compile: {time_complexity:.4f} seconds | "
+                f"Memory Usage: {memory_usage:.2f} MB | "
+                f"CPU Usage: {cpu_usage_percentage:.2f}%"
             )
 
             # Top Level Viz
