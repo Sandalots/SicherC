@@ -4,13 +4,13 @@
 # 2025
 
 # Tokeniser Module Dependencies
-import re # for matching regular expressions
-import sys # for checking if the user is running in debug mode
-import io # for capturing the debug output and redirecting the output so the visualiser can see and read it
+import re  # for matching regular expressions
+import sys  # for checking if the user is running in debug mode
+import io  # for capturing the debug output and redirecting the output so the visualiser can see and read it
 
 # Defining C keywords and symbols
-keywords = {'int', 'char', 'return', 'printf', 'strcpy', 'malloc', 'sizeof', 'free', 'if', 'else', 'for', 'while', 'do', 'break', 'continue'} # the keywords Sicher will be able to recognise in given C source files
-symbols = {'(', ')', '{', '}', '[', ']', ';', ',', '=', '!', '?', ':', '%', '\\', '&', '*', '+', '-', '/', '<', '>', '==', '!=', '<=', '>=', '&&', '||', '++', '--'} # the symbols/punctuation Sicher will be able to recognise in given C source files
+keywords = {'int', 'char', 'return', 'printf', 'strcpy', 'malloc', 'sizeof', 'free', 'if', 'else', 'for', 'while', 'do', 'break', 'continue'}  # the keywords Sicher will be able to recognise in given C source files
+symbols = {'(', ')', '{', '}', '[', ']', ';', ',', '=', '!', '?', ':', '%', '\\', '&', '*', '+', '-', '/', '<', '>', '==', '!=', '<=', '>=', '&&', '||', '++', '--'}  # the symbols/punctuation Sicher will be able to recognise in given C source files
 
 # C Token Types
 KEYWORD = 'KEYWORD'
@@ -22,7 +22,7 @@ COMMENT = 'COMMENT'
 PREPROCESSOR = 'PREPROCESSOR'
 UNKNOWN = 'UNKNOWN'
 
-# Method to tokenise a given c source file
+# Method to tokenise a given C source file
 def tokenise(code, debug=False):
     """
     Tokenises the given C code.
@@ -35,7 +35,7 @@ def tokenise(code, debug=False):
         tuple: A tuple containing the list of tokens and the debug output as a string.
     """
     
-    # create a empty list to store the eventual tokens
+    # Create an empty list to store the eventual tokens
     tokens = []
 
     # Redirect stdout to capture debug output
@@ -59,6 +59,7 @@ def tokenise(code, debug=False):
         if debug:
             print("Handled string literals:", string_literals)
 
+        # Split the code into lines
         lines = code.split('\n')
         for line_number, line in enumerate(lines, start=1):
             # Handle preprocessor directives
@@ -101,13 +102,22 @@ def tokenise(code, debug=False):
                     if debug:
                         print(f"Line {line_number}: Found unknown token: {word}")
 
-        # if the tokenisation has completed without error, tell the user the Tokeniser has completed its work
+            # Check if the line ends with a valid token
+            if words:
+                last_token = words[-1]
+                if last_token not in {';', '{', '}', '>'}:
+                    raise SyntaxError(
+                        f"Line {line_number}: Invalid line ending. Expected one of ';', '{{', '}}', or '>', "
+                        f"but got '{last_token}'."
+                    )
+
+        # If the tokenisation has completed without error, tell the user the Tokeniser has completed its work
         if debug:
             print("Tokenisation complete.")
 
         # Capture the debug output
         if debug:
-            # define the debug output
+            # Define the debug output
             debug_output = sys.stdout.getvalue()
 
     finally:
@@ -115,5 +125,5 @@ def tokenise(code, debug=False):
         if debug:
             sys.stdout = old_stdout
 
-    # Returns the list of tokens the tokeniser has generated, and the debug workings if we are in debug mode either just set an empty debug outpput
+    # Returns the list of tokens the tokeniser has generated, and the debug workings if we are in debug mode either just set an empty debug output
     return tokens, debug_output if debug else ""
