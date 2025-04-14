@@ -10,6 +10,7 @@ int* create_dangling_pointer() {
     return &local_var; // Returning the address of a local variable
 }
 
+// main method to create a dangling pointer
 int main() {
     // define the dangling pointer
     int* dangling_ptr = create_dangling_pointer(); // ceate a dangling pointer

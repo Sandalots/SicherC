@@ -7,11 +7,11 @@
 
 // A Double Free Test
 int main() {
-    // create a pointer to an integer
-    int* ptr = (int*)malloc(sizeof(int));
+    // the temp value to be passed to the pointer
+    int value = 77; // the value of the integer
 
     // set the value of the pointer to a int value, in this case 77
-    *ptr = 77;
+    int* ptr = &value; // create a pointer to the integer value
 
     // Let's now free the pointer
     free(ptr); // Free the memory

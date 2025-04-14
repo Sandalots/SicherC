@@ -6,11 +6,11 @@
 #include <stdio.h>
 
 int main() {
-    // let's create a pointer to an integer
-    int* ptr = (int*)malloc(sizeof(int));
+    // the temp value to be passed to the pointer
+    int value = 77; // the value of the integer
 
     // set the pointer above to have a integer value of 10
-    *ptr = 10;
+    int* ptr = &value; // create a pointer to the integer value
 
     // free the pointer
     free(ptr);
