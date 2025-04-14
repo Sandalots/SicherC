@@ -7,8 +7,7 @@
 // Simple Hello World Test.
 int main() {
    // printf() displays the string inside quotation
-   printf("A fools' thought.\n");
-   printf("But not a fool's thought.\n"); // secound printf 
+   printf("A fools' thought, stemming from the beginning and bit shifting down to dark. This was his tale, a tale as short as time itself.\n");
 
    // end of the program
    return 0;
