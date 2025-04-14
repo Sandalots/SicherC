@@ -1,48 +1,13 @@
-# Analyser Module for Sicher
-# Sandy MacDonald
-# 2003619
-# 2025
-
-# Analyser Module Dependencies
-import sys  # for setting the path
-import os  # for getting the parent src dir to the below appending to the path
-
-# set the path to include the src path to access and import the submodules
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-# import the submodules
-from submodules.buffer_sizer import resize_array  # buffer sizer submodule
-from submodules.unused_remover import remove_unused  # remove unused objects submodule
-from submodules.prevent_use_after_free import prevent_use_after_free  # prevent use after free submodule
-from submodules.prevent_double_free import prevent_double_free  # prevent double free submodule
-from submodules.remove_dangling_pointers import remove_dangling_pointers  # remove dangling pointers submodule
-
-# Encapsulates a child (node) of the AST
 class ASTNode:
-    # Constructor for ASTNode
     def __init__(self, node_type, value=None):
         self.node_type = node_type
         self.value = value
         self.children = []
 
-    # Method to add new child nodes
     def add_child(self, child):
         self.children.append(child)
 
-    # Method to output the ASTnode with type, values and the children
-    def __repr__(self):
-        return f"ASTNode({self.node_type}, {self.value}, {self.children})"
 
-    def pretty_print(self, indent=0):
-        value_str = f": {self.value}" if self.value is not None else ""
-        result = "  " * indent + f"{self.node_type}{value_str}\n"
-        
-        for child in self.children:
-            result += child.pretty_print(indent + 1)
-            
-        return result
-
-# Models the actual AST (Abstract Syntax Tree)
 class AST:
     def __init__(self):
         self.root = None
@@ -50,15 +15,18 @@ class AST:
     def set_root(self, root):
         self.root = root
 
-    def __repr__(self):
-        return f"AST({self.root})"
+    def pretty_print(self, node=None, indent=0):
+        """
+        Recursively prints the AST in a readable format.
+        """
+        if node is None:
+            node = self.root
 
-    def pretty_print(self):
-        if self.root:
-            return self.root.pretty_print()
-        
-        else:
-            return "Empty AST"
+        if node is not None:
+            print("  " * indent + f"{node.node_type}: {node.value if node.value else ''}")
+            for child in node.children:
+                self.pretty_print(child, indent + 1)
+
 
 def create_ast_from_tokens(tokens, debug=False):
     ast = AST()
@@ -67,115 +35,80 @@ def create_ast_from_tokens(tokens, debug=False):
 
     for token in tokens:
         token_type, token_value = token
-        
+
         if debug:
             print(f"Processing token: {token_type}, {token_value}")
 
-        if token_type == 'KEYWORD':
-            if token_value == 'int':
-                
+        if token_type == "KEYWORD":
+            if token_value == "int":
                 if current_node is None:
+                    # Create the root function node
                     current_node = ASTNode("Function", "main")
                     ast.set_root(current_node)
                     block_node = ASTNode("Block")
                     current_node.add_child(block_node)
                     stack.append(current_node)
                     current_node = block_node
-                    
                 else:
-                    var_node = ASTNode("VariableDeclaration", token_value)
-                    current_node.add_child(var_node)
+                    # Create a variable declaration node
+                    var_decl_node = ASTNode("VariableDeclaration", "int")
+                    current_node.add_child(var_decl_node)
                     stack.append(current_node)
-                    current_node = var_node
-                    
-            elif token_value == 'return':
+                    current_node = var_decl_node
+
+            elif token_value == "return":
                 return_node = ASTNode("Return")
                 current_node.add_child(return_node)
                 stack.append(current_node)
                 current_node = return_node
-                
-            elif token_value == 'printf':
+
+            elif token_value == "printf":
                 func_call_node = ASTNode("FunctionCall", token_value)
                 current_node.add_child(func_call_node)
                 stack.append(current_node)
                 current_node = func_call_node
-                
-        elif token_type == 'IDENTIFIER':
-            if current_node is not None:
-                
-                if token_value == 'for':
-                    for_node = ASTNode("ForLoop")
-                    current_node.add_child(for_node)
-                    stack.append(current_node)
-                    current_node = for_node
-                    
-                else:
-                    id_node = ASTNode("Identifier", token_value)
-                    current_node.add_child(id_node)
-                    
-        elif token_type == 'SYMBOL':
-            if token_value == '{':
+
+        elif token_type == "IDENTIFIER":
+            id_node = ASTNode("Identifier", token_value)
+            current_node.add_child(id_node)
+
+        elif token_type == "SYMBOL":
+            if token_value == "{":
                 block_node = ASTNode("Block")
                 current_node.add_child(block_node)
                 stack.append(current_node)
                 current_node = block_node
-                
-            elif token_value == '}':
+
+            elif token_value == "}":
                 current_node = stack.pop()
-                
-            elif token_value == '=':
+
+            elif token_value == "=":
                 assign_node = ASTNode("Assignment")
                 current_node.add_child(assign_node)
                 stack.append(current_node)
                 current_node = assign_node
-                
-            elif token_value == ';':
+
+            elif token_value == "+":
+                binary_op_node = ASTNode("BinaryOp", "+")
+                current_node.add_child(binary_op_node)
+                stack.append(current_node)
+                current_node = binary_op_node
+
+            elif token_value == ";":
                 current_node = stack[-1]
-                
-                if current_node.node_type == "Return" or current_node.node_type == "FunctionCall":
+                if current_node.node_type in ["Return", "FunctionCall", "Assignment", "BinaryOp"]:
                     current_node = stack.pop()
-                    
-            elif token_value == '(':
-                if current_node.node_type == "FunctionCall":
-                    stack.append(current_node)
-                    
-            elif token_value == '[':
-                array_access_node = ASTNode("ArrayAccess", current_node.children[-1].value)
-                current_node.children[-1] = array_access_node
-                stack.append(current_node)
-                current_node = array_access_node
-                
-            elif token_value == ']':
-                current_node = stack.pop()
-                
-            elif token_value == '<':
-                condition_node = ASTNode("Condition")
-                current_node.add_child(condition_node)
-                stack.append(current_node)
-                current_node = condition_node
-                operator_node = ASTNode("Operator", token_value)
-                current_node.add_child(operator_node)
-                
-            elif token_value == '++':
-                increment_node = ASTNode("Increment")
-                current_node.add_child(increment_node)
-                stack.append(current_node)
-                current_node = increment_node
-                operator_node = ASTNode("Operator", token_value)
-                current_node.add_child(operator_node)
-                
-        elif token_type == 'STRING':
+
+        elif token_type == "STRING":
             string_node = ASTNode("String", token_value)
             current_node.add_child(string_node)
-            
-        elif token_type == 'NUMBER':
-            number_node = ASTNode("Number", token_value)
+
+        elif token_type == "NUMBER":
+            number_node = ASTNode("Number", int(token_value))
             current_node.add_child(number_node)
+            
+    # Applying submodules for memory safety
 
-    # Apply memory safety submodules to the AST
-    # apply_memory_safety_measures(ast)
-
-    # Return the entire constructed Sicher AST
     return ast
 
 # def apply_memory_safety_measures(ast):
