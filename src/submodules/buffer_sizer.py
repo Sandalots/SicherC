@@ -19,13 +19,14 @@ def resize_array(array, target_size, default_value=0):
     current_size = len(array)
 
     if current_size > target_size:
-        # Truncate the array if it's larger than the target size
+        
         return array[:target_size]
     elif current_size < target_size:
-        # Expand the array if it's smaller than the target size
+        
+
         return array + [default_value] * (target_size - current_size)
     else:
-        # Return the array as-is if it's already the correct size
+
         return array
 
 
@@ -44,7 +45,7 @@ def remedy_scope_mismatch(node):
 
     for child in node.children:
         if child.node_type == "ArrayDeclaration" and "expected_size" in child.metadata:
-            current_size = len(child.value)  # Assuming `child.value` is the array
+            current_size = len(child.value)
             target_size = child.metadata["expected_size"]
             if current_size != target_size:
                 print(f"Resizing array '{child.value}' from {current_size} to {target_size}")

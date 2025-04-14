@@ -19,7 +19,6 @@ def remove_unused(node):
     declared_vars = set()
     used_vars = set()
 
-    # First pass: Collect declared and used variables
     def collect_vars(node):
         if node.node_type == "VariableDeclaration":
             declared_vars.add(node.value)
@@ -30,10 +29,8 @@ def remove_unused(node):
 
     collect_vars(node)
 
-    # Identify unused variables
     unused_vars = declared_vars - used_vars
 
-    # Second pass: Remove unused variables
     def remove_unused_nodes(node):
         node.children = [
             child for child in node.children
