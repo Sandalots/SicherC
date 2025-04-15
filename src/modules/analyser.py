@@ -34,8 +34,15 @@ class ASTNode:
         return f"ASTNode({self.node_type}, {self.value}, {self.children})"
 
     def pretty_print(self, indent=0):
+        """
+        Pretty-prints the ASTNode with '--' for each level of indentation.
+
+        Args:
+            indent (int): The current depth of the node in the tree.
+        """
+        indent_str = '--' * indent  # Use '--' for indentation
         value_str = f": {self.value}" if self.value is not None else ""
-        result = "  " * indent + f"{self.node_type}{value_str}\n"
+        result = f"{indent_str}{self.node_type}{value_str}\n"
         
         for child in self.children:
             result += child.pretty_print(indent + 1)
