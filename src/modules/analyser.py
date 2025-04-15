@@ -75,15 +75,13 @@ def create_ast_from_tokens(tokens, debug=False):
     try:
         for token in tokens:
             token_type, token_value = token
-            
-            if debug:
-                    print(f"Processing token: {token_type}, {token_value}")
-                    print(f"Current Node: {current_node}")
-                    print(f"Stack: {stack}")
 
+            if debug:
+                #print(f"Token: {token_type}, Value: {token_value}, Current Node: {current_node.node_type if current_node else 'None'}")
+                pass
+            
             if token_type == 'KEYWORD':
                 if token_value == 'int':
-                    
                     if current_node is None:
                         current_node = ASTNode("Function", "main")
                         ast.set_root(current_node)
@@ -91,133 +89,89 @@ def create_ast_from_tokens(tokens, debug=False):
                         current_node.add_child(block_node)
                         stack.append(current_node)
                         current_node = block_node
-                        
                     else:
                         var_node = ASTNode("VariableDeclaration", None)
                         current_node.add_child(var_node)
                         stack.append(current_node)
                         current_node = var_node
-                        
+
                 elif token_value == 'return':
-                    # Ensure the current node is the parent Block before adding the Return node
                     while current_node.node_type not in {"Block", "Function"}:
                         current_node = stack.pop()
-                    
                     return_node = ASTNode("Return")
                     current_node.add_child(return_node)
                     stack.append(current_node)
                     current_node = return_node
-                    
+
                 elif token_value == 'printf':
                     func_call_node = ASTNode("FunctionCall", token_value)
                     current_node.add_child(func_call_node)
                     stack.append(current_node)
                     current_node = func_call_node
-                    
+
             elif token_type == 'IDENTIFIER':
-                if current_node is not None:
-                    
-                    if current_node.node_type == "FunctionCall":
-                        id_node = ASTNode("Identifier", token_value)
-                        current_node.add_child(id_node)
-                    
-                    if current_node.node_type == "VariableDeclaration":
-                        current_node.value = token_value
-                    
-                    if token_value == 'for':
-                        for_node = ASTNode("ForLoop")
-                        current_node.add_child(for_node)
-                        stack.append(current_node)
-                        current_node = for_node
-                        
-                    else:
-                        # if in main function dont add the identifier to the AST
-                        if current_node.node_type == "Function":
-                            id_node = ASTNode("Identifier", token_value)
-                            current_node.add_child(id_node)
-                        
+                if current_node.node_type == "FunctionCall":
+                    id_node = ASTNode("Identifier", token_value)
+                    current_node.add_child(id_node)
+                elif current_node.node_type == "VariableDeclaration":
+                    current_node.value = token_value
+
             elif token_type == 'SYMBOL':
                 if token_value == '{':
-                    if current_node.node_type in {"If", "ForLoop"}:
-                        block_node = ASTNode("Block")
-                        current_node.add_child(block_node)
-                        stack.append(current_node)
-                        current_node = block_node
-                    
+                    block_node = ASTNode("Block")
+                    current_node.add_child(block_node)
+                    stack.append(current_node)
+                    current_node = block_node
+
                 elif token_value == '}':
                     current_node = stack.pop()
-                    
+
                 elif token_value == '=':
                     assign_node = ASTNode("Assignment")
                     current_node.add_child(assign_node)
                     stack.append(current_node)
                     current_node = assign_node
-                    
+
                 elif token_value == ';':
-                    if current_node.node_type in {"Return", "FunctionCall", "Assignment"}:
+                    while current_node.node_type in {"Return", "FunctionCall", "Assignment", "VariableDeclaration"}:
                         current_node = stack.pop()
-                        
-                    if current_node.node_type == "VariableDeclaration":
-                        current_node = stack.pop()
-                        
-                    if current_node.node_type == "FunctionCall":
-                        current_node = stack.pop()
-                        
-                elif token_value == '(':
-                    if current_node.node_type == "FunctionCall":
-                        stack.append(current_node)
-                        
-                elif token_value == '[':
-                    if current_node.children and current_node.children[-1].node_type in {"Identifier", "ArrayDeclaration"}:
-                        array_access_node = ASTNode("ArrayAccess", current_node.children[-1].value)
-                        current_node.children[-1] = array_access_node
-                        stack.append(current_node)
-                        current_node = array_access_node
-                    
+
+                elif token_value == '(' and current_node.node_type == "FunctionCall":
+                    stack.append(current_node)
+
+                elif token_value == '[' and current_node.children and current_node.children[-1].node_type in {"Identifier", "ArrayDeclaration"}:
+                    array_access_node = ASTNode("ArrayAccess", current_node.children[-1].value)
+                    current_node.children[-1] = array_access_node
+                    stack.append(current_node)
+                    current_node = array_access_node
+
                 elif token_value == ']':
                     current_node = stack.pop()
-                    
-                elif token_value == '<':
-                    condition_node = ASTNode("Condition")
-                    current_node.add_child(condition_node)
-                    stack.append(current_node)
-                    current_node = condition_node
-                    operator_node = ASTNode("Operator", token_value)
-                    current_node.add_child(operator_node)
-                    
-                elif token_value == '++':
-                    increment_node = ASTNode("Increment")
-                    current_node.add_child(increment_node)
-                    stack.append(current_node)
-                    current_node = increment_node
-                    operator_node = ASTNode("Operator", token_value)
-                    current_node.add_child(operator_node)
-                    
+
             elif token_type == 'STRING':
                 string_node = ASTNode("String", token_value)
                 current_node.add_child(string_node)
-                
+
             elif token_type == 'NUMBER':
                 number_node = ASTNode("Number", token_value)
                 current_node.add_child(number_node)
 
-        # Apply memory safety submodules to the AST
-        # apply_memory_safety_measures(ast)
-        #remove_unused(ast.root)
-    
     except Exception as e:
-        # Provide detailed error information
         error_message = f"Error creating AST: {str(e)}\n"
         error_message += f"Current token: {token_type}, {token_value}\n"
         error_message += f"Current node: {current_node}\n"
         error_message += f"Stack: {stack}\n"
         raise RuntimeError(error_message)
 
-    # Return the entire constructed Sicher AST
     return ast
 
+        # Apply memory safety submodules to the AST
+        # apply_memory_safety_measures(ast)
+        #remove_unused(ast.root)
+    
+
 # def apply_memory_safety_measures(ast):
-#     """
+#     """∂
 #     Applies memory safety measures to the AST using submodules.
 #     """
 #     if ast.root:
