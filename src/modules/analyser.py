@@ -187,6 +187,7 @@ def create_ast_from_tokens(tokens, debug=False):
 
     # Apply memory safety submodules to the AST
     # apply_memory_safety_measures(ast)
+    remove_unused(ast.root)
 
     # Return the entire constructed Sicher AST
     return ast
