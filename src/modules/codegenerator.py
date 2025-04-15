@@ -11,6 +11,7 @@ import sys  # for setting the path
 import os  # for getting the parent src dir to the below appending to the path
 
 # Code Generator Submodules
+from submodules.remove_special_chars import remove_special_chars_from_printf  # for removing new line special characters
 
 
 # Class to model the Sicher Code Generator (takes the AST and generates assembly code from it)
@@ -22,6 +23,9 @@ class CodeGenerator:
         self.printf = None
 
     def generate_code(self):
+        # use the remove_special 
+        remove_special_chars_from_printf(self.ast)
+        
         self._create_printf_function()
         self._traverse(self.ast.root)
         return str(self.module)
