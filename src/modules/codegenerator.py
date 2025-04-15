@@ -140,8 +140,27 @@ class CodeGenerator:
 
                         # Call printf with the variable value
                         self.builder.call(self.printf, [fmt_str_ptr, var_value])
-                    
+                        
+            # Add a new line after the printf call
+            newline_str_name = self._generate_unique_str_name()
+            newline_fmt_str = ir.GlobalVariable(
+                self.module,
+                ir.ArrayType(ir.IntType(8), len("\n\0")),
+                name=newline_str_name,
+            )
+            newline_fmt_str.initializer = ir.Constant(
+                ir.ArrayType(ir.IntType(8), len("\n\0")),
+                bytearray("\n\0", "utf8"),
+            )
+            newline_fmt_str.global_constant = True
+            newline_fmt_str.linkage = "internal"
+            newline_fmt_str.align = 1
+            newline_fmt_str_ptr = self.builder.bitcast(newline_fmt_str, ir.IntType(8).as_pointer())
 
+            # Call printf to print the new line
+            self.builder.call(self.printf, [newline_fmt_str_ptr])       
+                
+                    
         elif node.node_type == "Return":
             return_value = ir.Constant(ir.IntType(32), int(node.children[0].value))
             self.builder.ret(return_value)
