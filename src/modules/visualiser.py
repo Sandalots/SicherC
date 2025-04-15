@@ -594,9 +594,16 @@ class ASTVisualizerPanel(wx.ScrolledWindow):
             # Start drawing the AST
             self.draw_node(gc, self.ast.root, 1000, 50, 200, 100)  # Centered in the virtual space
 
-    def draw_node(self, gc, node, x, y, x_offset, y_offset):
+    def draw_node(self, gc, node, x, y, x_offset, y_offset, depth=0):
         if not node:
             return
+
+        # Alternate colors based on depth (even: bright yellow, odd: darker yellow)
+        color = "#FAD000" if depth % 2 == 0 else "#C9A000"  # Bright yellow for even layers, darker yellow for odd layers
+
+        # Set the brush and pen color for the rectangle
+        gc.SetBrush(wx.Brush(color))
+        gc.SetPen(wx.Pen(color, 2))
 
         # Draw the current node as a rectangle
         rect_width, rect_height = 120, 50
@@ -624,11 +631,11 @@ class ASTVisualizerPanel(wx.ScrolledWindow):
                 child_x = child_x_start + i * x_offset
 
                 # Draw an arrow to the child node
-                gc.SetPen(wx.Pen("#FAD000", 2))
+                gc.SetPen(wx.Pen("#FAD000", 2))  # Keep arrows bright yellow
                 gc.StrokeLine(x, y + rect_height, child_x, child_y)
 
-                # Recursively draw the child node
-                self.draw_node(gc, child, child_x, child_y, x_offset, y_offset)
+                # Recursively draw the child node, increasing the depth
+                self.draw_node(gc, child, child_x, child_y, x_offset, y_offset, depth + 1)
 
     def OnLeftDown(self, event):
         # Start panning
