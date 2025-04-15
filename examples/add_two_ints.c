@@ -17,7 +17,7 @@ int main() {
     int sum = num1 + num2; // add the two numbers to get the sum
 
     // Display the result, note the special format specifier %d for integers
-    printf("The sum of %d and %d is %d.\n", num1, num2, sum);
+    printf("The sum of %d is", sum);
 
     // return 0 to end the program
     return 0;
