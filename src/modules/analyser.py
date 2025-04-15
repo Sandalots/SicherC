@@ -158,12 +158,6 @@ def create_ast_from_tokens(tokens, debug=False):
                             binary_op_node.add_child(right_operand_node)
                             print(f"DEBUG: Added right operand to BinaryOperation: {binary_op_node}")  # Debug
                             
-                            
-                    else:
-                        # If no binary operation, treat it as a raw assignment
-                        current_node.add_child(left_operand_node)
-                        print(f"DEBUG: Added raw assignment: {current_node}")  # Debug
-
             elif token_type == 'SYMBOL':
                 if token_value == '{':
                     block_node = ASTNode("Block")
