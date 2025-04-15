@@ -96,6 +96,10 @@ def create_ast_from_tokens(tokens, debug=False):
                     current_node = var_node
                     
             elif token_value == 'return':
+                # Ensure the current node is the parent Block before adding the Return node
+                while current_node.node_type not in {"Block", "Function"}:
+                    current_node = stack.pop()
+                
                 return_node = ASTNode("Return")
                 current_node.add_child(return_node)
                 stack.append(current_node)
@@ -117,8 +121,10 @@ def create_ast_from_tokens(tokens, debug=False):
                     current_node = for_node
                     
                 else:
-                    id_node = ASTNode("Identifier", token_value)
-                    current_node.add_child(id_node)
+                    # if in main function dont add the identifier to the AST
+                    if current_node.node_type == "Function":
+                        id_node = ASTNode("Identifier", token_value)
+                        current_node.add_child(id_node)
                     
         elif token_type == 'SYMBOL':
             if token_value == '{':
@@ -138,7 +144,7 @@ def create_ast_from_tokens(tokens, debug=False):
                 current_node = assign_node
                 
             elif token_value == ';':
-                if current_node.node_type == "Return" or current_node.node_type == "FunctionCall":
+                if current_node.node_type in {"Return", "FunctionCall"}:
                     current_node = stack.pop()
                     
             elif token_value == '(':

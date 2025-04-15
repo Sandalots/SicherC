@@ -42,11 +42,16 @@ class CodeGenerator:
             for child in node.children:
                 self._traverse(child)
 
-            self.builder.ret(ir.Constant(ir.IntType(32), 0))
-
         elif node.node_type == "Block":
+            return_node = None  # Track the Return node to process it last
             for child in node.children:
-                self._traverse(child)
+                if child.node_type == "Return":
+                    return_node = child
+                else:
+                    self._traverse(child)
+            # Process the Return node after all other nodes
+            if return_node:
+                self._traverse(return_node)
 
         elif node.node_type == "FunctionCall":
             if node.value == "printf":
@@ -74,7 +79,8 @@ class CodeGenerator:
                     self.builder.call(self.printf, [fmt_str_ptr])
 
         elif node.node_type == "Return":
-            self.builder.ret(ir.Constant(ir.IntType(32), node.children[0].value))
+            return_value = ir.Constant(ir.IntType(32), int(node.children[0].value))
+            self.builder.ret(return_value)
 
     def save_code_to_file(self, filename):
         with open(filename, "w") as file:
