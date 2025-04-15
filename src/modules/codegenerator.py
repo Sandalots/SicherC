@@ -67,6 +67,11 @@ class CodeGenerator:
                 string_node = next(
                     (child for child in node.children if child.node_type == "String"), None
                 )
+                
+                identifier_node = next(
+                    (child for child in node.children if child.node_type == "Identifier"), None
+                )
+                
                 if string_node:
                     string_value = string_node.value + "\0"  # Add null terminator
                     fmt_str = ir.GlobalVariable(
@@ -85,6 +90,31 @@ class CodeGenerator:
 
                     # Call printf with the dynamically retrieved string
                     self.builder.call(self.printf, [fmt_str_ptr])
+                    
+                if identifier_node:
+                    # Handle identifiers (variables)
+                    var_name = identifier_node.value
+                    var_ptr = self.builder.alloca(ir.IntType(32), name=var_name)
+                    var_value = self.builder.load(var_ptr, name=var_name)
+
+                    # Create a format string for integers ("%d")
+                    fmt_str = ir.GlobalVariable(
+                        self.module,
+                        ir.ArrayType(ir.IntType(8), len("%d\0")),
+                        name=".str",
+                    )
+                    fmt_str.initializer = ir.Constant(
+                        ir.ArrayType(ir.IntType(8), len("%d\0")),
+                        bytearray("%d\0", "utf8"),
+                    )
+                    fmt_str.global_constant = True
+                    fmt_str.linkage = "internal"
+                    fmt_str.align = 1
+                    fmt_str_ptr = self.builder.bitcast(fmt_str, ir.IntType(8).as_pointer())
+
+                    # Call printf with the variable value
+                    self.builder.call(self.printf, [fmt_str_ptr, var_value])
+                    
 
         elif node.node_type == "Return":
             return_value = ir.Constant(ir.IntType(32), int(node.children[0].value))
