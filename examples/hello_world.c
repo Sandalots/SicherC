@@ -10,6 +10,10 @@ int main() {
    // printf() displays the string inside quotation
    printf("Hello, World!");
 
+   int i = 10 + 15;
+
+   printf(i);
+   
    // end of the program
    return 0;
 }

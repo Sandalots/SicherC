@@ -141,6 +141,37 @@ class CodeGenerator:
                         # Call printf with the variable value
                         self.builder.call(self.printf, [fmt_str_ptr, var_value])
                         
+            if node.value == "strcpy":
+                # Handle strcpy function call
+                dest_node = next((child for child in node.children if child.node_type == "Identifier"), None)
+                src_node = next((child for child in node.children if child.node_type == "String"), None)
+
+                if dest_node and src_node:
+                    dest_var = self.variables.get(dest_node.value)
+                    if not dest_var:
+                        raise ValueError(f"Undefined variable: {dest_node.value}")
+
+                    src_value = src_node.value + "\0"  # Add null terminator
+                    src_str_name = self._generate_unique_str_name()
+                    src_str = ir.GlobalVariable(
+                        self.module,
+                        ir.ArrayType(ir.IntType(8), len(src_value)),
+                        name=src_str_name,
+                    )
+                    src_str.initializer = ir.Constant(
+                        ir.ArrayType(ir.IntType(8), len(src_value)),
+                        bytearray(src_value, "utf8"),
+                    )
+                    src_str.global_constant = True
+                    src_str.linkage = "internal"
+                    src_str.align = 1
+                    src_ptr = self.builder.bitcast(src_str, ir.IntType(8).as_pointer())
+
+                    # Call memcpy to copy the string
+                    memcpy_ty = ir.FunctionType(ir.VoidType(), [ir.IntType(8).as_pointer(), ir.IntType(8).as_pointer(), ir.IntType(64)])
+                    memcpy = ir.Function(self.module, memcpy_ty, name="llvm.memcpy.p0i8.p0i8.i64")
+                    self.builder.call(memcpy, [dest_var, src_ptr, ir.Constant(ir.IntType(64), len(src_value))])
+                        
             # Add a new line after the printf call
             newline_str_name = self._generate_unique_str_name()
             newline_fmt_str = ir.GlobalVariable(
