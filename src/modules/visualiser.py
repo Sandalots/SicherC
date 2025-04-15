@@ -298,6 +298,32 @@ class CompilerFrame(wx.Frame):
         hbox_buttons.Add(self.diagnostics_button, flag=wx.LEFT, border=10)
 
         vbox.Add(hbox_buttons, flag=wx.ALIGN_CENTER | wx.TOP | wx.BOTTOM, border=20)
+        
+        # Add a spacer between Run and Clear buttons
+        hbox_buttons.AddSpacer(10)  # Add 10 pixels of horizontal space
+
+        # Clear button
+        self.clear_button = wx.Button(panel, label='Clear')
+        self.clear_button.SetBackgroundColour("#FAD000")
+        self.clear_button.SetForegroundColour("#2D2B55")
+        font = self.clear_button.GetFont()
+        font = font.Bold()
+        self.clear_button.SetFont(font)
+        self.clear_button.Bind(wx.EVT_BUTTON, self.OnClearButtonClick)
+        hbox_buttons.Add(self.clear_button, flag=wx.LEFT, border=10)
+        
+        # Add a spacer between Show Diagnostics and Run buttons
+        hbox_buttons.AddSpacer(10)  # Add 10 pixels of horizontal space
+
+        # Run button
+        self.run_button = wx.Button(panel, label='Run')
+        self.run_button.SetBackgroundColour("#FAD000")
+        self.run_button.SetForegroundColour("#2D2B55")
+        font = self.run_button.GetFont()
+        font = font.Bold()
+        self.run_button.SetFont(font)
+        self.run_button.Bind(wx.EVT_BUTTON, self.OnRunButtonClick)
+        hbox_buttons.Add(self.run_button, flag=wx.LEFT, border=10)
 
         # Time/Space Complexity Labels
         hbox_complexity = wx.BoxSizer(wx.HORIZONTAL)  # Horizontal box sizer for centering
@@ -469,6 +495,17 @@ class CompilerFrame(wx.Frame):
 
     def on_collapsible_pane_changed(self, event):
         self.output_panel.Layout()
+        
+    def OnClearButtonClick(self, event):
+        """
+        Handles the "Clear" button click.
+        Clears all collapsible sections and destroys their content.
+        """
+        # Destroy all children of the output panel
+        self.output_panel.DestroyChildren()
+
+        # Refresh the layout to reflect the changes
+        self.output_panel.Layout()
 
     def add_top_level_viz(self, ast):
         """
@@ -499,6 +536,29 @@ class CompilerFrame(wx.Frame):
         # Add the collapsible pane to the output panel
         self.output_sizer.Add(collapsible_pane, flag=wx.EXPAND | wx.ALL, border=5)
         self.output_panel.Layout()
+        
+        
+    def OnRunButtonClick(self, event):
+        """
+        Handles the "Run" button click.
+        Executes the ./output_binary file and displays the output.
+        """
+        try:
+            # Run the binary and capture the output
+            import subprocess
+            result = subprocess.run(["./output_binary"], capture_output=True, text=True, check=True)
+
+            # Display the output in a collapsible section
+            output = result.stdout.strip() if result.stdout else "No output."
+            self.add_collapsible_section("Run Output", output)
+
+        except subprocess.CalledProcessError as e:
+            # Handle errors during execution
+            error_message = f"Error running ./output_binary:\n{e.stderr.strip() if e.stderr else str(e)}"
+            self.add_collapsible_section("Run Output (Error)", error_message)
+        except FileNotFoundError:
+            # Handle the case where the binary does not exist
+            self.add_collapsible_section("Run Output (Error)", "Error: ./output_binary not found.")
 
 
 class ASTVisualizerPanel(wx.ScrolledWindow):

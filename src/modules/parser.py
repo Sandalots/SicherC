@@ -67,64 +67,56 @@ class Parser:
     def parse_declaration(self):
         if self.debug:
             print(f"Line {self.current_token + 1}: Parsing declaration")
-        self.expect('KEYWORD')
+        self.expect('KEYWORD')  # Expect a type like 'int'
         while True:
             if self.tokens[self.current_token][1] == '*':
                 self.expect('SYMBOL', '*')  # Handle pointer declaration
-            identifier = self.expect('IDENTIFIER')
+            identifier = self.expect('IDENTIFIER')  # Expect a variable name
             if self.tokens[self.current_token][1] == '[':
                 self.expect('SYMBOL', '[')
-                self.expect('NUMBER')
+                self.expect('NUMBER')  # Expect array size
                 self.expect('SYMBOL', ']')
             if self.tokens[self.current_token][1] == '=':
-                self.expect('SYMBOL', '=')
-                if self.tokens[self.current_token][0] == 'STRING':
-                    self.expect('STRING')
-                elif self.tokens[self.current_token][0] == 'NUMBER':
-                    self.expect('NUMBER')
-                elif self.tokens[self.current_token][0] == 'IDENTIFIER':
-                    self.expect('IDENTIFIER')
-                elif self.tokens[self.current_token][1] == '&':
-                    self.expect('SYMBOL', '&')  # Handle address-of operator
-                    self.expect('IDENTIFIER')
+                self.expect('SYMBOL', '=')  # Handle initialization
+                self.parse_expression()  # Parse the expression after '='
             if self.tokens[self.current_token][1] == ',':
-                self.expect('SYMBOL', ',')
+                self.expect('SYMBOL', ',')  # Handle multiple declarations
             else:
                 break
-        self.expect('SYMBOL', ';')
+        self.expect('SYMBOL', ';')  # Expect the semicolon at the end
         if self.debug:
             print(f"Line {self.current_token + 1}: Declared variable: {identifier}")
-
+            
     def parse_expression(self):
         if self.debug:
             print(f"Line {self.current_token + 1}: Parsing expression")
-        if self.tokens[self.current_token][1] == '*':
-            self.expect('SYMBOL', '*')  # Handle dereferencing
-        identifier = self.expect('IDENTIFIER')
-        if self.tokens[self.current_token][1] == '(':
-            self.expect('SYMBOL', '(')
-            while self.tokens[self.current_token][1] != ')':
-                if self.tokens[self.current_token][0] == 'IDENTIFIER':
-                    self.expect('IDENTIFIER')
-                elif self.tokens[self.current_token][0] == 'STRING':
-                    self.expect('STRING')
-                elif self.tokens[self.current_token][0] == 'NUMBER':
-                    self.expect('NUMBER')
-                if self.tokens[self.current_token][1] == ',':
-                    self.expect('SYMBOL', ',')
+        if self.tokens[self.current_token][1] in {'&', '*'}:
+            operator = self.expect('SYMBOL')  # Handle address-of or dereference operator
+            if self.debug:
+                print(f"Line {self.current_token + 1}: Found operator: {operator}")
+        self.parse_term()  # Parse the first term
+        while self.tokens[self.current_token][1] in {'+', '-', '*', '/'}:
+            operator = self.expect('SYMBOL')  # Expect a binary operator
+            if self.debug:
+                print(f"Line {self.current_token + 1}: Found operator: {operator}")
+            self.parse_term()  # Parse the next term
+
+    def parse_term(self):
+        token_type, token_value = self.tokens[self.current_token]
+        if token_type == 'IDENTIFIER':
+            self.expect('IDENTIFIER')  # Handle variables
+            if self.tokens[self.current_token][1] == '[':
+                self.expect('SYMBOL', '[')  # Handle array indexing
+                self.parse_expression()  # Parse the index expression
+                self.expect('SYMBOL', ']')
+        elif token_type == 'NUMBER':
+            self.expect('NUMBER')  # Handle numbers
+        elif token_type == 'SYMBOL' and token_value == '(':
+            self.expect('SYMBOL', '(')  # Handle parentheses
+            self.parse_expression()  # Parse the expression inside parentheses
             self.expect('SYMBOL', ')')
         else:
-            while self.tokens[self.current_token][1] not in {';', ')', ','}:
-                if self.tokens[self.current_token][0] == 'IDENTIFIER':
-                    self.expect('IDENTIFIER')
-                elif self.tokens[self.current_token][0] == 'NUMBER':
-                    self.expect('NUMBER')
-                elif self.tokens[self.current_token][0] == 'SYMBOL':
-                    self.expect('SYMBOL')
-        if self.tokens[self.current_token][1] == ';':
-            self.expect('SYMBOL', ';')
-        if self.debug:
-            print(f"Line {self.current_token + 1}: Expression: {identifier}")
+            raise SyntaxError(f"Line {self.current_token + 1}: Unexpected token: {token_type} {token_value}")
 
     def expect(self, token_type, token_value=None):
         if self.current_token >= len(self.tokens):
