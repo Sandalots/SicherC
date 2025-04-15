@@ -12,6 +12,8 @@ int main() {
 
    int i = 0; // should be removed as it is not used and is put there to test if sicher can remove unused variables
 
+   printf(i); // should ouput the above 0
+
    // end of the program
    return 0;
 }
