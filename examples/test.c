@@ -7,8 +7,12 @@ int main() {
 
     // Defone the values of the two numbers
     int num1 = 2; // first number
+    int num2 = 3; // second number
 
     printf(num1);
+
+    printf(num2);
+
 
     // return 0 to end the program
     return 0;

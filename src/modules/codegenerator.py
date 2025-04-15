@@ -21,6 +21,8 @@ class CodeGenerator:
         self.module = ir.Module(name="module")
         self.builder = None
         self.printf = None
+        self.str_counter = 0 # for iterating unique string names
+        self.variables = {}  
 
     def generate_code(self):
         if self.ast is None or self.ast.root is None:
@@ -39,6 +41,10 @@ class CodeGenerator:
         voidptr_ty = ir.IntType(8).as_pointer()
         printf_ty = ir.FunctionType(ir.IntType(32), [voidptr_ty], var_arg=True)
         self.printf = ir.Function(self.module, printf_ty, name="printf")
+        
+    def _generate_unique_str_name(self):
+        self.str_counter += 1
+        return f".str.{self.str_counter}"
 
     def _traverse(self, node):
         if node.node_type == "Function":
@@ -60,6 +66,22 @@ class CodeGenerator:
             # Process the Return node after all other nodes
             if return_node:
                 self._traverse(return_node)
+                
+        elif node.node_type == "VariableDeclaration":
+            # Allocate memory for the variable
+            var_name = node.value
+            var_ptr = self.builder.alloca(ir.IntType(32), name=var_name)
+            self.variables[var_name] = var_ptr  # Store the memory location in the dictionary
+
+            # Check if the variable has an Assignment child
+            assignment_node = next((child for child in node.children if child.node_type == "Assignment"), None)
+            if assignment_node:
+                # Get the value being assigned
+                value_node = next((child for child in assignment_node.children if child.node_type == "Number"), None)
+                if value_node:
+                    value = int(value_node.value)
+                    # Store the value in the allocated memory
+                    self.builder.store(ir.Constant(ir.IntType(32), value), var_ptr)
 
         elif node.node_type == "FunctionCall":
             if node.value == "printf":
@@ -94,26 +116,28 @@ class CodeGenerator:
                 if identifier_node:
                     # Handle identifiers (variables)
                     var_name = identifier_node.value
-                    var_ptr = self.builder.alloca(ir.IntType(32), name=var_name)
-                    var_value = self.builder.load(var_ptr, name=var_name)
+                    if var_name in self.variables:
+                        var_ptr = self.variables[var_name]  # Retrieve the memory location from the dictionary
+                        var_value = self.builder.load(var_ptr, name=var_name)
 
-                    # Create a format string for integers ("%d")
-                    fmt_str = ir.GlobalVariable(
-                        self.module,
-                        ir.ArrayType(ir.IntType(8), len("%d\0")),
-                        name=".str",
-                    )
-                    fmt_str.initializer = ir.Constant(
-                        ir.ArrayType(ir.IntType(8), len("%d\0")),
-                        bytearray("%d\0", "utf8"),
-                    )
-                    fmt_str.global_constant = True
-                    fmt_str.linkage = "internal"
-                    fmt_str.align = 1
-                    fmt_str_ptr = self.builder.bitcast(fmt_str, ir.IntType(8).as_pointer())
+                        # Create a unique format string for integers ("%d")
+                        unique_str_name = self._generate_unique_str_name()
+                        fmt_str = ir.GlobalVariable(
+                            self.module,
+                            ir.ArrayType(ir.IntType(8), len("%d\0")),
+                            name=unique_str_name,
+                        )
+                        fmt_str.initializer = ir.Constant(
+                            ir.ArrayType(ir.IntType(8), len("%d\0")),
+                            bytearray("%d\0", "utf8"),
+                        )
+                        fmt_str.global_constant = True
+                        fmt_str.linkage = "internal"
+                        fmt_str.align = 1
+                        fmt_str_ptr = self.builder.bitcast(fmt_str, ir.IntType(8).as_pointer())
 
-                    # Call printf with the variable value
-                    self.builder.call(self.printf, [fmt_str_ptr, var_value])
+                        # Call printf with the variable value
+                        self.builder.call(self.printf, [fmt_str_ptr, var_value])
                     
 
         elif node.node_type == "Return":
