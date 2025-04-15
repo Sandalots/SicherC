@@ -90,7 +90,7 @@ def create_ast_from_tokens(tokens, debug=False):
                     current_node = block_node
                     
                 else:
-                    var_node = ASTNode("VariableDeclaration", token_value)
+                    var_node = ASTNode("VariableDeclaration", None)
                     current_node.add_child(var_node)
                     stack.append(current_node)
                     current_node = var_node
@@ -113,6 +113,13 @@ def create_ast_from_tokens(tokens, debug=False):
                 
         elif token_type == 'IDENTIFIER':
             if current_node is not None:
+                
+                if current_node.node_type == "FunctionCall":
+                    id_node = ASTNode("Identifier", token_value)
+                    current_node.add_child(id_node)
+                
+                if current_node.node_type == "VariableDeclaration":
+                    current_node.value = token_value
                 
                 if token_value == 'for':
                     for_node = ASTNode("ForLoop")
@@ -144,7 +151,13 @@ def create_ast_from_tokens(tokens, debug=False):
                 current_node = assign_node
                 
             elif token_value == ';':
-                if current_node.node_type in {"Return", "FunctionCall"}:
+                if current_node.node_type in {"Return", "FunctionCall", "Assignment"}:
+                    current_node = stack.pop()
+                    
+                if current_node.node_type == "VariableDeclaration":
+                    current_node = stack.pop()
+                    
+                if current_node.node_type == "FunctionCall":
                     current_node = stack.pop()
                     
             elif token_value == '(':
