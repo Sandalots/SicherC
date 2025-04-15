@@ -72,14 +72,26 @@ def create_ast_from_tokens(tokens, debug=False):
     current_node = None
     stack = []
 
+    # Initialize token context
+    current_token = None
+    previous_token = None
+    next_token = None
+
     try:
-        for token in tokens:
-            token_type, token_value = token
+        for i, token in enumerate(tokens):
+            previous_token = current_token
+            current_token = token
+            next_token = tokens[i + 1] if i + 1 < len(tokens) else None
+
+            token_type, token_value = current_token
 
             if debug:
-                #print(f"Token: {token_type}, Value: {token_value}, Current Node: {current_node.node_type if current_node else 'None'}")
-                pass
-            
+                print(f"DEBUG: Current token: {current_token}, Previous token: {previous_token}, Next token: {next_token}")
+
+            if token_type == "PREPROCESSOR":
+                # Handle preprocessor directives here if needed
+                continue
+
             if token_type == 'KEYWORD':
                 if token_value == 'int':
                     if current_node is None:
@@ -115,6 +127,42 @@ def create_ast_from_tokens(tokens, debug=False):
                     current_node.add_child(id_node)
                 elif current_node.node_type == "VariableDeclaration":
                     current_node.value = token_value
+                    
+                elif current_node.node_type == "Assignment":
+                    # Handle binary operations or raw assignments
+                    left_operand_node = ASTNode("Identifier", token_value)
+                    print(f"DEBUG: Creating left operand node: {left_operand_node}")  # Debug
+
+                    if next_token and next_token[0] == 'SYMBOL' and next_token[1] in {'+', '-', '*', '/'}:
+                        operator_token = next_token
+                        next_token_index = tokens.index(next_token) + 1
+                        right_operand_token = tokens[next_token_index] if next_token_index < len(tokens) else None
+
+                        if right_operand_token:
+                            # Create a BinaryOperation node
+                            binary_op_node = ASTNode("BinaryOperation", operator_token[1])
+                            print(f"DEBUG: Creating BinaryOperation node: {binary_op_node}")  # Debug
+
+                            current_node.add_child(binary_op_node)  # Add the BinaryOperation node to the Assignment
+                            print(f"DEBUG: Added BinaryOperation node to Assignment: {current_node}")  # Debug
+
+                            # Add the left operand
+                            binary_op_node.add_child(left_operand_node)
+                            print(f"DEBUG: Added left operand to BinaryOperation: {binary_op_node}")  # Debug
+
+                            # Add the right operand
+                            right_operand_node = ASTNode(
+                                "Identifier" if right_operand_token[0] == 'IDENTIFIER' else "Number",
+                                right_operand_token[1]
+                            )
+                            binary_op_node.add_child(right_operand_node)
+                            print(f"DEBUG: Added right operand to BinaryOperation: {binary_op_node}")  # Debug
+                            
+                            
+                    else:
+                        # If no binary operation, treat it as a raw assignment
+                        current_node.add_child(left_operand_node)
+                        print(f"DEBUG: Added raw assignment: {current_node}")  # Debug
 
             elif token_type == 'SYMBOL':
                 if token_value == '{':
@@ -136,18 +184,6 @@ def create_ast_from_tokens(tokens, debug=False):
                     while current_node.node_type in {"Return", "FunctionCall", "Assignment", "VariableDeclaration"}:
                         current_node = stack.pop()
 
-                elif token_value == '(' and current_node.node_type == "FunctionCall":
-                    stack.append(current_node)
-
-                elif token_value == '[' and current_node.children and current_node.children[-1].node_type in {"Identifier", "ArrayDeclaration"}:
-                    array_access_node = ASTNode("ArrayAccess", current_node.children[-1].value)
-                    current_node.children[-1] = array_access_node
-                    stack.append(current_node)
-                    current_node = array_access_node
-
-                elif token_value == ']':
-                    current_node = stack.pop()
-
             elif token_type == 'STRING':
                 string_node = ASTNode("String", token_value)
                 current_node.add_child(string_node)
@@ -158,13 +194,12 @@ def create_ast_from_tokens(tokens, debug=False):
 
     except Exception as e:
         error_message = f"Error creating AST: {str(e)}\n"
-        error_message += f"Current token: {token_type}, {token_value}\n"
+        error_message += f"Current token: {current_token}\n"
         error_message += f"Current node: {current_node}\n"
         error_message += f"Stack: {stack}\n"
         raise RuntimeError(error_message)
 
     return ast
-
         # Apply memory safety submodules to the AST
         # apply_memory_safety_measures(ast)
         #remove_unused(ast.root)
