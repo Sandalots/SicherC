@@ -96,11 +96,13 @@ class CodeGenerator:
                 
                 if string_node:
                     string_value = string_node.value + "\0"  # Add null terminator
+                    unique_str_name = self._generate_unique_str_name()
                     fmt_str = ir.GlobalVariable(
                         self.module,
                         ir.ArrayType(ir.IntType(8), len(string_value)),
-                        name=".str",
+                        name=unique_str_name,
                     )
+                    
                     fmt_str.initializer = ir.Constant(
                         ir.ArrayType(ir.IntType(8), len(string_value)),
                         bytearray(string_value, "utf8"),

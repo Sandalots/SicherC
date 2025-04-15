@@ -10,8 +10,9 @@ int main() {
     int num2 = 3; // second number
 
     printf(num1);
-
+    printf("joiytg");
     printf(num2);
+    printf("Snhied2iiggiuge2i");
 
 
     // return 0 to end the program
