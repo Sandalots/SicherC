@@ -3,7 +3,7 @@
 *  Date: 12/03/2025 */
 
 #include <stdio.h>
-#include <stdlib.h> // for malloc and free mm functions
+#include <stdlib.h>
 
 // A Double Free Test
 int main() {

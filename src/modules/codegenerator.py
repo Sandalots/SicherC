@@ -23,11 +23,15 @@ class CodeGenerator:
         self.printf = None
 
     def generate_code(self):
-        # use the remove_special 
+        if self.ast is None or self.ast.root is None:
+            raise ValueError("AST is empty or not initialized.")
+        
+        # use the remove special chars runtime submodule
         remove_special_chars_from_printf(self.ast)
         
         self._create_printf_function()
         self._traverse(self.ast.root)
+        
         return str(self.module)
 
     def _create_printf_function(self):

@@ -24,6 +24,7 @@ Sicher contains 5 core modules that perform the complete workings of the Sicher 
 3. Prevent Use after Free
 4. Remove Dangling Pointer
 5. Unused Remover
+6. Remove Special Chars
 
 ### Usage
 In the root directory of SicherC run the following:

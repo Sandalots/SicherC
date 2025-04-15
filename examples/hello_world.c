@@ -3,7 +3,7 @@
 *  Date: 12/03/2025 */
 
 // import the standard io library
-#include <stdio.h> // for printf
+#include <stdio.h>
 
 // Simple Hello World Test.
 int main() {

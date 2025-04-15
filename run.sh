@@ -1,3 +1,6 @@
+# Sandy MacDonald (2003619)
+# Sicher run Script
+
 # check if the user has python3 in their path
 if ! command -v python3 &> /dev/null
 then
@@ -16,4 +19,6 @@ fi
 ./requirements.sh
 
 # run the sicher compiler with hello world testing suite file as input
-python3 src/sicher.py examples/hello_world.c --debug --gui
+python3 src/sicher.py examples/hello_world.c --debug --gui # uses the GUI option plus the debug option to show additional sicher compiler logs
+
+
