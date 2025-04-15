@@ -603,9 +603,16 @@ class ASTVisualizerPanel(wx.ScrolledWindow):
         gc.DrawRectangle(x - rect_width // 2, y, rect_width, rect_height)
 
         # Draw the node label
+        label_lines = [node.node_type, node.value] if node.value else [node.node_type]
+
+        # Draw the node type (bold)
         gc.SetFont(wx.Font(10, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD), "#2D2B55")
-        label = f"{node.node_type}\n{node.value}" if node.value else node.node_type
-        gc.DrawText(label, x - rect_width // 2 + 10, y + 10)
+        gc.DrawText(label_lines[0], x - rect_width // 2 + 10, y + 10)
+
+        # Draw the node value (normal)
+        if len(label_lines) > 1:
+            gc.SetFont(wx.Font(10, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL), "#2D2B55")
+            gc.DrawText(label_lines[1], x - rect_width // 2 + 10, y + 25)
 
         # Calculate positions for child nodes
         num_children = len(node.children)
