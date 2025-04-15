@@ -57,7 +57,11 @@ class Parser:
         if self.debug:
             print(f"Line {self.current_token + 1}: Parsing return statement")
         self.expect('KEYWORD', 'return')
-        self.expect('NUMBER')
+        if self.tokens[self.current_token][1] == '&':
+            self.expect('SYMBOL', '&')  # Handle the address-of operator
+            self.expect('IDENTIFIER')  # Expect a variable name
+        else:
+            self.expect('NUMBER')  # Handle returning a number
         self.expect('SYMBOL', ';')
 
     def parse_declaration(self):
@@ -66,7 +70,7 @@ class Parser:
         self.expect('KEYWORD')
         while True:
             if self.tokens[self.current_token][1] == '*':
-                self.expect('SYMBOL', '*')
+                self.expect('SYMBOL', '*')  # Handle pointer declaration
             identifier = self.expect('IDENTIFIER')
             if self.tokens[self.current_token][1] == '[':
                 self.expect('SYMBOL', '[')
@@ -78,7 +82,10 @@ class Parser:
                     self.expect('STRING')
                 elif self.tokens[self.current_token][0] == 'NUMBER':
                     self.expect('NUMBER')
-                else:
+                elif self.tokens[self.current_token][0] == 'IDENTIFIER':
+                    self.expect('IDENTIFIER')
+                elif self.tokens[self.current_token][1] == '&':
+                    self.expect('SYMBOL', '&')  # Handle address-of operator
                     self.expect('IDENTIFIER')
             if self.tokens[self.current_token][1] == ',':
                 self.expect('SYMBOL', ',')
@@ -92,7 +99,7 @@ class Parser:
         if self.debug:
             print(f"Line {self.current_token + 1}: Parsing expression")
         if self.tokens[self.current_token][1] == '*':
-            self.expect('SYMBOL', '*')
+            self.expect('SYMBOL', '*')  # Handle dereferencing
         identifier = self.expect('IDENTIFIER')
         if self.tokens[self.current_token][1] == '(':
             self.expect('SYMBOL', '(')
@@ -118,50 +125,6 @@ class Parser:
             self.expect('SYMBOL', ';')
         if self.debug:
             print(f"Line {self.current_token + 1}: Expression: {identifier}")
-
-    def parse_if(self):
-        if self.debug:
-            print(f"Line {self.current_token + 1}: Parsing if statement")
-        self.expect('KEYWORD', 'if')
-        self.expect('SYMBOL', '(')
-        self.parse_expression()
-        self.expect('SYMBOL', ')')
-        self.expect('SYMBOL', '{')
-        while self.tokens[self.current_token][1] != '}':
-            self.parse_statement()
-        self.expect('SYMBOL', '}')
-
-    def parse_for(self):
-        if self.debug:
-            print(f"Line {self.current_token + 1}: Parsing for loop")
-        self.expect('IDENTIFIER', 'for')
-        self.expect('SYMBOL', '(')
-        self.parse_for_initialization()  # Handle the initialization part
-        self.expect('SYMBOL', ';')
-        self.parse_expression()  # Handle the condition part
-        self.parse_for_increment()  # Handle the increment part
-        self.expect('SYMBOL', ')')
-        self.expect('SYMBOL', '{')
-        while self.tokens[self.current_token][1] != '}':
-            self.parse_statement()
-        self.expect('SYMBOL', '}')
-
-    def parse_for_initialization(self):
-        token_type, token_value = self.tokens[self.current_token]
-        if token_type == 'KEYWORD' and token_value in {'char', 'int'}:
-            self.parse_declaration()
-        else:
-            self.parse_expression()
-
-    def parse_for_increment(self):
-        if self.debug:
-            print(f"Line {self.current_token + 1}: Parsing for increment")
-        while self.tokens[self.current_token][1] != ')':
-            self.parse_expression()
-            if self.tokens[self.current_token][1] == ',':
-                self.expect('SYMBOL', ',')
-        if self.debug:
-            print(f"Line {self.current_token + 1}: Finished parsing for increment")
 
     def expect(self, token_type, token_value=None):
         if self.current_token >= len(self.tokens):
