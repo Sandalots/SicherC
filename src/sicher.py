@@ -29,6 +29,8 @@ def main():
     parser.add_argument('--debug', action='store_true', help='Enable debug output') # get the optional debug flag
     parser.add_argument('--gui', action='store_true', help='Run the GUI visualizer') # get the optional GUI flag
     parser.add_argument('--output', type=str, help='Output binary filename', default='output_binary') # get the oprional output filename
+    parser.add_argument('--nocompile', action='store_true', help="Skip the code generation step") # add the --nocompile flag
+
     
     # Parse the command-line arguments
     args = parser.parse_args()
@@ -133,33 +135,36 @@ def main():
         # exit the program to avoid further errors
         sys.exit(1)
     
-   # Code Generator Module
-    try:
-        # Run the code generator on the AST
-        code_generator = CodeGenerator(ast)
+    # Code Generator Module (Skip if --nocompile is set)
+    if not args.nocompile:
+        try:
+            # Run the code generator on the AST
+            code_generator = CodeGenerator(ast)
+            
+            # Generate the code
+            generated_code = code_generator.generate_code()
+            
+            # Output the generated code
+            print("Generated Code:")
+            
+            # the actual generated code
+            print(generated_code)
+            
+            # Save the generated code to a file
+            code_generator.save_code_to_file('output.ll')
+            
+            # Compile the generated code to an ARM64 binary
+            code_generator.compile_to_arm64('output.ll', args.output)
         
-        # Generate the code
-        generated_code = code_generator.generate_code()
-        
-        # Output the generated code
-        print("Generated Code:")
-        
-        # the actual generated code
-        print(generated_code)
-        
-        # Save the generated code to a file
-        code_generator.save_code_to_file('output.ll')
-        
-        # Compile the generated code to an ARM64 binary
-        code_generator.compile_to_arm64('output.ll', 'output_binary')
-    
-    # raise an error if there is a problem with the code generation     
-    except Exception as e:
-        # prompt the code generation error
-        print(f"Error generating code: {e}")
-        
-        # exit the program to avoid further errors
-        sys.exit(1)
+        # raise an error if there is a problem with the code generation     
+        except Exception as e:
+            # prompt the code generation error
+            print(f"Error generating code: {e}")
+            
+            # exit the program to avoid further errors
+            sys.exit(1)
+    else:
+        print("\nSkipping code generation as --nocompile flag is set.\n")
     
     # Visualiser Module
     if args.gui:
