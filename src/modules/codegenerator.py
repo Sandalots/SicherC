@@ -7,12 +7,9 @@
 import llvmlite.ir as ir  # for converting the AST to LLVM IR
 import llvmlite.binding as llvm  # for compiling the above IR for the target architecture/system (the OS/CPU)
 import subprocess  # for generating subprocess calls in the code generation
-import sys  # for setting the path
-import os  # for getting the parent src dir to the below appending to the path
 
 # Code Generator Submodules
 from submodules.remove_special_chars import remove_special_chars_from_printf  # for removing new line special characters
-
 
 # Class to model the Sicher Code Generator (takes the AST and generates assembly code from it)
 class CodeGenerator:

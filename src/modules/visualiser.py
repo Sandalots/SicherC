@@ -18,7 +18,6 @@ from modules.parser import parse_tokens  # for parsing the tokenised C source co
 from modules.analyser import create_ast_from_tokens  # for modelling the given C source code as an Sicher AST
 from modules.codegenerator import CodeGenerator  # for generating actual assembly code from the AST
 
-
 # Models the Compiler Frame to the GUI
 class CompilerFrame(wx.Frame):
     ## Constructs the Compiler Frame

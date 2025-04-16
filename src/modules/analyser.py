@@ -199,19 +199,3 @@ def create_ast_from_tokens(tokens, debug=False):
     remove_unused(ast)
     
     return ast
-        # Apply memory safety submodules to the AST
-        # apply_memory_safety_measures(ast)
-        #remove_unused(ast.root)
-    
-
-# def apply_memory_safety_measures(ast):
-#     """∂
-#     Applies memory safety measures to the AST using submodules.
-#     """
-#     if ast.root:
-#         # Apply each submodule to the AST
-#         resize_array(ast)
-#         remove_unused(ast)
-#         prevent_use_after_free(ast)
-#         prevent_double_free(ast)
-#         remove_dangling_pointers(ast)
