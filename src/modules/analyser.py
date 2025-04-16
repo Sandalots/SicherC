@@ -25,6 +25,7 @@ class ASTNode:
         self.value = value
         self.children = []
         self.parent = None
+        self.isUsed = False  # Flag to indicate if the node is used
 
     # Method to add new child nodes
     def add_child(self, child):
@@ -195,6 +196,8 @@ def create_ast_from_tokens(tokens, debug=False):
         error_message += f"Stack: {stack}\n"
         raise RuntimeError(error_message)
 
+    remove_unused(ast)
+    
     return ast
         # Apply memory safety submodules to the AST
         # apply_memory_safety_measures(ast)

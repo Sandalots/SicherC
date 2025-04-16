@@ -12,6 +12,7 @@ int main() {
 
    // integer identifier
    int i = 4;
+   int g = 3;
 
    // output the above integer
    printf(i);
