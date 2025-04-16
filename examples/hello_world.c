@@ -10,8 +10,10 @@ int main() {
    // printf() displays the string inside quotation
    printf("Hello, World!");
 
-   int i = 10 + 15;
+   // integer identifier
+   int i = 4;
 
+   // output the above integer
    printf(i);
    
    // end of the program
