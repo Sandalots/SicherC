@@ -24,10 +24,12 @@ class ASTNode:
         self.node_type = node_type
         self.value = value
         self.children = []
+        self.parent = None
 
     # Method to add new child nodes
     def add_child(self, child):
         self.children.append(child)
+        child.parent = self
 
     # Method to output the ASTnode with type, values and the children
     def __repr__(self):
