@@ -22,6 +22,13 @@ def mark_used_variables(node):
                 variable_name = child.value
                 mark_variable_as_used(node, variable_name)
 
+    elif node.node_type == "BinaryOperation":
+        # Mark variables used in binary operations
+        for child in node.children:
+            if child.node_type == "Identifier":
+                variable_name = child.value
+                mark_variable_as_used(node, variable_name)
+
     # Recursively check all children
     for child in node.children:
         mark_used_variables(child)
@@ -66,4 +73,3 @@ def remove_unused(ast):
 
         # Remove unused variables
         remove_unused_variables(ast.root)
-        
