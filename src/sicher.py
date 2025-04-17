@@ -10,7 +10,7 @@ import sys # for exiting the sicher program
 import argparse # for parsing given command line arguments to the sicher program
 import os # for checking if the given source code file exists and is a c source code file
 
-# Sicher Modules
+# Sicher Modules (The 5 integral modules of the Sicher Compiler)
 from modules.tokeniser import tokenise # for tokenising the given c source code
 from modules.parser import parse_tokens # for parsing the tokenised c source code
 from modules.analyser import create_ast_from_tokens # for modelling the given c source code as an sicher AST

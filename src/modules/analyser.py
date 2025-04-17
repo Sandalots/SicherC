@@ -15,17 +15,17 @@ from submodules.remove_dangling_pointers import remove_dangling_pointers  # remo
 # Encapsulates a child (node) of the AST
 class ASTNode:
     # Constructor for ASTNode
-    def __init__(self, node_type, value=None):
-        self.node_type = node_type
-        self.value = value
-        self.children = []
-        self.parent = None
+    def __init__(self, node_type, value=None): # creates a new node for the ast
+        self.node_type = node_type # get the type of the node
+        self.value = value # get the value of the node
+        self.children = [] # get any children of the current node
+        self.parent = None # get the parent of the current noe
         self.isUsed = False  # Flag to indicate if the node is used
 
     # Method to add new child nodes
     def add_child(self, child):
-        self.children.append(child)
-        child.parent = self
+        self.children.append(child) # adds the child to the current node
+        child.parent = self # sets the parent of the new child to the current node
 
     # Method to output the ASTnode with type, values and the children
     def __repr__(self):
@@ -186,11 +186,11 @@ def create_ast_from_tokens(tokens, debug=False):
 
     # Handle AST errors
     except Exception as e:
-        error_message = f"Error creating AST: {str(e)}\n"
-        error_message += f"Current token: {current_token}\n"
-        error_message += f"Current node: {current_node}\n"
-        error_message += f"Stack: {stack}\n"
-        raise RuntimeError(error_message)
+        error_message = f"Error creating AST: {str(e)}\n" # the error message
+        error_message += f"Current token: {current_token}\n" # what the current token is
+        error_message += f"Current node: {current_node}\n" # what the current node is
+        error_message += f"Stack: {stack}\n" # the stack trace
+        raise RuntimeError(error_message) # raises the error message
 
     # applying the removed unused submodule countermeasure
     remove_unused(ast)

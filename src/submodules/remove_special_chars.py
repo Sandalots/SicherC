@@ -1,3 +1,9 @@
+# Remove Special Characters Submodule for Sicher
+# Sandy MacDonald
+# 2003619
+# 2025
+
+# method to remove newline characters from printf strings in the AST, which may cause some issues as sicher has it's own rules for newline code generation
 def remove_special_chars_from_printf(ast):
     """
     Removes special characters (e.g., '\n') from printf strings in the AST.
@@ -8,6 +14,8 @@ def remove_special_chars_from_printf(ast):
     Returns:
         None. The AST is modified in place.
     """
+    
+    # check if sicher has a empty or invalid AST
     if not ast or not ast.root:
         return
 
@@ -23,4 +31,5 @@ def remove_special_chars_from_printf(ast):
         for child in node.children:
             traverse_and_clean(child)
 
+    # traverse the ast and clean any new lines/special characters if they exist
     traverse_and_clean(ast.root)

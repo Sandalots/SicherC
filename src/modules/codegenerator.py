@@ -16,12 +16,13 @@ class CodeGenerator:
     def __init__(self, ast):
         self.ast = ast # getting the ast of the source code created by sicher
         self.module = ir.Module(name="module") 
-        self.builder = None
-        self.printf = None
+        self.builder = None # create empty builder for the module
+        self.printf = None # set a placeholder for any printf functions to be encountered later on
         self.str_counter = 0 # for iterating unique string names
         self.variables = {} # for storing variables
 
     def generate_code(self):
+        # check if ast exists and is valid
         if self.ast is None or self.ast.root is None:
             raise ValueError("AST is empty or not initialized.")
         
