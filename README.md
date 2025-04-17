@@ -9,6 +9,7 @@ Through a modular approach, forming from the lexical analysis to the code-genera
 Sicher C State as of 13/04/2025.
 
 <br><br>
+
 Sicher contains 5 core modules that perform the complete workings of the Sicher Compiler, as-well as optional extendable submodules. A GUI visualiser is included to present all the workings of the Sicher C Compiler and allow for easy compilations.
 
 ### Modules
@@ -59,3 +60,7 @@ A shell script is also given to both allow for installing dependencies and runni
 
 ### Usage
 ```run.sh```
+
+### Requirements
+* Python3
+* Unix environment 

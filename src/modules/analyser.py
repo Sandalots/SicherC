@@ -38,7 +38,7 @@ class ASTNode:
         Args:
             indent (int): The current depth of the node in the tree.
         """
-        indent_str = '--' * indent  # Use '--' for indentation
+        indent_str = '--' * indent
         value_str = f": {self.value}" if self.value is not None else ""
         result = f"{indent_str}{self.node_type}{value_str}\n"
         

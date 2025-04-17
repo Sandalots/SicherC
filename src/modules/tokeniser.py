@@ -8,11 +8,11 @@ import re  # for matching regular expressions
 import sys  # for checking if the user is running in debug mode
 import io  # for capturing the debug output and redirecting the output so the visualiser can see and read it
 
-# Defining C keywords and symbols
+# Defining C keywords and symbols for Sicher 
 keywords = {'int', 'char', 'return', 'printf', 'strcpy', 'malloc', 'sizeof', 'free', 'if', 'else', 'for', 'while', 'do', 'break', 'continue'}  # the keywords Sicher will be able to recognise in given C source files
 symbols = {'(', ')', '{', '}', '[', ']', ';', ',', '=', '!', '?', ':', '%', '\\', '&', '*', '+', '-', '/', '<', '>', '==', '!=', '<=', '>=', '&&', '||', '++', '--'}  # the symbols/punctuation Sicher will be able to recognise in given C source files
 
-# C Token Types
+# Sicher C Token Types
 KEYWORD = 'KEYWORD'
 SYMBOL = 'SYMBOL'
 IDENTIFIER = 'IDENTIFIER'

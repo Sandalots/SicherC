@@ -716,7 +716,6 @@ def main():
     # Keep the GUI running
     app.MainLoop()
 
-
 # Run the main function
 if __name__ == '__main__':
     main()

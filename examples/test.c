@@ -9,11 +9,11 @@ int main() {
     int num1 = 2; // first number
     int num2 = 3; // second number
 
+    // Testing the printf function(s)
     printf(num1);
     printf("joiytg");
     printf(num2);
     printf("Snhied2iiggiuge2i");
-
 
     // return 0 to end the program
     return 0;

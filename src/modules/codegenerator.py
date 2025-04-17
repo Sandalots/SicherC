@@ -14,12 +14,12 @@ from submodules.remove_special_chars import remove_special_chars_from_printf  # 
 # Class to model the Sicher Code Generator (takes the AST and generates assembly code from it)
 class CodeGenerator:
     def __init__(self, ast):
-        self.ast = ast
-        self.module = ir.Module(name="module")
+        self.ast = ast # getting the ast of the source code created by sicher
+        self.module = ir.Module(name="module") 
         self.builder = None
         self.printf = None
         self.str_counter = 0 # for iterating unique string names
-        self.variables = {}  
+        self.variables = {} # for storing variables
 
     def generate_code(self):
         if self.ast is None or self.ast.root is None:
@@ -229,6 +229,7 @@ class CodeGenerator:
                 check=True,
             )
 
+            # tell the end user of what outbut binary file sicher has been code generated to
             print(f"Successfully compiled to {output_filename}")
 
         # Error handling any subprocess errors
