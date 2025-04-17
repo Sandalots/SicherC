@@ -20,4 +20,6 @@ python3 src/sicher.py examples/double_free.c --debug > debug/double_free_log.txt
 python3 src/sicher.py examples/tale.c --debug > debug/tale_log.txt # for the tale.c file
 python3 src/sicher.py examples/uninitialised_variable.c --debug > debug/uninitialized_variable_log.txt # for the uninitialised_variable.c file
 python3 src/sicher.py examples/use_after_free.c --debug > debug/use_after_free_log.txt # for the use_after_free.c file
-
+python3 src/sicher.py examples/test.c --debug > debug/test_log.txt # for the test.c file
+# python3 src/sicher.py examples/empty.c --debug > debug/empty_log.txt # for the empty.c file
+# python3 src/sicher.py examples/shouldnt_be_able_to_compile-test.rb --debug > debug/shouldnt_be_able_to_compile_log.txt # for the shouldnt_be_able_to_compile-test.rb file

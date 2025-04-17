@@ -4,11 +4,7 @@
 # 2025
 
 # Analyser Module Dependencies
-import sys  # for setting the path
-import os  # for getting the parent src dir to the below appending to the path
 
-# set the path to include the src path to access and import the submodules
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # import the submodules
 from submodules.buffer_sizer import resize_array  # buffer sizer submodule

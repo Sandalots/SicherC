@@ -20,10 +20,10 @@ from modules.visualiser import main as visualiser # for visualising the AST thro
 # Sicher Main Function (Entry Point)
 def main():
     """
-    Entry point for my Sicher C Compiler.
+    Entry Point for my Sicher C Compiler.
     """
     
-    # Command Line Arguments
+    # Command Line Arguments for Sicher
     parser = argparse.ArgumentParser(description='Parse a C source file.') # give the parser a description
     parser.add_argument('filename', type=str, help='The C source file to parse') # get the input c source code file
     parser.add_argument('--debug', action='store_true', help='Enable debug output') # get the optional debug flag
@@ -31,7 +31,6 @@ def main():
     parser.add_argument('--output', type=str, help='Output binary filename', default='output_binary') # get the oprional output filename
     parser.add_argument('--nocompile', action='store_true', help="Skip the code generation step") # add the --nocompile flag
 
-    
     # Parse the command-line arguments
     args = parser.parse_args()
 
@@ -163,7 +162,9 @@ def main():
             
             # exit the program to avoid further errors
             sys.exit(1)
+            
     else:
+        # Tell the user the code generation was skipped due to the nocompile flag
         print("\nSkipping code generation as --nocompile flag is set.\n")
     
     # Visualiser Module
