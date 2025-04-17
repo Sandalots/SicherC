@@ -5,8 +5,7 @@
 
 # Analyser Module Dependencies
 
-
-# import the submodules
+# import the compile-time submodules
 from submodules.buffer_sizer import resize_array  # buffer sizer submodule
 from submodules.unused_remover import remove_unused  # remove unused objects submodule
 from submodules.prevent_use_after_free import prevent_use_after_free  # prevent use after free submodule
@@ -185,6 +184,7 @@ def create_ast_from_tokens(tokens, debug=False):
                 number_node = ASTNode("Number", token_value)
                 current_node.add_child(number_node)
 
+    # Handle AST errors
     except Exception as e:
         error_message = f"Error creating AST: {str(e)}\n"
         error_message += f"Current token: {current_token}\n"
@@ -192,6 +192,8 @@ def create_ast_from_tokens(tokens, debug=False):
         error_message += f"Stack: {stack}\n"
         raise RuntimeError(error_message)
 
+    # applying the removed unused submodule countermeasure
     remove_unused(ast)
     
+    # return the final ast to the sicher compiler
     return ast
