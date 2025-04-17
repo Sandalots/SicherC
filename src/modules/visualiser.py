@@ -10,7 +10,7 @@ import time  # for measuring the time to compile
 import psutil  # for measuring memory and CPU usage of Sicher
 import sys  # for getting the Python version
 import matplotlib.pyplot as plt  # For sicher visualisations
-from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
+from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas  # for embedding the plots in the gui
 
 # Sicher Module Dependencies
 from modules.tokeniser import tokenise  # for tokenising the given C source code
@@ -258,8 +258,6 @@ class CompilerFrame(wx.Frame):
         # Buttons (Compile, Generate Visualisations, Show Diagnostics)
         hbox_buttons = wx.BoxSizer(wx.HORIZONTAL)
 
-        hbox_buttons.AddStretchSpacer(1)  # Add a stretchable space before the buttons
-
         # Compile button
         self.compile_button = wx.Button(panel, label='Compile')
         self.compile_button.SetBackgroundColour("#FAD000")
@@ -271,7 +269,7 @@ class CompilerFrame(wx.Frame):
         hbox_buttons.Add(self.compile_button, flag=wx.RIGHT, border=10)
 
         # Add a spacer between Compile and Generate Visualisations buttons
-        hbox_buttons.AddSpacer(20)  # Add 20 pixels of horizontal space
+        hbox_buttons.AddSpacer(10)
 
         # Generate Visualisations button
         self.visualise_button = wx.Button(panel, label='Generate Visualisations')
@@ -282,9 +280,6 @@ class CompilerFrame(wx.Frame):
         self.visualise_button.SetFont(font)
         self.visualise_button.Bind(wx.EVT_BUTTON, self.OnGenerateVisualisations)
         hbox_buttons.Add(self.visualise_button, flag=wx.RIGHT, border=10)
-
-        # Add a spacer between Generate Visualisations and Show Diagnostics buttons
-        hbox_buttons.AddSpacer(10)  # Add 10 pixels of horizontal space
 
         # Show Diagnostics button
         self.diagnostics_button = wx.Button(panel, label='Show Diagnostics')
@@ -323,6 +318,19 @@ class CompilerFrame(wx.Frame):
         self.run_button.SetFont(font)
         self.run_button.Bind(wx.EVT_BUTTON, self.OnRunButtonClick)
         hbox_buttons.Add(self.run_button, flag=wx.LEFT, border=10)
+        
+        # Add a spacer between Run and Show Source buttons
+        hbox_buttons.AddSpacer(10)  # Add 10 pixels of horizontal space
+
+        # Show Source button
+        self.show_source_button = wx.Button(panel, label='Show Source')
+        self.show_source_button.SetBackgroundColour("#FAD000")
+        self.show_source_button.SetForegroundColour("#2D2B55")
+        font = self.show_source_button.GetFont()
+        font = font.Bold()
+        self.show_source_button.SetFont(font)
+        self.show_source_button.Bind(wx.EVT_BUTTON, self.OnShowSourceButtonClick)
+        hbox_buttons.Add(self.show_source_button, flag=wx.LEFT, border=10)
 
         # Time/Space Complexity Labels
         hbox_complexity = wx.BoxSizer(wx.HORIZONTAL)  # Horizontal box sizer for centering
@@ -334,9 +342,10 @@ class CompilerFrame(wx.Frame):
 
         # Add the label to the horizontal sizer and center it
         hbox_complexity.Add(self.complexity_label, flag=wx.ALIGN_CENTER)
-
-        # Add the horizontal sizer to the main vertical sizer
         vbox.Add(hbox_complexity, flag=wx.ALIGN_CENTER | wx.TOP, border=5)
+        
+        # Add a spacer between the buttons and the output panel
+        vbox.AddSpacer(10)
 
         # Output Header
         output_label = wx.StaticText(panel, label='Sicher Output:')
@@ -347,7 +356,7 @@ class CompilerFrame(wx.Frame):
         output_label.SetFont(font)
         vbox.Add(output_label, flag=wx.ALIGN_LEFT | wx.TOP | wx.LEFT, border=10)
         output_label.SetBackgroundColour("#2D2B55")
-        vbox.AddSpacer(10)  # Add some space between the label and the output panel
+        vbox.AddSpacer(10)
 
         # Output panel for collapsible sections
         self.output_panel = wx.Panel(panel)
@@ -558,6 +567,32 @@ class CompilerFrame(wx.Frame):
         except FileNotFoundError:
             # Handle the case where the binary does not exist
             self.add_collapsible_section("Run Output (Error)", "Error: ./output_binary not found.")
+            
+    def OnShowSourceButtonClick(self, event):
+        """
+        Handles the "Show Source" button click.
+        Displays the content of the input C source file in a collapsible section.
+        """
+        filepath = self.file_picker.GetPath()
+
+        if not filepath:
+            wx.MessageBox('Please select a file to display', 'Error', wx.OK | wx.ICON_ERROR)
+            return
+
+        # Check if the file exists
+        if not os.path.isfile(filepath):
+            wx.MessageBox('File does not exist', 'Error', wx.OK | wx.ICON_ERROR)
+            return
+
+        try:
+            with open(filepath, 'r') as file:
+                source_code = file.read()
+
+            # Display the source code in a collapsible section
+            self.add_collapsible_section("Source Code", source_code)
+
+        except IOError:
+            wx.MessageBox('Error reading file', 'Error', wx.OK | wx.ICON_ERROR)
 
 
 class ASTVisualizerPanel(wx.ScrolledWindow):
