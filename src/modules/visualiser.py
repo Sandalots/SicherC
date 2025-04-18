@@ -331,6 +331,19 @@ class CompilerFrame(wx.Frame):
         self.show_source_button.SetFont(font)
         self.show_source_button.Bind(wx.EVT_BUTTON, self.OnShowSourceButtonClick)
         hbox_buttons.Add(self.show_source_button, flag=wx.LEFT, border=10)
+        
+        # Add a spacer between Show Source and Show Full Log buttons
+        hbox_buttons.AddSpacer(10)  # Add 10 pixels of horizontal space
+
+        # Show Full Log button
+        self.show_full_log_button = wx.Button(panel, label='Show Full Log')
+        self.show_full_log_button.SetBackgroundColour("#FAD000")
+        self.show_full_log_button.SetForegroundColour("#2D2B55")
+        font = self.show_full_log_button.GetFont()
+        font = font.Bold()
+        self.show_full_log_button.SetFont(font)
+        self.show_full_log_button.Bind(wx.EVT_BUTTON, self.OnShowFullLogButtonClick)
+        hbox_buttons.Add(self.show_full_log_button, flag=wx.LEFT, border=10)
 
         # Time/Space Complexity Labels
         hbox_complexity = wx.BoxSizer(wx.HORIZONTAL)  # Horizontal box sizer for centering
@@ -545,7 +558,6 @@ class CompilerFrame(wx.Frame):
         self.output_sizer.Add(collapsible_pane, flag=wx.EXPAND | wx.ALL, border=5)
         self.output_panel.Layout()
         
-        
     def OnRunButtonClick(self, event):
         """
         Handles the "Run" button click.
@@ -593,7 +605,46 @@ class CompilerFrame(wx.Frame):
 
         except IOError:
             wx.MessageBox('Error reading file', 'Error', wx.OK | wx.ICON_ERROR)
+            
+    def OnShowFullLogButtonClick(self, event):
+        """
+        Handles the "Show Full Log" button click.
+        Runs sicher.py with the --debug flag and displays the full log in a collapsible section.
+        """
+        filepath = self.file_picker.GetPath()
 
+        if not filepath:
+            wx.MessageBox('Please select a file to compile', 'Error', wx.OK | wx.ICON_ERROR)
+            return
+
+        # Check if the file exists
+        if not os.path.isfile(filepath):
+            wx.MessageBox('File does not exist', 'Error', wx.OK | wx.ICON_ERROR)
+            return
+
+        try:
+            # Run sicher.py as a subprocess with the --debug flag
+            import subprocess
+            result = subprocess.run(
+                ["python3", "src/sicher.py", filepath, "--debug"],
+                capture_output=True,
+                text=True,
+                check=True
+            )
+
+            # Capture the debug output
+            debug_log = result.stdout.strip()
+
+            # Display the debug log in a collapsible section
+            self.add_collapsible_section("Full Debug Log", debug_log)
+
+        except subprocess.CalledProcessError as e:
+            # Handle errors during execution
+            error_message = f"Error running sicher.py:\n{e.stderr.strip() if e.stderr else str(e)}"
+            self.add_collapsible_section("Full Debug Log (Error)", error_message)
+        except FileNotFoundError:
+            # Handle the case where sicher.py is not found
+            self.add_collapsible_section("Full Debug Log (Error)", "Error: sicher.py not found.")
 
 class ASTVisualizerPanel(wx.ScrolledWindow):
     def __init__(self, parent, ast):

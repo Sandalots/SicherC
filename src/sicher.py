@@ -86,6 +86,12 @@ def main():
             # tokenise the source code
             tokens, _ = tokenise(code, debug=args.debug)
             
+            if args.debug:
+                # output the tokens if the debug flag is set
+                print("Tokens:")
+                for token in tokens:
+                    print(token)
+            
             # tell the user the tokenisation was successful
             print("\nSource code is lexically correct\n")
             
@@ -102,8 +108,12 @@ def main():
         # parse the source code
         parse_tokens(tokens, debug=args.debug)
         
+        if args.debug:
+            print("Parsed Tokens:")
+            print(parse_tokens(tokens, debug=args.debug))
+        
         # tell the user the parsing was successful
-        print("\nSource code is syntactically correct\n")
+        print("Source code is syntactically correct\n")
         
     # raise a syntax error if there is a problem with the parsing
     except SyntaxError as e:
