@@ -11,6 +11,7 @@ import psutil  # for measuring memory and CPU usage of Sicher
 import sys  # for getting the Python version
 import matplotlib.pyplot as plt  # For sicher visualisations
 from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas  # for embedding the plots in the gui
+import subprocess  # for running the compiled binary
 
 # Sicher Module Dependencies
 from modules.tokeniser import tokenise  # for tokenising the given C source code
@@ -258,7 +259,7 @@ class CompilerFrame(wx.Frame):
         vbox.Add(hbox1, flag=wx.EXPAND | wx.ALL, border=10)
         
         # Add a smaller header above the buttons
-        magic_buttons_label = wx.StaticText(panel, label='Sicher Magic Buttons')
+        magic_buttons_label = wx.StaticText(panel, label='Sicher Controls:')
         magic_buttons_label.SetForegroundColour("#FAD000")
         font = magic_buttons_label.GetFont()
         font.PointSize += 3  # Slightly smaller than the title
@@ -611,12 +612,14 @@ class CompilerFrame(wx.Frame):
     def OnRunButtonClick(self, event):
         """
         Handles the "Run" button click.
-        Executes the ./output_binary file and displays the output.
+        Executes the custom binary if set, otherwise executes the default binary.
         """
+        # Use the custom binary name if set, otherwise default to "output_binary"
+        binary_name = getattr(self, "custom_binary_name", "output_binary")
+
         try:
             # Run the binary and capture the output
-            import subprocess
-            result = subprocess.run(["./output_binary"], capture_output=True, text=True, check=True)
+            result = subprocess.run([f"./{binary_name}"], capture_output=True, text=True, check=True)
 
             # Display the output in a collapsible section
             output = result.stdout.strip() if result.stdout else "No output."
@@ -624,11 +627,11 @@ class CompilerFrame(wx.Frame):
 
         except subprocess.CalledProcessError as e:
             # Handle errors during execution
-            error_message = f"Error running ./output_binary:\n{e.stderr.strip() if e.stderr else str(e)}"
+            error_message = f"Error running ./{binary_name}:\n{e.stderr.strip() if e.stderr else str(e)}"
             self.add_collapsible_section("Run Output (Error)", error_message)
         except FileNotFoundError:
             # Handle the case where the binary does not exist
-            self.add_collapsible_section("Run Output (Error)", "Error: ./output_binary not found.")
+            self.add_collapsible_section("Run Output (Error)", f"Error: ./{binary_name} not found.")
             
     def OnShowSourceButtonClick(self, event):
         """
