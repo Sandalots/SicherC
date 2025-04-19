@@ -6,7 +6,7 @@ The Sicher C Compiler is an attempt to rectify many of the common-place Memory-s
 Through a modular approach, forming from the lexical analysis to the code-generation, modules are therein easily extendable to provide additional features to the Sicher C Compiler.
 
 ### State
-Sicher C State as of 13/04/2025.
+Sicher C State as of 19/04/2025.
 
 <br><br>
 
@@ -64,3 +64,7 @@ A shell script is also given to both allow for installing dependencies and runni
 ### Requirements
 * Python3
 * Unix environment 
+
+### Targets 
+* macOS 15.4
+* AArch64 aka ARM64

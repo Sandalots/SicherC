@@ -22,7 +22,7 @@ COMMENT = 'COMMENT'
 PREPROCESSOR = 'PREPROCESSOR'
 UNKNOWN = 'UNKNOWN'
 
-# Method to tokenise a given C source file
+# Turns an input c source file into a collectino of sicher created tokens
 def tokenise(code, debug=False):
     """
     Tokenises the given C code.
@@ -35,77 +35,122 @@ def tokenise(code, debug=False):
         tuple: A tuple containing the list of tokens and the debug output as a string.
     """
     
-    # Create an empty list to store the eventual tokens
+    # Collects any tokens from the input c source file
     tokens = []
 
-    # Redirect stdout to capture debug output
+    # if user requires debug flag in the entry point, collect all logging and printing from the tokeniser
     if debug:
-        old_stdout = sys.stdout
-        sys.stdout = io.StringIO()
+        old_stdout = sys.stdout # defines the old standard output
+        sys.stdout = io.StringIO() # redirect stdout to a string version
 
     try:
         # Remove any comments from source code
         code = re.sub(r'/\*.*?\*/', '', code, flags=re.DOTALL)
         
+        # tell the user comments have been removed
         if debug:
             print("Removed comments from the source code.")
 
-        # Handle string literals
+        # find any string leterals
         string_literals = re.findall(r'"(.*?)"', code)
         
+        # handle the string literals
         for string_literal in string_literals:
+            # give any string literal a placeholder string literal token, to be replaced later
             code = code.replace(f'"{string_literal}"', 'STRING_LITERAL_PLACEHOLDER', 1)
             
+        # tell the user string literals have been handled
         if debug:
             print("Handled string literals:", string_literals)
 
         # Split the code into lines
         lines = code.split('\n')
-        for line_number, line in enumerate(lines, start=1):
-            # Handle preprocessor directives
+        
+        # process each line in the source code
+        for line_number, line in enumerate(lines, start=1): # starts at line 1
+            
+            # Handle preprocessors
             if line.startswith('#'):
+                # tokenise any preprocessor directives
                 tokens.append((PREPROCESSOR, line.strip()))
                 
+                # if the debug flag is set, print the line of where sicher tokensied the pre-procesor token
                 if debug:
                     print(f"Line {line_number}: Found preprocessor directive: {line.strip()}")
                     
+                # contine to the next line
                 continue
 
             # Remove single-line comments
             line = re.sub(r'//.*', '', line)
 
-            # Tokenize the line
+            # get the words from the line
             words = re.findall(r'\w+|[^\s\w]', line)
+            
+            # for all the words on the current line
             for word in words:
+                # if the current word is the above created string literal placeholder
                 if word == 'STRING_LITERAL_PLACEHOLDER':
+                    # tokenise as a string and remove from the string literals collection
                     tokens.append((STRING, string_literals.pop(0)))
+                    
+                    # if the debug flag is set, print the line of where sicher tokensied the string literal
                     if debug:
                         print(f"Line {line_number}: Found string literal.")
+                        
+                # check if a keyword
                 elif word in keywords:
+                    # tokenise as a keyword
                     tokens.append((KEYWORD, word))
+                    
+                    # if the debug flag is set, print the line of where sicher tokensied the keyword
                     if debug:
                         print(f"Line {line_number}: Found keyword: {word}")
+                        
+                # check if a symbol
                 elif word in symbols:
+                    # tokenise as a symbol
                     tokens.append((SYMBOL, word))
+                    
+                    # if the debug flag is set, print the line of where sicher tokensied the symbol
                     if debug:
                         print(f"Line {line_number}: Found symbol: {word}")
+                        
+                # check if a number
                 elif re.match(r'^[0-9]+$', word):
+                    # tokenise as a number
                     tokens.append((NUMBER, word))
+                    
+                    # if the debug flag is set, print the line of where sicher tokensied the number
                     if debug:
                         print(f"Line {line_number}: Found number: {word}")
+                        
+                # check if an identifier, i.e. a variable name
                 elif re.match(r'^[a-zA-Z_]\w*$', word):
+                    # tokenise as an identifier
                     tokens.append((IDENTIFIER, word))
+                    
+                    # if the debug flag is set, print the line of where sicher tokensied the identifier
                     if debug:
                         print(f"Line {line_number}: Found identifier: {word}")
+                     
+                # handle unknown tokens   
                 else:
+                    # tokenise as an unknown token
                     tokens.append((UNKNOWN, word))
+                    
+                    # if the debug flag is set, print the line of where sicher tokensied the unknown token
                     if debug:
                         print(f"Line {line_number}: Found unknown token: {word}")
 
-            # Check if the line ends with a valid token
+            # Check if the line ends with a valid token, i.e end of line validation
             if words:
-                last_token = words[-1]
+                last_token = words[-1] # get the last token in the line
+                
+                # check if the last token is properly terminated with either (';', '{', '}' or '>')
                 if last_token not in {';', '{', '}', '>'}:
+                    
+                    # raise a syntax error along with the line, and where the expected terminating symbol should be on the what token
                     raise SyntaxError(
                         f"Line {line_number}: Invalid line ending. Expected one of ';', '{{', '}}', or '>', "
                         f"but got '{last_token}'."
@@ -121,8 +166,9 @@ def tokenise(code, debug=False):
             debug_output = sys.stdout.getvalue()
 
     finally:
-        # Restore original stdout
+        # Restore original stdout if debug flag is set
         if debug:
+            # set the standard output back to the original standard output
             sys.stdout = old_stdout
 
     # Returns the list of tokens the tokeniser has generated, and the debug workings if we are in debug mode either just set an empty debug output

@@ -2,6 +2,7 @@
 *  Author: Sandalots
 *  Date: 12/03/2025 */
 
+// use the standard io library
 #include <stdio.h>
 
 // main method to create a dangling pointer
