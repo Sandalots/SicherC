@@ -359,6 +359,19 @@ class CompilerFrame(wx.Frame):
         self.help_button.SetFont(font)
         self.help_button.Bind(wx.EVT_BUTTON, self.OnHelpButtonClick)
         hbox_buttons.Add(self.help_button, flag=wx.LEFT, border=10)
+        
+        # Add a spacer between Show Full Log and Customise buttons
+        hbox_buttons.AddSpacer(10)  # Add 10 pixels of horizontal space
+
+        # Customise button
+        self.customise_button = wx.Button(panel, label='Customise')
+        self.customise_button.SetBackgroundColour("#FAD000")
+        self.customise_button.SetForegroundColour("#2D2B55")
+        font = self.customise_button.GetFont()
+        font = font.Bold()
+        self.customise_button.SetFont(font)
+        self.customise_button.Bind(wx.EVT_BUTTON, self.OnCustomiseButtonClick)
+        hbox_buttons.Add(self.customise_button, flag=wx.LEFT, border=10)
 
         # Time/Space Complexity Labels
         hbox_complexity = wx.BoxSizer(wx.HORIZONTAL)  # Horizontal box sizer for centering
@@ -413,14 +426,17 @@ class CompilerFrame(wx.Frame):
         if not os.path.isfile(filepath):
             wx.MessageBox('File does not exist', 'Error', wx.OK | wx.ICON_ERROR)
             return
+
         # Check if the file is a C source file
         if not filepath.endswith('.c'):
             wx.MessageBox('File is not a C source file', 'Error', wx.OK | wx.ICON_ERROR)
             return
+
         # Check if the file is empty
         if os.path.getsize(filepath) == 0:
             wx.MessageBox('File is empty', 'Error', wx.OK | wx.ICON_ERROR)
             return
+
         # Check if the file is readable
         try:
             with open(filepath, 'r') as file:
@@ -458,6 +474,16 @@ class CompilerFrame(wx.Frame):
             codegen = CodeGenerator(ast)
             generated_code = codegen.generate_code()
             self.add_collapsible_section("Code Generator Module", generated_code)
+
+            # Save the generated code to a file
+            codegen.save_code_to_file('output.ll')
+
+            # Compile the generated code to an ARM64 binary
+            output_binary_name = getattr(self, "custom_binary_name", "output_binary")  # Use custom name if set
+            codegen.compile_to_arm64('output.ll', output_binary_name)
+
+            # Display success message
+            wx.MessageBox(f"Compilation successful! Binary saved as: {output_binary_name}", "Success", wx.OK | wx.ICON_INFORMATION)
 
             # End time and CPU usage
             end_time = time.time()
@@ -690,6 +716,30 @@ class CompilerFrame(wx.Frame):
         )
 
         wx.MessageBox(help_text, "Help - Sicher C Compiler", wx.OK | wx.ICON_INFORMATION)
+        
+    def OnCustomiseButtonClick(self, event):
+        """
+        Handles the "Customise" button click.
+        Opens a popup dialog for the user to specify a custom output binary name.
+        """
+        dialog = wx.TextEntryDialog(
+            self,
+            "Enter a custom output binary name:",
+            "Customise Output Binary",
+            value="output_binary"
+        )
+
+        if dialog.ShowModal() == wx.ID_OK:
+            # Get the custom binary name from the dialog
+            self.custom_binary_name = dialog.GetValue().strip()
+
+            # Validate the input
+            if not self.custom_binary_name:
+                wx.MessageBox("Binary name cannot be empty.", "Error", wx.OK | wx.ICON_ERROR)
+            else:
+                wx.MessageBox(f"Custom binary name set to: {self.custom_binary_name}", "Success", wx.OK | wx.ICON_INFORMATION)
+
+        dialog.Destroy()
 
 class ASTVisualizerPanel(wx.ScrolledWindow):
     def __init__(self, parent, ast):
