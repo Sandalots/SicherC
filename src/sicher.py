@@ -114,8 +114,8 @@ def main():
         # check if the debug flag is set
         if args.debug:
             # output the parsed tokens if the debug flag is set
-            print("Parsed Tokens:")
-            print(parse_tokens(tokens, debug=args.debug))
+            print("Parsed Tokens:") # header for the parsed tokens
+            print(parse_tokens(tokens, debug=args.debug)) # the actual parsed tokens output
         
         # tell the user the parsing was successful
         print("Source code is syntactically correct\n")
@@ -149,7 +149,7 @@ def main():
         # exit the program to avoid further errors
         sys.exit(1)
     
-    # Code Generator Module (Skip if --nocompile is set)
+    # Code Generator Module (Skips if optional flag --nocompile is set)
     if not args.nocompile:
         try:
             # Run the code generator on the AST

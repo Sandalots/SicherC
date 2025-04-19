@@ -37,16 +37,25 @@ class CompilerFrame(wx.Frame):
         # gets the filepath from the file picker
         filepath = self.file_picker.GetPath()
 
+        # check if no file was selected
         if not filepath:
+            # tell the user the to select a file as the filepicker is empty
             wx.MessageBox('Please select a file to compile', 'Error', wx.OK | wx.ICON_ERROR)
+            
             return
 
+        # check if the file exists
         if not os.path.isfile(filepath):
+            # tell the user the file does not exist
             wx.MessageBox('File does not exist', 'Error', wx.OK | wx.ICON_ERROR)
+            
             return
 
+        # try and copmile the user given file
         try:
+            # read the filepath
             with open(filepath, 'r') as file:
+                # set the code as the file contents
                 code = file.read()
 
             # Initialize lists to store metrics
