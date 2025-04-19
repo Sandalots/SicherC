@@ -47,6 +47,9 @@ class CompilerFrame(wx.Frame):
             # tell the user the file does not exist
             wx.MessageBox('File does not exist', 'Error', wx.OK | wx.ICON_ERROR)
             return
+        
+        self.output_panel.DestroyChildren()  # Clear the output panel
+        self.output_panel.Layout()  # Layout the output panel
 
         # try and compile the user given file
         try:
