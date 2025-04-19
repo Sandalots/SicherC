@@ -740,7 +740,7 @@ class CompilerFrame(wx.Frame):
             "- Run: Executes the compiled binary and displays its output.\n"
             "- Show Source: Displays the content of the selected C source file.\n"
             "- Show Full Log: Runs Sicher with the --debug flag and displays the full debug log.\n"
-            "- Help: Displays this help dialog.\n\n"
+            "- Help: Displays this help dialog.\n"
             "- Customise: Allows you to specify a custom output binary name.\n\n"
             
             "How to Use:\n"
