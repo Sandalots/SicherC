@@ -272,7 +272,7 @@ class CompilerFrame(wx.Frame):
         # Set default path for the file picker using a relative path
         base_dir = os.path.dirname(os.path.abspath(__file__))  # Get the directory of the current file
         default_path = os.path.join(base_dir, "../../examples/hello_world.c")  # Construct the relative path to the hello world.c file
-        self.file_picker = wx.FilePickerCtrl(panel, path=default_path)
+        self.file_picker = wx.FilePickerCtrl(panel, path=default_path) # start the file picker with the default path, in the examples directory
         hbox1.Add(self.file_picker, proportion=1, flag=wx.EXPAND)
         vbox.Add(hbox1, flag=wx.EXPAND | wx.ALL, border=10)
         
@@ -726,6 +726,8 @@ class CompilerFrame(wx.Frame):
         Handles the "Help" button click.
         Displays an alert box explaining the Visualiser features and Sicher functionality.
         """
+        
+        # create the help text of which an alert will be shown if the on help button is clicked
         help_text = (
             "Welcome to the Sicher C Compiler Visualiser!\n\n"
             "Features:\n"
@@ -753,6 +755,7 @@ class CompilerFrame(wx.Frame):
             "It also provides performance metrics and visualizations for educational purposes."
         )
 
+        # add the help text to a message box using wx
         wx.MessageBox(help_text, "Help - Sicher C Compiler", wx.OK | wx.ICON_INFORMATION)
         
     def OnCustomiseButtonClick(self, event):

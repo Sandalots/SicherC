@@ -49,9 +49,10 @@ class Parser:
         
         # parse rule for statements in the function
         while self.tokens[self.current_token][1] != '}':
+            # for every statement in the function, parse
             self.parse_statement()
             
-        # expect a ending brace/parenthesis
+        # expect a ending brace
         self.expect('SYMBOL', '}')
 
     # parse rule for statements
@@ -61,24 +62,36 @@ class Parser:
         
         # if debug flag is set output the current line number, token type and value
         if self.debug:
-            print(f"Line {self.current_token + 1}: Parsing statement: {token_type}, {token_value}")
+            print(f"Line {self.current_token + 1}: Parsing statement: {token_type}, {token_value}") # debug output
             
+        # check if the current token is a keyword and if it is a return statement
         if token_type == 'KEYWORD' and token_value == 'return':
+            # parse as a return statement
             self.parse_return()
             
+        # check if the current token is a keyword and if it is a a char or int declaration
         elif token_type == 'KEYWORD' and token_value in {'char', 'int'}:
+            # parse as a declaration
             self.parse_declaration()
             
+        # check if the current token is a keyword and if it is an if statement
         elif token_type == 'KEYWORD' and token_value == 'if':
+            # parse as an if statement
             self.parse_if()
             
+        # check if the current token is a identifier  and if it is a for statement
         elif token_type == 'IDENTIFIER' and token_value == 'for':
+            # parse as a for statement
             self.parse_for()
             
+        # check if the current token is a identifier or a symbol and a pointer symbol
         elif token_type == 'IDENTIFIER' or (token_type == 'SYMBOL' and token_value == '*'):
+            # parse as an expression
             self.parse_expression()
             
+        # if the token doesnt fit any of the above rules increment the current token index
         else:
+            # increments the current token index
             self.current_token += 1
 
     # parse rule for returns
@@ -158,18 +171,18 @@ class Parser:
         if token_type == 'IDENTIFIER':
             self.expect('IDENTIFIER')  # Handle variables
             
-            if self.tokens[self.current_token][1] == '[':
+            if self.tokens[self.current_token][1] == '[': # check for array indexing
                 self.expect('SYMBOL', '[')  # Handle array indexing
                 self.parse_expression()  # Parse the index expression
-                self.expect('SYMBOL', ']')
+                self.expect('SYMBOL', ']') # expect a closing array indexing
                 
         elif token_type == 'NUMBER':
             self.expect('NUMBER')  # Handle numbers
             
         elif token_type == 'SYMBOL' and token_value == '(':
-            self.expect('SYMBOL', '(')  # Handle parentheses
+            self.expect('SYMBOL', '(')  # expect a opening parenthesis
             self.parse_expression()  # Parse the expression inside parentheses
-            self.expect('SYMBOL', ')')
+            self.expect('SYMBOL', ')') # expect a closing parenthesis
             
         else:
             raise SyntaxError(f"Line {self.current_token + 1}: Unexpected token: {token_type} {token_value}")
@@ -179,6 +192,7 @@ class Parser:
         if self.current_token >= len(self.tokens):
             raise SyntaxError("Unexpected end of input")
         
+        # get the current token
         token = self.tokens[self.current_token]
         
         if token[0] != token_type or (token_value is not None and token[1] != token_value):

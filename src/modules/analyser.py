@@ -224,7 +224,7 @@ def create_ast_from_tokens(tokens, debug=False):
                 
             # parse rules for symbols            
             elif token_type == 'SYMBOL':
-                # check if the current node is opening parenthesis
+                # check if the current node is opening bracket
                 if token_value == '{':
                     # create a new block node
                     block_node = ASTNode("Block")
@@ -236,7 +236,7 @@ def create_ast_from_tokens(tokens, debug=False):
                     # update the current node to be the block node
                     current_node = block_node
 
-                # check if the current node is closing parenthesis
+                # check if the current node is closing brakcet
                 elif token_value == '}':
                     # pop the current node from the stack
                     current_node = stack.pop()

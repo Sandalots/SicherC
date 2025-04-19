@@ -43,6 +43,7 @@ class CodeGenerator:
     def _create_printf_function(self):
         # create a void pointer for the printf
         voidptr_ty = ir.IntType(8).as_pointer()
+        
         # handler for a prinf function type
         printf_ty = ir.FunctionType(ir.IntType(32), [voidptr_ty], var_arg=True)
         
@@ -51,8 +52,8 @@ class CodeGenerator:
         
     # creating unique assembly names for the strings so we can have multiple strings
     def _generate_unique_str_name(self):
-        self.str_counter += 1
-        return f".str.{self.str_counter}"
+        self.str_counter += 1 # increment the string counter
+        return f".str.{self.str_counter}" # return the new incremented string name
 
     # function to traverse the ast and generate the code
     def _traverse(self, node):
