@@ -270,8 +270,8 @@ class CompilerFrame(wx.Frame):
         hbox1 = wx.BoxSizer(wx.HORIZONTAL)
 
         # Set default path for the file picker using a relative path
-        base_dir = os.path.dirname(os.path.abspath(__file__))  # Get the directory of the current script
-        default_path = os.path.join(base_dir, "../../examples/hello_world.c")  # Construct the relative path
+        base_dir = os.path.dirname(os.path.abspath(__file__))  # Get the directory of the current file
+        default_path = os.path.join(base_dir, "../../examples/hello_world.c")  # Construct the relative path to the hello world.c file
         self.file_picker = wx.FilePickerCtrl(panel, path=default_path)
         hbox1.Add(self.file_picker, proportion=1, flag=wx.EXPAND)
         vbox.Add(hbox1, flag=wx.EXPAND | wx.ALL, border=10)
@@ -470,7 +470,10 @@ class CompilerFrame(wx.Frame):
         try:
             with open(filepath, 'r') as file:
                 pass
+            
+        # handle any IO errors
         except IOError:
+            # tell the user there was an error reading the file
             wx.MessageBox('Error reading file', 'Error', wx.OK | wx.ICON_ERROR)
             return
 
@@ -875,7 +878,6 @@ class ASTVisualizerPanel(wx.ScrolledWindow):
                         self.GetScrollPos(wx.VERTICAL) + dy // 20)
 
             self.last_mouse_position = current_position
-
 
 # Main loop to run the GUI
 def main():

@@ -119,12 +119,19 @@ def create_ast_from_tokens(tokens, debug=False):
             if token_type == 'KEYWORD':
                 # if next token is a int
                 if token_value == 'int':
+                    # check if the current node is none
                     if current_node is None:
+                        # create a new ASTNode for the main function
                         current_node = ASTNode("Function", "main")
+                        # update the root to be the current main function one
                         ast.set_root(current_node)
+                        # create a block node for the nested function contents
                         block_node = ASTNode("Block")
+                        # add the block node to the current node
                         current_node.add_child(block_node)
+                        # append the current node to the stack along with its chikd block node
                         stack.append(current_node)
+                        # set the current node to be the block node
                         current_node = block_node
                         
                     else:
