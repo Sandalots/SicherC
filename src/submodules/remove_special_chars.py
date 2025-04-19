@@ -34,6 +34,7 @@ def remove_special_chars_from_printf(ast):
                 
         # for any child nodes apply the cleanup method
         for child in node.children:
+            # apply the remove special characters method to the child node
             traverse_and_clean(child)
 
     # traverse the ast and clean any new lines/special characters if they exist

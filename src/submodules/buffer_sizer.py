@@ -3,7 +3,6 @@
 # 2003619
 # 2025
 
-
 # function to resize a buffer mismatched array
 def resize_array(array, target_size, default_value=0):
     """

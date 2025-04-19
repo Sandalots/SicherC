@@ -68,17 +68,17 @@ class CompilerFrame(wx.Frame):
                 initial_cpu_times = process.cpu_times()  # Start measuring CPU times
 
                 # Tokenisation Module
-                tokens, _ = tokenise(code, debug=False)
+                tokens, _ = tokenise(code, debug=False) # creates the tokens
 
                 # Parser Module
-                parse_tokens(tokens, debug=False)
+                parse_tokens(tokens, debug=False) # parses the tokens
 
                 # Analyser Module
-                ast = create_ast_from_tokens(tokens, debug=False)
+                ast = create_ast_from_tokens(tokens, debug=False) # creates an AST from the syntax correct tokens
 
                 # Code Generator Module
-                codegen = CodeGenerator(ast)
-                codegen.generate_code()
+                codegen = CodeGenerator(ast) # generates assembly and creates a binary from the AST, creates the codegenerator object
+                codegen.generate_code() # generate the code from the avove object
 
                 # end the compile timer and record the memory and cpu usage
                 end_time = time.time() # stop the compile timer
@@ -116,29 +116,29 @@ class CompilerFrame(wx.Frame):
         fig, axs = plt.subplots(3, 1, figsize=(6, 8)) 
 
         # Plot time to compile for sicher
-        axs[0].plot(range(1, 11), compile_times, marker='o', color='blue')
-        axs[0].set_title('Time to Compile (seconds)', fontsize=10)
-        axs[0].set_xlabel('Iteration', fontsize=8)
-        axs[0].set_ylabel('Time (s)', fontsize=8)
-        axs[0].tick_params(axis='both', labelsize=8)
+        axs[0].plot(range(1, 11), compile_times, marker='o', color='blue') # plot the compile times
+        axs[0].set_title('Time to Compile (seconds)', fontsize=10) # title
+        axs[0].set_xlabel('Iteration', fontsize=8) # x axis label
+        axs[0].set_ylabel('Time (s)', fontsize=8) # y axis label
+        axs[0].tick_params(axis='both', labelsize=8) 
 
         # Plot memory usage for sicher
-        axs[1].plot(range(1, 11), memory_usages, marker='o', color='green')
-        axs[1].set_title('Memory Usage (MB)', fontsize=10)
-        axs[1].set_xlabel('Iteration', fontsize=8)
-        axs[1].set_ylabel('Memory (MB)', fontsize=8)
+        axs[1].plot(range(1, 11), memory_usages, marker='o', color='green') # plot the memory usage
+        axs[1].set_title('Memory Usage (MB)', fontsize=10) # title
+        axs[1].set_xlabel('Iteration', fontsize=8) # x axis label
+        axs[1].set_ylabel('Memory (MB)', fontsize=8) # y axis label
         axs[1].tick_params(axis='both', labelsize=8)
 
         # Plot CPU usage for sicher
-        axs[2].plot(range(1, 11), cpu_usages, marker='o', color='red')
-        axs[2].set_title('CPU Usage (%)', fontsize=10)
-        axs[2].set_xlabel('Iteration', fontsize=8)
-        axs[2].set_ylabel('CPU Usage (%)', fontsize=8)
+        axs[2].plot(range(1, 11), cpu_usages, marker='o', color='red') # plot the cpu usage
+        axs[2].set_title('CPU Usage (%)', fontsize=10) # title
+        axs[2].set_xlabel('Iteration', fontsize=8) # x axis label
+        axs[2].set_ylabel('CPU Usage (%)', fontsize=8) # y axis label
         axs[2].tick_params(axis='both', labelsize=8)
 
         # Adjust layout to reduce spacing
-        fig.subplots_adjust(hspace=0.8, top=0.9)
-        fig.suptitle('Sicher Compiler Performance Metrics', fontsize=12, fontweight='bold')
+        fig.subplots_adjust(hspace=0.8, top=0.9)  # give some spacing to between the tops of each plots
+        fig.suptitle('Sicher Compiler Performance Metrics', fontsize=12, fontweight='bold') # title for the figure
 
         # Embed the figure into a collapsible section
         self.add_visualisation_section(fig)
@@ -154,6 +154,8 @@ class CompilerFrame(wx.Frame):
             label="Visualisation Plots",
             style=wx.CP_DEFAULT_STYLE | wx.CP_NO_TLW_RESIZE
         )
+        
+        # Bind the event to handle collapsible pane changes
         collapsible_pane.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.on_collapsible_pane_changed)
 
         # Set the arrow color to yellow (same as buttons)
@@ -198,9 +200,9 @@ class CompilerFrame(wx.Frame):
         self.output_panel.DestroyChildren()
 
         # Gather system information
-        os_info = os.uname() if hasattr(os, "uname") else "Unknown OS"
-        cpu_info = os.cpu_count()
-        process = psutil.Process()
+        os_info = os.uname() if hasattr(os, "uname") else "Unknown OS" # get the os information
+        cpu_info = os.cpu_count() # get the cpu info 
+        process = psutil.Process() # get the current process (sicher)
 
         # Gather diagnostic data
         diagnostics = {
