@@ -96,7 +96,7 @@ class CompilerFrame(wx.Frame):
                 ) 
                 
                 # get the cpu time used
-                cpu_usage_percentage = (cpu_time_used / time_complexity) * 100 if time_complexity > 0 else 0 # compute the cpu usage percentage
+                cpu_usage_percentage = (cpu_time_used / time_complexity) * 10000 if time_complexity > 0 else 0 # compute the cpu usage percentage
 
                 # Store metrics
                 compile_times.append(time_complexity) # store the time to compile for sicher in the cirrent iteration
