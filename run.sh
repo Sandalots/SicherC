@@ -22,5 +22,12 @@ fi
 # run the reqiurements.sh to install the external python packages if need be
 ./requirements.sh
 
+echo "" # newline for showing diff between requirements and testing suite integrity
+
+# check the testing suite integrity
+./check_testing_suite.sh
+
+echo "" # newline for readability between testing suite and the sicher compiler cli output and later gui output
+
 # run the sicher compiler with hello world testing suite file as input
 python3 src/sicher.py examples/hello_world.c --debug --gui # uses the GUI option plus the debug option to show additional sicher compiler logs

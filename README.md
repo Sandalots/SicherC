@@ -92,3 +92,8 @@ A shell script is also given to both allow for installing dependencies and runni
 * Running the Binary in GUI
 * Help in GUI
 * Browser in GUI
+* Fully commented and documented
+* Unique and logical variable and indentifier names
+* Modular and maintainable codebase
+* Extendable via the use of submodules
+* Expressive and visual with the GUI

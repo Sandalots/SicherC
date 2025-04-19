@@ -59,28 +59,43 @@ class CodeGenerator:
     def _traverse(self, node):
         # check if current node is a function
         if node.node_type == "Function":
+            # set the function type
             func_ty = ir.FunctionType(ir.IntType(32), [])
+            # get the function
             func = ir.Function(self.module, func_ty, name=node.value)
+            # create a block
             block = func.append_basic_block(name="entry")
+            # set the builder to the block
             self.builder = ir.IRBuilder(block)
 
+            # for each child of the function node
             for child in node.children:
+                # traverse and generate code for each child
                 self._traverse(child)
 
+        # check if current node is a block node
         elif node.node_type == "Block":
             return_node = None  # Track the Return node to process it last
+            
+            # for each child of the block node
             for child in node.children:
                 
+                # check if the child is a return node
                 if child.node_type == "Return":
+                    # set the return node to the child
                     return_node = child
                     
+                # if not a return node, traverse the child
                 else:
+                    # traverse the child and coede generate it
                     self._traverse(child)
                     
             # Process the Return node after all other nodes
             if return_node:
+                # traverse the return node and code generate it
                 self._traverse(return_node)
                 
+        # check if current node is a variable declaration
         elif node.node_type == "VariableDeclaration":
             # Allocate memory for the variable
             var_name = node.value
@@ -97,113 +112,153 @@ class CodeGenerator:
                     # Store the value in the allocated memory
                     self.builder.store(ir.Constant(ir.IntType(32), value), var_ptr)
 
+        # check if current node is an function call
         elif node.node_type == "FunctionCall":
+            # check if the function call is a printf
             if node.value == "printf":
-                # Retrieve the string argument from the FunctionCall node's children
-                string_node = next(
-                    (child for child in node.children if child.node_type == "String"), None
-                )
+                # Retrieve the string argument from the FunctionCall node's children if it exists
+                string_node = next((child for child in node.children if child.node_type == "String"), None ) # for a string node
                 
-                identifier_node = next(
-                    (child for child in node.children if child.node_type == "Identifier"), None
-                )
+                # get the identifier node from the function call if one exists
+                identifier_node = next((child for child in node.children if child.node_type == "Identifier"), None) # for an identifier node
                 
+                # if the printf function has a string as an argument
                 if string_node:
+                    # get the value of the string node
                     string_value = string_node.value + "\0"  # Add null terminator
+                    
+                    # create a unique .str name for the string
                     unique_str_name = self._generate_unique_str_name()
+                    
+                    # create the string variable in the module
                     fmt_str = ir.GlobalVariable(
                         self.module,
                         ir.ArrayType(ir.IntType(8), len(string_value)),
                         name=unique_str_name,
                     )
                     
+                    # initialise the string variable with the string value
                     fmt_str.initializer = ir.Constant(
                         ir.ArrayType(ir.IntType(8), len(string_value)),
                         bytearray(string_value, "utf8"),
                     )
-                    fmt_str.global_constant = True
+                    
+                    # properties of the string variable
+                    fmt_str.global_constant = True 
                     fmt_str.linkage = "internal"
                     fmt_str.align = 1
-                    fmt_str_ptr = self.builder.bitcast(fmt_str, ir.IntType(8).as_pointer())
+                    fmt_str_ptr = self.builder.bitcast(fmt_str, ir.IntType(8).as_pointer()) # get the pointer to the string variable
 
                     # Call printf with the dynamically retrieved string
-                    self.builder.call(self.printf, [fmt_str_ptr])
+                    self.builder.call(self.printf, [fmt_str_ptr]) # using the printf function to print the string referencing the pointer of the above created string
                     
+                # if the printf function has an identifier (variable) as an argument
                 if identifier_node:
-                    # Handle identifiers (variables)
+                    # get the variable name from the identifier node
                     var_name = identifier_node.value
+                    
+                    # check if the variable exists in the variables dictionary
                     if var_name in self.variables:
-                        var_ptr = self.variables[var_name]  # Retrieve the memory location from the dictionary
-                        var_value = self.builder.load(var_ptr, name=var_name)
+                        var_ptr = self.variables[var_name]  # Retrieve the pointer to the variable
+                        var_value = self.builder.load(var_ptr, name=var_name) # get the value of the variable
 
-                        # Create a unique format string for integers ("%d")
+                        # Create a unique .str name for the format string
                         unique_str_name = self._generate_unique_str_name()
+                        
+                        # Create the format string variable in the module
                         fmt_str = ir.GlobalVariable(
                             self.module,
                             ir.ArrayType(ir.IntType(8), len("%d\0")),
                             name=unique_str_name,
                         )
+                        
+                        # Initialise the format string variable with the format specifier
                         fmt_str.initializer = ir.Constant(
                             ir.ArrayType(ir.IntType(8), len("%d\0")),
                             bytearray("%d\0", "utf8"),
                         )
+                        
+                        # Properties of the format string variable
                         fmt_str.global_constant = True
                         fmt_str.linkage = "internal"
                         fmt_str.align = 1
-                        fmt_str_ptr = self.builder.bitcast(fmt_str, ir.IntType(8).as_pointer())
+                        fmt_str_ptr = self.builder.bitcast(fmt_str, ir.IntType(8).as_pointer()) # get the pointer to the format string variable
 
                         # Call printf with the variable value
-                        self.builder.call(self.printf, [fmt_str_ptr, var_value])
-                        
+                        self.builder.call(self.printf, [fmt_str_ptr, var_value]) # use both the value of the var and the pointer to the format stirng to code generate a identifier printf node
+                    
+            # if the function call is a strcpy method node    
             if node.value == "strcpy":
-                # Handle strcpy function call
-                dest_node = next((child for child in node.children if child.node_type == "Identifier"), None)
-                src_node = next((child for child in node.children if child.node_type == "String"), None)
+                # setup the destinatoin and source node
+                dest_node = next((child for child in node.children if child.node_type == "Identifier"), None) # destination node
+                src_node = next((child for child in node.children if child.node_type == "String"), None) # source node
 
+                # check if both the destination and source nodes exist
                 if dest_node and src_node:
+                    # get the value of the destination node
                     dest_var = self.variables.get(dest_node.value)
+                    
+                    # if the value of the desintation does not exst or is undefined
                     if not dest_var:
+                        # tell the user that a value error has occurred with the destination node as a undefined variable and the value of the destination node that is undefined
                         raise ValueError(f"Undefined variable: {dest_node.value}")
 
-                    src_value = src_node.value + "\0"  # Add null terminator
+
+                    # get the value of the source node
+                    src_value = src_node.value + "\0"  # Add null terminator onto the string value
+                    
+                    # create a unique .str name for the source string
                     src_str_name = self._generate_unique_str_name()
+                    
+                    # create the source string variable in the module
                     src_str = ir.GlobalVariable(
                         self.module,
                         ir.ArrayType(ir.IntType(8), len(src_value)),
                         name=src_str_name,
                     )
+                    
+                    # initialise the source string variable with the string value
                     src_str.initializer = ir.Constant(
                         ir.ArrayType(ir.IntType(8), len(src_value)),
                         bytearray(src_value, "utf8"),
                     )
+                    
+                    # properties of the source string variable
                     src_str.global_constant = True
                     src_str.linkage = "internal"
                     src_str.align = 1
-                    src_ptr = self.builder.bitcast(src_str, ir.IntType(8).as_pointer())
+                    src_ptr = self.builder.bitcast(src_str, ir.IntType(8).as_pointer()) # get the pointer to the source string variable
 
                     # Call memcpy to copy the string
-                    memcpy_ty = ir.FunctionType(ir.VoidType(), [ir.IntType(8).as_pointer(), ir.IntType(8).as_pointer(), ir.IntType(64)])
-                    memcpy = ir.Function(self.module, memcpy_ty, name="llvm.memcpy.p0i8.p0i8.i64")
-                    self.builder.call(memcpy, [dest_var, src_ptr, ir.Constant(ir.IntType(64), len(src_value))])
+                    memcpy_ty = ir.FunctionType(ir.VoidType(), [ir.IntType(8).as_pointer(), ir.IntType(8).as_pointer(), ir.IntType(64)]) # create the memcpy function type 
+                    memcpy = ir.Function(self.module, memcpy_ty, name="llvm.memcpy.p0i8.p0i8.i64") # create the memcpy function
+                    self.builder.call(memcpy, [dest_var, src_ptr, ir.Constant(ir.IntType(64), len(src_value))]) # build the memcpy function call along with the destination value and the source location pointer
                         
             # Add a new line after the printf call
+            # setup a unique new line string name
             newline_str_name = self._generate_unique_str_name()
+            
+            # format the new line string
             newline_fmt_str = ir.GlobalVariable(
                 self.module,
                 ir.ArrayType(ir.IntType(8), len("\n\0")),
                 name=newline_str_name,
             )
+            
+            # initialise the new line string
             newline_fmt_str.initializer = ir.Constant(
                 ir.ArrayType(ir.IntType(8), len("\n\0")),
                 bytearray("\n\0", "utf8"),
             )
+            
+            # properties of the new line string
             newline_fmt_str.global_constant = True
             newline_fmt_str.linkage = "internal"
             newline_fmt_str.align = 1
-            newline_fmt_str_ptr = self.builder.bitcast(newline_fmt_str, ir.IntType(8).as_pointer())
+            newline_fmt_str_ptr = self.builder.bitcast(newline_fmt_str, ir.IntType(8).as_pointer()) # get the pointer to the new line string variable
 
             # Call printf to print the new line
-            self.builder.call(self.printf, [newline_fmt_str_ptr])       
+            self.builder.call(self.printf, [newline_fmt_str_ptr]) # build the new line string variable using the pointer to the new line string formatted variable
                 
         # check if current node is a return node/statement        
         elif node.node_type == "Return":
@@ -222,21 +277,33 @@ class CodeGenerator:
     # function to compile the generate code to arm64 assembly code
     def compile_to_arm64(self, source_filename, output_filename):
         try:
+            # Initialize LLVM via llvmlite
             llvm.initialize()
+            # get the native target
             llvm.initialize_native_target()
+            # get the native asm printer
             llvm.initialize_native_asmprinter()
 
+            # try and open the source filename and read the ir
             with open(source_filename, "r") as f:
-                llvm_ir = f.read()
+                llvm_ir = f.read() # read the ir representation of the code
 
+            # set the module to be the parsed llvm ir
             mod = llvm.parse_assembly(llvm_ir)
+            
+            # verify the module
             mod.verify()
 
+            # define the target 
             target = llvm.Target.from_default_triple()
+            # create the target machine
             target_machine = target.create_target_machine()
 
+            # use the above targets and module to emit the assembly code
             with llvm.create_mcjit_compiler(mod, target_machine) as ee:
+                # use the execution engine to finalise any objects
                 ee.finalize_object()
+                # emit the assembly code as asm uaing the target machine
                 asm = target_machine.emit_assembly(mod)
 
             # try and write the assembly code to a file
@@ -244,7 +311,7 @@ class CodeGenerator:
                 # write the assembly contents to the file
                 f.write(asm)
 
-            # Assemble the assembly code
+            # Assemble the assembly code using the arm64 assembler
             subprocess.run(["as", "-arch", "arm64", "-o", "output.o", "output.s"], check=True)
 
             # Link the object file to create the binary using clang for arm64 macOS platform
