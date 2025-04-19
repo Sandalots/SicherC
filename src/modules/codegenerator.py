@@ -57,10 +57,13 @@ class CodeGenerator:
         elif node.node_type == "Block":
             return_node = None  # Track the Return node to process it last
             for child in node.children:
+                
                 if child.node_type == "Return":
                     return_node = child
+                    
                 else:
                     self._traverse(child)
+                    
             # Process the Return node after all other nodes
             if return_node:
                 self._traverse(return_node)

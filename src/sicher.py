@@ -86,9 +86,12 @@ def main():
             # tokenise the source code
             tokens, _ = tokenise(code, debug=args.debug)
             
+            # check if the debug flag is set
             if args.debug:
                 # output the tokens if the debug flag is set
                 print("Tokens:")
+                
+                # output the tokens to the console
                 for token in tokens:
                     print(token)
             
@@ -108,7 +111,9 @@ def main():
         # parse the source code
         parse_tokens(tokens, debug=args.debug)
         
+        # check if the debug flag is set
         if args.debug:
+            # output the parsed tokens if the debug flag is set
             print("Parsed Tokens:")
             print(parse_tokens(tokens, debug=args.debug))
         
@@ -181,13 +186,13 @@ def main():
     if args.gui:
         # try and show the visualiser/GUI
         try:
-            # show the sicher GUI
+            # show the sicher GUI if the --gui flag is set
             visualiser()
             
         # raise an error if there is a problem with the visualiser
         except Exception as e:
             # prompt the visualiser error
-            print(f"Error running visualiser: {e}")
+            print(f"Error running visualiser: {e}") # the error message
             
             # exit the program to avoid further errors
             sys.exit(1)
