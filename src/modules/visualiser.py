@@ -86,8 +86,8 @@ class CompilerFrame(wx.Frame):
                 final_cpu_times = process.cpu_times()  # End measuring CPU times
 
                 # Calculate metrics
-                time_complexity = end_time - start_time # get the time to compile
-                memory_usage = (final_memory - initial_memory) / (1024 * 1024)  # Convert to MB
+                time_complexity = (end_time - start_time) * 1000  # get the time to compile
+                memory_usage = ((final_memory - initial_memory) / (1024 * 1024)) *100  # Convert to MB
                 
                 # Calculate CPU usage
                 cpu_time_used = (
