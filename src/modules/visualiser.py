@@ -88,10 +88,14 @@ class CompilerFrame(wx.Frame):
                 # Calculate metrics
                 time_complexity = end_time - start_time # get the time to compile
                 memory_usage = (final_memory - initial_memory) / (1024 * 1024)  # Convert to MB
+                
+                # Calculate CPU usage
                 cpu_time_used = (
                     (final_cpu_times.user - initial_cpu_times.user) +
                     (final_cpu_times.system - initial_cpu_times.system)
-                ) # get the cpu time used
+                ) 
+                
+                # get the cpu time used
                 cpu_usage_percentage = (cpu_time_used / time_complexity) * 100 if time_complexity > 0 else 0 # compute the cpu usage percentage
 
                 # Store metrics
@@ -204,7 +208,7 @@ class CompilerFrame(wx.Frame):
         cpu_info = os.cpu_count() # get the cpu info 
         process = psutil.Process() # get the current process (sicher)
 
-        # Gather diagnostic data
+        # Gather diagnostic data in the below dictionary
         diagnostics = {
             "Operating System": os_info.sysname if hasattr(os_info, "sysname") else os_info,
             "OS Version": os_info.release if hasattr(os_info, "release") else "Unknown",
@@ -236,7 +240,10 @@ class CompilerFrame(wx.Frame):
 
     # Initialise the GUI elements
     def InitUI(self):
+        # create the main panel
         panel = wx.Panel(self)
+        
+        # Set the background colour of the panel to be the dark purple colour
         panel.SetBackgroundColour("#2D2B55")
 
         vbox = wx.BoxSizer(wx.VERTICAL)
@@ -427,6 +434,7 @@ class CompilerFrame(wx.Frame):
         self.output_panel.SetSizer(self.output_sizer)
         vbox.Add(self.output_panel, proportion=1, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=10)
 
+        # adjust the vbox sizer to fit the panel
         panel.SetSizer(vbox)
 
         # Gives the GUI window the Sicher C Compiler title
@@ -725,16 +733,20 @@ class CompilerFrame(wx.Frame):
             "- Show Source: Displays the content of the selected C source file.\n"
             "- Show Full Log: Runs Sicher with the --debug flag and displays the full debug log.\n"
             "- Help: Displays this help dialog.\n\n"
+            "- Customise: Allows you to specify a custom output binary name.\n\n"
+            
             "How to Use:\n"
             "1. Use the file picker to select a C source file.\n"
             "2. Click 'Compile' to compile the file and view the output.\n"
             "3. Use other buttons to explore additional features.\n\n"
+            
             "Time/Space Complexity Labels:\n"
             "- Time to Compile: The time taken to compile the file.\n"
             "- Memory Usage: The memory used during compilation.\n"
             "- CPU Usage: The percentage of CPU used during compilation.\n\n"
+            
             "About Sicher:\n"
-            "Sicher is a C compiler that tokenizes, parses, analyzes, and generates assembly code for C programs. "
+            "Sicher is a C compiler that tokenizes, parses, analyzes, and generates assembly code for C programs and then proceeds to create a executable Binary for it. "
             "It also provides performance metrics and visualizations for educational purposes."
         )
 

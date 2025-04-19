@@ -29,7 +29,7 @@ class ASTNode:
 
     # Method to output the ASTnode with type, values and the children
     def __repr__(self):
-        return f"ASTNode({self.node_type}, {self.value}, {self.children})"
+        return f"ASTNode({self.node_type}, {self.value}, {self.children})" # return the string representation of the node
 
     # Method to pretty print the AST to the console and visualiser GUI, using '--' indentation to prettily print the output of the AST right back to the user
     def pretty_print(self, indent=0):
@@ -40,7 +40,7 @@ class ASTNode:
             indent (int): The current depth of the node in the tree.
         """
         # define the indentation string
-        indent_str = '--' * indent
+        indent_str = '--' * indent # dynamically set the indent
         
         # get the value string from the node value
         value_str = f": {self.value}" if self.value is not None else ""
@@ -83,32 +83,41 @@ class AST:
             # tell the user the ast is empty
             return "Empty AST"
 
+# main ast function, to create the ast from the stream of tokens from the tokeniser and validate the tokens
 def create_ast_from_tokens(tokens, debug=False):
-    ast = AST()
-    current_node = None
-    stack = []
+    ast = AST() # create a new AST object
+    current_node = None # set the current node to none
+    stack = [] # create a stack list to keep track of nodes in the staxck
 
     # Initialize token context
-    current_token = None
-    previous_token = None
-    next_token = None
+    current_token = None # set the current token to none
+    previous_token = None # set the previous token to none
+    next_token = None # set the next token to none
 
+    # try and loop through the tokens to create the AST
     try:
+        # create a index, and loop through the tokens
         for i, token in enumerate(tokens):
-            previous_token = current_token
-            current_token = token
-            next_token = tokens[i + 1] if i + 1 < len(tokens) else None
+            previous_token = current_token # get the previous token
+            current_token = token # get the current token
+            next_token = tokens[i + 1] if i + 1 < len(tokens) else None # get the next token
 
+            # get the token type and value from the current token
             token_type, token_value = current_token
 
+            # if the debug flag is sets
             if debug:
+                # output token traverse, the current token, the previous token and the next token only if the debug flag is set by the user 
                 print(f"DEBUG: Current token: {current_token}, Previous token: {previous_token}, Next token: {next_token}")
 
+            # handle preprocessor directives nodes
             if token_type == "PREPROCESSOR":
-                # Handle preprocessor directives here if needed
+                # skip the preprocessor directives
                 continue
 
+            # parse rules for keywords
             if token_type == 'KEYWORD':
+                # if next token is a int
                 if token_value == 'int':
                     if current_node is None:
                         current_node = ASTNode("Function", "main")

@@ -56,8 +56,10 @@ class Parser:
 
     # parse rule for statements
     def parse_statement(self):
+        # get the current token type and value
         token_type, token_value = self.tokens[self.current_token]
         
+        # if debug flag is set output the current line number, token type and value
         if self.debug:
             print(f"Line {self.current_token + 1}: Parsing statement: {token_type}, {token_value}")
             
@@ -213,8 +215,9 @@ def parse_tokens(tokens, debug=False):
         # attempt to parse the tokens and capture the debug output
         try:
             parser.parse() # parse the tokens
-            debug_output = sys.stdout.getvalue()  # Capture the debug output
+            debug_output = sys.stdout.getvalue() # Capture the debug output
             
+        # if sicher can parse the tokens, next step is to revert the stdout for the visualiser to see the log
         finally:
             sys.stdout = old_stdout  # Restore original stdout
             

@@ -84,7 +84,7 @@ def main():
         # attempt to tokenise the given c source file
         try:
             # tokenise the source code
-            tokens, _ = tokenise(code, debug=args.debug)
+            tokens, _ = tokenise(code, debug=args.debug) # empty string if no debug flag is set
             
             # check if the debug flag is set
             if args.debug:
@@ -93,7 +93,7 @@ def main():
                 
                 # output the tokens to the console
                 for token in tokens:
-                    print(token)
+                    print(token) # output the token
             
             # tell the user the tokenisation was successful
             print("\nSource code is lexically correct\n")
@@ -109,7 +109,7 @@ def main():
     # Parser Module
     try:
         # parse the source code
-        parse_tokens(tokens, debug=args.debug)
+        parse_tokens(tokens, debug=args.debug) # parse the tokens and acknowledge the debug flag
         
         # check if the debug flag is set
         if args.debug:
@@ -131,7 +131,7 @@ def main():
     # Analyser Module
     try:
         # create the AST from the tokens
-        ast = create_ast_from_tokens(tokens, debug=args.debug)
+        ast = create_ast_from_tokens(tokens, debug=args.debug) # create the AST and acknowledge the debug flag
         
         # tell the user the AST was created successfully
         print("\nAST created successfully\n")
@@ -139,7 +139,7 @@ def main():
         # check if the debug flag is set
         if args.debug:
             # output the ast prettily
-            print(ast.pretty_print())
+            print(ast.pretty_print()) # ast plus the indent formatting and the pretty tree like layout for the AST
             
     # raise an error if there is a problem with the AST creation
     except Exception as e:
@@ -153,7 +153,7 @@ def main():
     if not args.nocompile:
         try:
             # Run the code generator on the AST
-            code_generator = CodeGenerator(ast)
+            code_generator = CodeGenerator(ast) # use the AST from the analyser module
             
             # Generate the code
             generated_code = code_generator.generate_code()
@@ -183,6 +183,8 @@ def main():
         print("\nSkipping code generation as --nocompile flag is set.\n")
     
     # Visualiser Module
+    
+    # check if the GUI flag is set
     if args.gui:
         # try and show the visualiser/GUI
         try:

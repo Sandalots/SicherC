@@ -48,7 +48,6 @@ def mark_used_variables(node):
         # recursively call the function to mark any used variables in the child node
         mark_used_variables(child)
 
-
 # this function marks a node used if it is indeed used later on in the ast
 def mark_variable_as_used(node, variable_name):
     """
@@ -67,7 +66,6 @@ def mark_variable_as_used(node, variable_name):
             
         # set the current node to the parent node
         node = node.parent
-
 
 # given a node this function tries and removes any unused variables from the AST
 def remove_unused_variables(node):
@@ -96,12 +94,12 @@ def remove_unused_variables(node):
         # tell the user the unused node has been removed
         print(f"Removed unused variable: {unused_node.value}")
 
-
 # function to remove any unused variables from the sicher ast
 def remove_unused(ast):
     """
     Main function to remove unused variables from the AST.
     """
+    # check if the AST is not empty
     if ast.root:
         # Mark all used variables
         mark_used_variables(ast.root)

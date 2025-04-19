@@ -164,7 +164,8 @@ def tokenise(code, debug=False):
         if debug:
             # Define the debug output
             debug_output = sys.stdout.getvalue()
-
+    
+    # after tokenisation is complete I need to set the stdout to be the old stream so the visualiser can see an access the logs from there
     finally:
         # Restore original stdout if debug flag is set
         if debug:

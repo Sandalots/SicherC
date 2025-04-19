@@ -15,7 +15,7 @@ from submodules.remove_special_chars import remove_special_chars_from_printf  # 
 class CodeGenerator:
     def __init__(self, ast):
         self.ast = ast # getting the ast of the source code created by sicher
-        self.module = ir.Module(name="module") 
+        self.module = ir.Module(name="module")  # create a module for the code generation
         self.builder = None # create empty builder for the module
         self.printf = None # set a placeholder for any printf functions to be encountered later on
         self.str_counter = 0 # for iterating unique string names
@@ -221,7 +221,6 @@ class CodeGenerator:
     # function to compile the generate code to arm64 assembly code
     def compile_to_arm64(self, source_filename, output_filename):
         try:
-            
             llvm.initialize()
             llvm.initialize_native_target()
             llvm.initialize_native_asmprinter()
