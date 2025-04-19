@@ -17,17 +17,22 @@ def remove_special_chars_from_printf(ast):
     
     # check if sicher has a empty or invalid AST
     if not ast or not ast.root:
+        # return if invalid/unexpected ast
         return
 
+    # method to traverse the AST and clean up printf strings
     def traverse_and_clean(node):
+        # if the current node is a printf
         if node.node_type == "FunctionCall" and node.value == "printf":
-            # Find the String child node
-            string_node = next(
-                (child for child in node.children if child.node_type == "String"), None
-            )
+            # get the string of the printf statement/node
+            string_node = next((child for child in node.children if child.node_type == "String"), None)
+            
+            # check if valid node
             if string_node and string_node.value:
                 # Remove '\n' from the string value
                 string_node.value = string_node.value.replace("\\n", "")
+                
+        # for any child nodes apply the cleanup method
         for child in node.children:
             traverse_and_clean(child)
 

@@ -5,7 +5,7 @@
 
 # Analyser Module Dependencies
 
-# import the compile-time submodules
+# import the Sicher compile-time Submodules
 from submodules.buffer_sizer import resize_array  # buffer sizer submodule
 from submodules.unused_remover import remove_unused  # remove unused objects submodule
 from submodules.prevent_use_after_free import prevent_use_after_free  # prevent use after free submodule
@@ -31,6 +31,7 @@ class ASTNode:
     def __repr__(self):
         return f"ASTNode({self.node_type}, {self.value}, {self.children})"
 
+    # Method to pretty print the AST to the console and visualiser GUI, using '--' indentation to prettily print the output of the AST right back to the user
     def pretty_print(self, indent=0):
         """
         Pretty-prints the ASTNode with '--' for each level of indentation.
@@ -38,31 +39,48 @@ class ASTNode:
         Args:
             indent (int): The current depth of the node in the tree.
         """
+        # define the indentation string
         indent_str = '--' * indent
+        
+        # get the value string from the node value
         value_str = f": {self.value}" if self.value is not None else ""
+        
+        # declare the result plus the indentation string and the type plus the value string
         result = f"{indent_str}{self.node_type}{value_str}\n"
         
+        # for every child of the current node, recursively call the pretty print method
         for child in self.children:
+            # indent the indentation string and pretty print that child
             result += child.pretty_print(indent + 1)
             
+        # return the ast prettified
         return result
 
 # Models the actual AST (Abstract Syntax Tree)
 class AST:
+    # constructor for the ast
     def __init__(self):
+        # set the root to initially be none
         self.root = None
 
+    # method to set the root of the ast
     def set_root(self, root):
         self.root = root
 
+    # return the string representation of the AST
     def __repr__(self):
         return f"AST({self.root})"
 
+    # method to apply pretty print to the ast
     def pretty_print(self):
+        # chek if root is not none
         if self.root:
+            # return the pretty print of the root
             return self.root.pretty_print()
         
+        # if the root is none, return an empty string
         else:
+            # tell the user the ast is empty
             return "Empty AST"
 
 def create_ast_from_tokens(tokens, debug=False):

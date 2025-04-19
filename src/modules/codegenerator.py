@@ -21,6 +21,7 @@ class CodeGenerator:
         self.str_counter = 0 # for iterating unique string names
         self.variables = {} # for storing variables
 
+    # the function to generate the code
     def generate_code(self):
         # check if ast exists and is valid
         if self.ast is None or self.ast.root is None:
@@ -35,8 +36,10 @@ class CodeGenerator:
         # traverse the AST and create some code
         self._traverse(self.ast.root)
         
+        # return the generated code as a string so we can capture what sicher just code generated to the user
         return str(self.module)
 
+    # pre-processing for the printf nodes
     def _create_printf_function(self):
         # create a void pointer for the printf
         voidptr_ty = ir.IntType(8).as_pointer()
@@ -46,11 +49,14 @@ class CodeGenerator:
         # fully pre-process the printf node
         self.printf = ir.Function(self.module, printf_ty, name="printf")
         
+    # creating unique assembly names for the strings so we can have multiple strings
     def _generate_unique_str_name(self):
         self.str_counter += 1
         return f".str.{self.str_counter}"
 
+    # function to traverse the ast and generate the code
     def _traverse(self, node):
+        # check if current node is a function
         if node.node_type == "Function":
             func_ty = ir.FunctionType(ir.IntType(32), [])
             func = ir.Function(self.module, func_ty, name=node.value)
@@ -198,18 +204,24 @@ class CodeGenerator:
             # Call printf to print the new line
             self.builder.call(self.printf, [newline_fmt_str_ptr])       
                 
-                    
+        # check if current node is a return node/statement        
         elif node.node_type == "Return":
+            # declare and get the return value
             return_value = ir.Constant(ir.IntType(32), int(node.children[0].value))
+            # code generate the return value
             self.builder.ret(return_value)
 
+    # function to save the generated code to a file, this file can be specified by the user either in CLI or using the Sicher GUI later on
     def save_code_to_file(self, filename):
+        # try and open the filename to write to
         with open(filename, "w") as file:
+            # write the code to the file
             file.write(str(self.module))
 
+    # function to compile the generate code to arm64 assembly code
     def compile_to_arm64(self, source_filename, output_filename):
         try:
-            # Compile the LLVM IR to assembly
+            
             llvm.initialize()
             llvm.initialize_native_target()
             llvm.initialize_native_asmprinter()
@@ -227,17 +239,16 @@ class CodeGenerator:
                 ee.finalize_object()
                 asm = target_machine.emit_assembly(mod)
 
+            # try and write the assembly code to a file
             with open("output.s", "w") as f:
+                # write the assembly contents to the file
                 f.write(asm)
 
             # Assemble the assembly code
             subprocess.run(["as", "-arch", "arm64", "-o", "output.o", "output.s"], check=True)
 
             # Link the object file to create the binary using clang for arm64 macOS platform
-            subprocess.run(
-                ["clang", "-o", output_filename, "output.o", "-target", "arm64-apple-macos15"],
-                check=True,
-            )
+            subprocess.run(["clang", "-o", output_filename, "output.o", "-target", "arm64-apple-macos15"],check=True,)
 
             # tell the end user of what outbut binary file sicher has been code generated to
             print(f"Successfully compiled to {output_filename}")

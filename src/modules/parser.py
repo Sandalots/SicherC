@@ -47,11 +47,14 @@ class Parser:
         self.expect('SYMBOL', ')') # expects the closing parenthesis
         self.expect('SYMBOL', '{') # expects the opening brace
         
+        # parse rule for statements in the function
         while self.tokens[self.current_token][1] != '}':
             self.parse_statement()
             
+        # expect a ending brace/parenthesis
         self.expect('SYMBOL', '}')
 
+    # parse rule for statements
     def parse_statement(self):
         token_type, token_value = self.tokens[self.current_token]
         
@@ -76,6 +79,7 @@ class Parser:
         else:
             self.current_token += 1
 
+    # parse rule for returns
     def parse_return(self):
         if self.debug:
             print(f"Line {self.current_token + 1}: Parsing return statement")
@@ -91,6 +95,7 @@ class Parser:
             
         self.expect('SYMBOL', ';')
 
+    # parse rule for declarations
     def parse_declaration(self):
         if self.debug:
             print(f"Line {self.current_token + 1}: Parsing declaration")
@@ -123,6 +128,7 @@ class Parser:
         if self.debug:
             print(f"Line {self.current_token + 1}: Declared variable: {identifier}")
             
+    # parse rule for expressions
     def parse_expression(self):
         if self.debug:
             print(f"Line {self.current_token + 1}: Parsing expression")
@@ -143,6 +149,7 @@ class Parser:
                 
             self.parse_term()  # Parse the next term
 
+    # parse rule for terms
     def parse_term(self):
         token_type, token_value = self.tokens[self.current_token]
         
@@ -165,6 +172,7 @@ class Parser:
         else:
             raise SyntaxError(f"Line {self.current_token + 1}: Unexpected token: {token_type} {token_value}")
 
+    # parse rule for expects
     def expect(self, token_type, token_value=None):
         if self.current_token >= len(self.tokens):
             raise SyntaxError("Unexpected end of input")
@@ -181,6 +189,7 @@ class Parser:
         
         return token[1]
 
+# the main function, parse_tokens to parse tokens from the tokeniser and optional additional debug output
 def parse_tokens(tokens, debug=False):
     """
     Parses the tokens and optionally returns debug output.
@@ -192,6 +201,7 @@ def parse_tokens(tokens, debug=False):
     Returns:
         str: The debug output if debug=True, otherwise an empty string.
     """
+    # define the parse, passing the tokens and debug flag
     parser = Parser(tokens, debug=debug)
     
     # if debug flag is set, return the debug output
@@ -200,6 +210,7 @@ def parse_tokens(tokens, debug=False):
         old_stdout = sys.stdout # Save the original stdout
         sys.stdout = io.StringIO() # redirect old output to a string buffer so the visualiser can access it
         
+        # attempt to parse the tokens and capture the debug output
         try:
             parser.parse() # parse the tokens
             debug_output = sys.stdout.getvalue()  # Capture the debug output

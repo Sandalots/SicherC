@@ -10,10 +10,10 @@ import time  # for measuring the time to compile
 import psutil  # for measuring memory and CPU usage of Sicher
 import sys  # for getting the Python version
 import matplotlib.pyplot as plt  # For sicher visualisations
-from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas  # for embedding the plots in the gui
+from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas  # for embedding the plots in the wx gui
 import subprocess  # for running the compiled binary
 
-# Sicher Module Dependencies
+# Sicher Module Dependencies (the 4 modules bar this current visualiser module)
 from modules.tokeniser import tokenise  # for tokenising the given C source code
 from modules.parser import parse_tokens  # for parsing the tokenised C source code
 from modules.analyser import create_ast_from_tokens  # for modelling the given C source code as an Sicher AST
