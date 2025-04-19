@@ -29,15 +29,21 @@ class CodeGenerator:
         # use the remove special chars runtime submodule
         remove_special_chars_from_printf(self.ast)
         
+        # printf preprocessing
         self._create_printf_function()
+        
+        # traverse the AST and create some code
         self._traverse(self.ast.root)
         
         return str(self.module)
 
     def _create_printf_function(self):
-        # Declare printf function
+        # create a void pointer for the printf
         voidptr_ty = ir.IntType(8).as_pointer()
+        # handler for a prinf function type
         printf_ty = ir.FunctionType(ir.IntType(32), [voidptr_ty], var_arg=True)
+        
+        # fully pre-process the printf node
         self.printf = ir.Function(self.module, printf_ty, name="printf")
         
     def _generate_unique_str_name(self):

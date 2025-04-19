@@ -51,6 +51,7 @@ Generated binaries will usually be in the root dir here.
 Modules found in src/modules.
 Submodules found in src/submodules.
 src/sicher.py is the entry point to sicher.
+Design flowcharts and other design documents in the design/ directory.
 
 ### Shell Scripts
 A shell script is given to install python dependencies for Sicher. ```requirements.sh```
@@ -68,3 +69,26 @@ A shell script is also given to both allow for installing dependencies and runni
 ### Targets 
 * macOS 15.4
 * AArch64 aka ARM64
+
+### Sicher Features
+* Sicher Tokeniser
+* Sicher Parser
+* Sicher Analyser
+* Sicher Code Generator
+* Sicher Visualiser
+* Unused Remover Submodule
+* Remove Special Chars Submodule
+* Debug mode
+* --nocompile mode
+* Custom output binary 
+* Check Testing Suite
+* Evaulate Errors
+* Requirements
+* Run Script
+* Generation of Sicher Performance Visualisations
+* Diagnostics Output
+* Full Log Output
+* Top Level Visualisations
+* Running the Binary in GUI
+* Help in GUI
+* Browser in GUI
