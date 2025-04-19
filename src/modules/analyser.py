@@ -133,96 +133,148 @@ def create_ast_from_tokens(tokens, debug=False):
                         stack.append(current_node)
                         # set the current node to be the block node
                         current_node = block_node
-                        
+                      
+                    # if not a main function it must be a variable declaration  
                     else:
+                        # create a new ASTNode for the variable declarations
                         var_node = ASTNode("VariableDeclaration", None)
+                        # add the var node to the current node
                         current_node.add_child(var_node)
+                        # append the current node to the stack
                         stack.append(current_node)
+                        # set the current node to be the variable declaration node
                         current_node = var_node
 
+                # parse rule for returns
                 elif token_value == 'return':
+                    # check if return is not in a function or block scope
                     while current_node.node_type not in {"Block", "Function"}:
+                        # pop the current node from the stack
                         current_node = stack.pop()
                         
+                    # create a new ASTNode for the return statement
                     return_node = ASTNode("Return")
+                    # add the return node to the current node
                     current_node.add_child(return_node)
+                    # set the current node to be the return node
                     stack.append(current_node)
+                    # update the current node to be the return node
                     current_node = return_node
 
+                # parse rule for printf calls
                 elif token_value == 'printf':
+                    # create the functional call node
                     func_call_node = ASTNode("FunctionCall", token_value)
+                    # add the function call node to the current node
                     current_node.add_child(func_call_node)
+                    # append the current node to the stack
                     stack.append(current_node)
+                    
+                    # update the current node to be the function call node
                     current_node = func_call_node
 
+            # parse rules for identifiers
             elif token_type == 'IDENTIFIER':
+                # check if in function call or variable declaration
                 if current_node.node_type == "FunctionCall":
+                    # if in identifier, create a new identifier node
                     id_node = ASTNode("Identifier", token_value)
+                    # add the identifier node to the current node
                     current_node.add_child(id_node)
                     
+                # else if the current node is a variable declaration
                 elif current_node.node_type == "VariableDeclaration":
+                    # set the value of the current node to be the identifier value
                     current_node.value = token_value
                     
+                # check if the current node is a assignment node
                 elif current_node.node_type == "Assignment":
-                    # Handle binary operations or raw assignments
+                    # create the left operand node for the identifier
                     left_operand_node = ASTNode("Identifier", token_value)
-                    print(f"DEBUG: Creating left operand node: {left_operand_node}")  # Debug
-
+                    
+                    # check for a symbol
                     if next_token and next_token[0] == 'SYMBOL' and next_token[1] in {'+', '-', '*', '/'}:
+                        # get the operator token as the next token
                         operator_token = next_token
+                        # update the next token to be the next token after the operator
                         next_token_index = tokens.index(next_token) + 1
+                        
+                        # set the right operand token to be the next next token
                         right_operand_token = tokens[next_token_index] if next_token_index < len(tokens) else None
 
+                        # parse rule for right operand
                         if right_operand_token:
-                            # Create a BinaryOperation node
+                            # create a binary operation node
                             binary_op_node = ASTNode("BinaryOperation", operator_token[1])
-                            print(f"DEBUG: Creating BinaryOperation node: {binary_op_node}")  # Debug
 
-                            current_node.add_child(binary_op_node)  # Add the BinaryOperation node to the Assignment
-                            print(f"DEBUG: Added BinaryOperation node to Assignment: {current_node}")  # Debug
+                            # add the binary operation node to the current node
+                            current_node.add_child(binary_op_node)
 
-                            # Add the left operand
+                            # Add the left operand to the binary operation node
                             binary_op_node.add_child(left_operand_node)
-                            print(f"DEBUG: Added left operand to BinaryOperation: {binary_op_node}")  # Debug
 
-                            # Add the right operand
+                            # Add the right operand node to the binary operation node along with the identifier and the number
                             right_operand_node = ASTNode(
                                 "Identifier" if right_operand_token[0] == 'IDENTIFIER' else "Number",
                                 right_operand_token[1]
                             )
-                            binary_op_node.add_child(right_operand_node)
-                            print(f"DEBUG: Added right operand to BinaryOperation: {binary_op_node}")  # Debug
                             
+                            # add the right operand node to the binary operation node
+                            binary_op_node.add_child(right_operand_node)
+                
+            # parse rules for symbols            
             elif token_type == 'SYMBOL':
+                # check if the current node is opening parenthesis
                 if token_value == '{':
+                    # create a new block node
                     block_node = ASTNode("Block")
+                    # add the block node to the current node
                     current_node.add_child(block_node)
+                    # append the current node to the stack
                     stack.append(current_node)
+                    
+                    # update the current node to be the block node
                     current_node = block_node
 
+                # check if the current node is closing parenthesis
                 elif token_value == '}':
+                    # pop the current node from the stack
                     current_node = stack.pop()
 
+                # check if the current node is a equal sign
                 elif token_value == '=':
+                    # create the assignment node
                     assign_node = ASTNode("Assignment")
+                    # add the assignment node to the current node
                     current_node.add_child(assign_node)
+                    # set the current node to be the assignment node
                     stack.append(current_node)
+                    # update the current node to be the assignment node
                     current_node = assign_node
 
+                # check if the current node is a semicolon
                 elif token_value == ';':
+                    # check if the current node is in a return, function call, assignment or variable declaration scope
                     while current_node.node_type in {"Return", "FunctionCall", "Assignment", "VariableDeclaration"}:
+                        # pop the current node from the stack
                         current_node = stack.pop()
 
+            # parse rules for strings
             elif token_type == 'STRING':
+                # get the string value from the token and create a new string node
                 string_node = ASTNode("String", token_value)
+                # add the string node to the current node
                 current_node.add_child(string_node)
 
+            # parse rules for numbers
             elif token_type == 'NUMBER':
+                # get the number value from the token and create a new number node
                 number_node = ASTNode("Number", token_value)
+                # add the number node to the current node
                 current_node.add_child(number_node)
 
     # Handle AST errors
-    except Exception as e:
+    except Exception as e: # get the error message
         error_message = f"Error creating AST: {str(e)}\n" # the error message
         error_message += f"Current token: {current_token}\n" # what the current token is
         error_message += f"Current node: {current_node}\n" # what the current node is
