@@ -26,14 +26,13 @@ class CompilerFrame(wx.Frame):
         super(CompilerFrame, self).__init__(*args, **kw, size=(800, 600 * 2))  # Declares the size of the window
         self.InitUI()  # Populates the GUI with the initial elements
 
-    # Generate Visualisations button logic
+    # Generate Visualisations button logic, getting the performance metrics of Sicher and plotting them
     def OnGenerateVisualisations(self, event):
         """
         Handles the Generate Visualisations button click.
         Compiles the current file 10 times and generates plots for time to compile,
         memory usage, and CPU usage.
         """
-        
         # gets the filepath from the file picker
         filepath = self.file_picker.GetPath()
 
@@ -41,17 +40,15 @@ class CompilerFrame(wx.Frame):
         if not filepath:
             # tell the user the to select a file as the filepicker is empty
             wx.MessageBox('Please select a file to compile', 'Error', wx.OK | wx.ICON_ERROR)
-            
             return
 
         # check if the file exists
         if not os.path.isfile(filepath):
             # tell the user the file does not exist
             wx.MessageBox('File does not exist', 'Error', wx.OK | wx.ICON_ERROR)
-            
             return
 
-        # try and copmile the user given file
+        # try and compile the user given file
         try:
             # read the filepath
             with open(filepath, 'r') as file:
@@ -59,78 +56,80 @@ class CompilerFrame(wx.Frame):
                 code = file.read()
 
             # Initialize lists to store metrics
-            compile_times = []
-            memory_usages = []
-            cpu_usages = []
+            compile_times = [] # store the time to compile sicher
+            memory_usages = [] # store the memory usage of sicher
+            cpu_usages = [] # store the cpu usage of sicher
 
             # Compile the file 10 times and record metrics
             for i in range(10):
-                start_time = time.time()
-                process = psutil.Process()
+                start_time = time.time() # start the compile timer
+                process = psutil.Process() # get the current process (sicher)
                 initial_memory = process.memory_info().rss  # Memory usage in bytes
                 initial_cpu_times = process.cpu_times()  # Start measuring CPU times
 
-                # Tokenization
+                # Tokenisation Module
                 tokens, _ = tokenise(code, debug=False)
 
-                # Parsing
+                # Parser Module
                 parse_tokens(tokens, debug=False)
 
-                # Analyzing
+                # Analyser Module
                 ast = create_ast_from_tokens(tokens, debug=False)
 
-                # Code Generation
+                # Code Generator Module
                 codegen = CodeGenerator(ast)
                 codegen.generate_code()
 
-                # End time and CPU usage
-                end_time = time.time()
+                # end the compile timer and record the memory and cpu usage
+                end_time = time.time() # stop the compile timer
                 final_memory = process.memory_info().rss  # Memory usage in bytes
                 final_cpu_times = process.cpu_times()  # End measuring CPU times
 
                 # Calculate metrics
-                time_complexity = end_time - start_time
+                time_complexity = end_time - start_time # get the time to compile
                 memory_usage = (final_memory - initial_memory) / (1024 * 1024)  # Convert to MB
                 cpu_time_used = (
                     (final_cpu_times.user - initial_cpu_times.user) +
                     (final_cpu_times.system - initial_cpu_times.system)
-                )
-                cpu_usage_percentage = (cpu_time_used / time_complexity) * 100 if time_complexity > 0 else 0
+                ) # get the cpu time used
+                cpu_usage_percentage = (cpu_time_used / time_complexity) * 100 if time_complexity > 0 else 0 # compute the cpu usage percentage
 
                 # Store metrics
-                compile_times.append(time_complexity)
-                memory_usages.append(memory_usage)
-                cpu_usages.append(cpu_usage_percentage)
+                compile_times.append(time_complexity) # store the time to compile for sicher in the cirrent iteration
+                memory_usages.append(memory_usage) # store the memory usage for sicher in the current iteration
+                cpu_usages.append(cpu_usage_percentage) # store the cpu usage for sicher in the current iteration
 
             # Generate plots
-            self.generate_plots(compile_times, memory_usages, cpu_usages)
+            self.generate_plots(compile_times, memory_usages, cpu_usages) # pass the plots the compile times, memory usage and cpu usage
 
+        # Handle exceptions for generating and visualising sicher performance plots
         except Exception as e:
             wx.MessageBox(f"Error during compilation: {e}", 'Error', wx.OK | wx.ICON_ERROR)
             
-
+    # From the above measuements, generate the plots for the time to compile, memory usage and cpu usage of sicher
     def generate_plots(self, compile_times, memory_usages, cpu_usages):
         """
         Generates and embeds scaled-down plots for time to compile, memory usage, and CPU usage
         into a collapsible section in the GUI.
         """
+        # create a figure with 3 subplots
         fig, axs = plt.subplots(3, 1, figsize=(6, 8)) 
 
-        # Plot time to compile
+        # Plot time to compile for sicher
         axs[0].plot(range(1, 11), compile_times, marker='o', color='blue')
         axs[0].set_title('Time to Compile (seconds)', fontsize=10)
         axs[0].set_xlabel('Iteration', fontsize=8)
         axs[0].set_ylabel('Time (s)', fontsize=8)
         axs[0].tick_params(axis='both', labelsize=8)
 
-        # Plot memory usage
+        # Plot memory usage for sicher
         axs[1].plot(range(1, 11), memory_usages, marker='o', color='green')
         axs[1].set_title('Memory Usage (MB)', fontsize=10)
         axs[1].set_xlabel('Iteration', fontsize=8)
         axs[1].set_ylabel('Memory (MB)', fontsize=8)
         axs[1].tick_params(axis='both', labelsize=8)
 
-        # Plot CPU usage
+        # Plot CPU usage for sicher
         axs[2].plot(range(1, 11), cpu_usages, marker='o', color='red')
         axs[2].set_title('CPU Usage (%)', fontsize=10)
         axs[2].set_xlabel('Iteration', fontsize=8)
@@ -144,6 +143,7 @@ class CompilerFrame(wx.Frame):
         # Embed the figure into a collapsible section
         self.add_visualisation_section(fig)
             
+    # method to add the plots to a collapsable section in the visualiser GUI
     def add_visualisation_section(self, figure):
         """
         Adds a collapsible section to display the scaled-down visualisation plots.
