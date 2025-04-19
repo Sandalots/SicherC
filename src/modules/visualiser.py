@@ -32,6 +32,8 @@ class CompilerFrame(wx.Frame):
         Compiles the current file 10 times and generates plots for time to compile,
         memory usage, and CPU usage.
         """
+        
+        # gets the filepath from the file picker
         filepath = self.file_picker.GetPath()
 
         if not filepath:
@@ -236,7 +238,7 @@ class CompilerFrame(wx.Frame):
         title.SetFont(font)
         vbox.Add(title, flag=wx.ALIGN_CENTER | wx.TOP, border=10)
 
-        # File upload
+        # File Upload Button
         file_label = wx.StaticText(panel, label='Select a C Source File:')
         file_label.SetForegroundColour("#FAD000")
         font = file_label.GetFont()
@@ -344,6 +346,19 @@ class CompilerFrame(wx.Frame):
         self.show_full_log_button.SetFont(font)
         self.show_full_log_button.Bind(wx.EVT_BUTTON, self.OnShowFullLogButtonClick)
         hbox_buttons.Add(self.show_full_log_button, flag=wx.LEFT, border=10)
+        
+        # Add a spacer between Show Full Log and Help buttons
+        hbox_buttons.AddSpacer(10)  # Add 10 pixels of horizontal space
+
+        # Help button
+        self.help_button = wx.Button(panel, label='Help')
+        self.help_button.SetBackgroundColour("#FAD000")
+        self.help_button.SetForegroundColour("#2D2B55")
+        font = self.help_button.GetFont()
+        font = font.Bold()
+        self.help_button.SetFont(font)
+        self.help_button.Bind(wx.EVT_BUTTON, self.OnHelpButtonClick)
+        hbox_buttons.Add(self.help_button, flag=wx.LEFT, border=10)
 
         # Time/Space Complexity Labels
         hbox_complexity = wx.BoxSizer(wx.HORIZONTAL)  # Horizontal box sizer for centering
@@ -645,6 +660,36 @@ class CompilerFrame(wx.Frame):
         except FileNotFoundError:
             # Handle the case where sicher.py is not found
             self.add_collapsible_section("Full Debug Log (Error)", "Error: sicher.py not found.")
+            
+    def OnHelpButtonClick(self, event):
+        """
+        Handles the "Help" button click.
+        Displays an alert box explaining the Visualiser features and Sicher functionality.
+        """
+        help_text = (
+            "Welcome to the Sicher C Compiler Visualiser!\n\n"
+            "Features:\n"
+            "- Compile: Compiles the selected C source file and displays the output of each module.\n"
+            "- Generate Visualisations: Compiles the file multiple times and generates performance metrics (time, memory, CPU usage).\n"
+            "- Show Diagnostics: Displays system and Sicher-specific diagnostics.\n"
+            "- Run: Executes the compiled binary and displays its output.\n"
+            "- Show Source: Displays the content of the selected C source file.\n"
+            "- Show Full Log: Runs Sicher with the --debug flag and displays the full debug log.\n"
+            "- Help: Displays this help dialog.\n\n"
+            "How to Use:\n"
+            "1. Use the file picker to select a C source file.\n"
+            "2. Click 'Compile' to compile the file and view the output.\n"
+            "3. Use other buttons to explore additional features.\n\n"
+            "Time/Space Complexity Labels:\n"
+            "- Time to Compile: The time taken to compile the file.\n"
+            "- Memory Usage: The memory used during compilation.\n"
+            "- CPU Usage: The percentage of CPU used during compilation.\n\n"
+            "About Sicher:\n"
+            "Sicher is a C compiler that tokenizes, parses, analyzes, and generates assembly code for C programs. "
+            "It also provides performance metrics and visualizations for educational purposes."
+        )
+
+        wx.MessageBox(help_text, "Help - Sicher C Compiler", wx.OK | wx.ICON_INFORMATION)
 
 class ASTVisualizerPanel(wx.ScrolledWindow):
     def __init__(self, parent, ast):
