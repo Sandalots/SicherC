@@ -1011,7 +1011,7 @@ class ASTVisualizerPanel(wx.ScrolledWindow):
             # update the last mouse position
             self.last_mouse_position = current_position
 
-# Main loop to run the GUI
+# Main loop to run the Visualiser GUI Module
 def main():
     # create the wx GUI application
     app = wx.App()
