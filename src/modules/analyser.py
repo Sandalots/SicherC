@@ -249,6 +249,7 @@ def create_ast_from_tokens(tokens, debug=False):
                     current_node.add_child(assign_node)
                     # set the current node to be the assignment node
                     stack.append(current_node)
+                    
                     # update the current node to be the assignment node
                     current_node = assign_node
 

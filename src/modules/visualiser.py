@@ -48,6 +48,7 @@ class CompilerFrame(wx.Frame):
             wx.MessageBox('File does not exist', 'Error', wx.OK | wx.ICON_ERROR)
             return
         
+        # Redraw the visualisations on click of the generate visualisations button
         self.output_panel.DestroyChildren()  # Clear the output panel
         self.output_panel.Layout()  # Layout the output panel
 
@@ -270,6 +271,7 @@ class CompilerFrame(wx.Frame):
         vbox.Add(file_label, flag=wx.ALIGN_LEFT | wx.TOP | wx.LEFT, border=10)
         file_label.SetBackgroundColour("#2D2B55")
 
+        # some horizontal spacing for the below file picker
         hbox1 = wx.BoxSizer(wx.HORIZONTAL)
 
         # Set default path for the file picker using a relative path
@@ -279,7 +281,7 @@ class CompilerFrame(wx.Frame):
         hbox1.Add(self.file_picker, proportion=1, flag=wx.EXPAND)
         vbox.Add(hbox1, flag=wx.EXPAND | wx.ALL, border=10)
         
-        # Add a smaller header above the buttons
+        # Label fo the below Sicher Controls (Buttons)
         magic_buttons_label = wx.StaticText(panel, label='Sicher Controls:')
         magic_buttons_label.SetForegroundColour("#FAD000")
         font = magic_buttons_label.GetFont()
@@ -326,8 +328,7 @@ class CompilerFrame(wx.Frame):
 
         vbox.Add(hbox_buttons, flag=wx.ALIGN_CENTER | wx.TOP | wx.BOTTOM, border=20)
         
-        # Add a spacer between Run and Clear buttons
-        hbox_buttons.AddSpacer(10)  # Add 10 pixels of horizontal space
+        hbox_buttons.AddSpacer(10)  # Add 10 pixels of horizontal space between the eiqgnowtics and clear buttons
 
         # Clear button
         self.clear_button = wx.Button(panel, label='Clear')
@@ -448,33 +449,41 @@ class CompilerFrame(wx.Frame):
 
     # Compile button logic
     def OnCompile(self, event):
+        # get the filepath from the file picker
         filepath = self.file_picker.GetPath()
 
+        # check if no file was selected
         if not filepath:
+            # tell the user the to select a file as the filepicker is empty
             wx.MessageBox('Please select a file to compile', 'Error', wx.OK | wx.ICON_ERROR)
             return
 
         # Check if the file exists
         if not os.path.isfile(filepath):
+            # tell the user the file does not exist
             wx.MessageBox('File does not exist', 'Error', wx.OK | wx.ICON_ERROR)
             return
 
         # Check if the file is a C source file
         if not filepath.endswith('.c'):
+            # tell the user the file is not a C source file
             wx.MessageBox('File is not a C source file', 'Error', wx.OK | wx.ICON_ERROR)
             return
 
         # Check if the file is empty
         if os.path.getsize(filepath) == 0:
+            # tell the user the file is empty
             wx.MessageBox('File is empty', 'Error', wx.OK | wx.ICON_ERROR)
             return
 
         # Check if the file is readable
         try:
+            # try and open the filepath
             with open(filepath, 'r') as file:
+                # as it can be opened no error was raised
                 pass
             
-        # handle any IO errors
+        # handle any IO errors that may occur while attempting to read the file
         except IOError:
             # tell the user there was an error reading the file
             wx.MessageBox('Error reading file', 'Error', wx.OK | wx.ICON_ERROR)
@@ -484,49 +493,51 @@ class CompilerFrame(wx.Frame):
         self.output_panel.DestroyChildren()
 
         try:
+            # Read the source file
             with open(filepath, 'r') as file:
+                # save the source file as code
                 code = file.read()
 
             # Measure start time and CPU usage
-            start_time = time.time()
-            process = psutil.Process()
+            start_time = time.time() # start the compile timer
+            process = psutil.Process() # get the current process (sicher)
             initial_memory = process.memory_info().rss  # Memory usage in bytes
             initial_cpu_times = process.cpu_times()  # Start measuring CPU times
 
             # Tokenization
-            tokens, tokeniser_log = tokenise(code, debug=True)
+            tokens, tokeniser_log = tokenise(code, debug=True) # tokenise the code (infer the tokeniser module)
             self.add_collapsible_section("Tokenisation Module", tokeniser_log)  # Display the debug output
 
             # Parsing
-            parsing_debug_output = parse_tokens(tokens, debug=True)
-            self.add_collapsible_section("Parser Module", parsing_debug_output)
+            parsing_debug_output = parse_tokens(tokens, debug=True) # parse the tokens (infer the parser module)
+            self.add_collapsible_section("Parser Module", parsing_debug_output) # Display the debug output
 
             # Analyzing
-            ast = create_ast_from_tokens(tokens, debug=True)
-            self.add_collapsible_section("Analyser Module (Abstract Syntax Tree)", ast.pretty_print())
+            ast = create_ast_from_tokens(tokens, debug=True) # create the AST (infer the analyser module)
+            self.add_collapsible_section("Analyser Module (Abstract Syntax Tree)", ast.pretty_print()) # Display the AST
 
             # Code Generation
-            codegen = CodeGenerator(ast)
-            generated_code = codegen.generate_code()
-            self.add_collapsible_section("Code Generator Module", generated_code)
+            codegen = CodeGenerator(ast) # create the code generator object (infer the code generator module)
+            generated_code = codegen.generate_code() # generate the code using the code generator object
+            self.add_collapsible_section("Code Generator Module", generated_code) # Display the generated code
 
             # Save the generated code to a file
             codegen.save_code_to_file('output.ll')
 
             # Compile the generated code to an ARM64 binary
             output_binary_name = getattr(self, "custom_binary_name", "output_binary")  # Use custom name if set
-            codegen.compile_to_arm64('output.ll', output_binary_name)
+            codegen.compile_to_arm64('output.ll', output_binary_name) # save as the custom binary name
 
             # Display success message
             wx.MessageBox(f"Compilation successful! Binary saved as: {output_binary_name}", "Success", wx.OK | wx.ICON_INFORMATION)
 
             # End time and CPU usage
-            end_time = time.time()
+            end_time = time.time() # stop the compile timer
             final_memory = process.memory_info().rss  # Memory usage in bytes
             final_cpu_times = process.cpu_times()  # End measuring CPU times
 
             # Calculate time complexity
-            time_complexity = end_time - start_time
+            time_complexity = end_time - start_time # get the time to compile
 
             # Calculate memory usage (RAM usage)
             memory_usage = (final_memory - initial_memory) / (1024 * 1024)  # Convert to MB
@@ -535,30 +546,35 @@ class CompilerFrame(wx.Frame):
             cpu_time_used = (
                 (final_cpu_times.user - initial_cpu_times.user) +
                 (final_cpu_times.system - initial_cpu_times.system)
-            )
-            cpu_usage_percentage = (cpu_time_used / time_complexity) * 100 if time_complexity > 0 else 0
+            ) # get the cpu time used 
+            
+            cpu_usage_percentage = (cpu_time_used / time_complexity) * 100 if time_complexity > 0 else 0 # compute the cpu usage percentage by using the cpu time divided by the time to compile
 
-            # Update the combined complexity label
+            # Update the performance labels with the time to compile, memory usage and cpu usage
             self.complexity_label.SetLabel(
-                f"Time to Compile: {time_complexity:.4f} seconds | "
-                f"Memory Usage: {memory_usage:.2f} MB | "
-                f"CPU Usage: {cpu_usage_percentage:.2f}%"
+                f"Time to Compile: {time_complexity:.2f} seconds | " # to 2 decimal places for the secounds
+                f"Memory Usage: {memory_usage:.2f} MB | " # to 2 decimal places for the memory usage
+                f"CPU Usage: {cpu_usage_percentage:.2f}%" # to 2 decimal places for the cpu percentage
             )
 
             # Top Level Viz
-            self.add_top_level_viz(ast)
+            self.add_top_level_viz(ast) # show the top level visualisation of the AST
 
+        # handle any exceptions
         except Exception as e:
+            # tell the user an error has occured as a wx message box/alert
             wx.MessageBox(f"Error: {e}", 'Error', wx.OK | wx.ICON_ERROR)
 
     # Defines a method to add collapsable sections housing each of the Sicher Modules work plus the additional top level viz
     def add_collapsible_section(self, title, content):
-        # Create a collapsible pane
+        # Create a collapsible pane for a given content (.e. module container/top level viz)
         collapsible_pane = wx.CollapsiblePane(
             self.output_panel,
             label=title,
             style=wx.CP_DEFAULT_STYLE | wx.CP_NO_TLW_RESIZE
         )
+        
+        # bind the created collapsible pane to the event handler
         collapsible_pane.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.on_collapsible_pane_changed)
 
         # Set the arrow color to yellow (same as buttons)
@@ -570,29 +586,38 @@ class CompilerFrame(wx.Frame):
 
         # Add content to the collapsible pane
         pane = collapsible_pane.GetPane()
+        
+        # set the text controls of the panel
         text_ctrl = wx.TextCtrl(
             pane,
             value=content,
             style=wx.TE_MULTILINE | wx.TE_READONLY | wx.BORDER_NONE
         )
-        text_ctrl.SetBackgroundColour("#1E1E3F")
-        text_ctrl.SetForegroundColour("#FAD000")
+        
+        # set the styling of the text control
+        text_ctrl.SetBackgroundColour("#1E1E3F") # the dark purple colour
+        text_ctrl.SetForegroundColour("#FAD000") # the yellow colour
 
         # Adjust the height of the collapsible boxes
         text_ctrl.SetMinSize((-1, 150))  # Set a minimum height of 150 pixels
 
         # Layout for the collapsible pane
-        pane_sizer = wx.BoxSizer(wx.VERTICAL)
-        pane_sizer.Add(text_ctrl, proportion=1, flag=wx.EXPAND)
-        pane.SetSizer(pane_sizer)
+        pane_sizer = wx.BoxSizer(wx.VERTICAL) # define the pane sizer
+        pane_sizer.Add(text_ctrl, proportion=1, flag=wx.EXPAND) # add the text control to the pane sizer
+        pane.SetSizer(pane_sizer) # set the sizer of the pane to be the pane sizer
 
         # Add the collapsible pane to the output panel
         self.output_sizer.Add(collapsible_pane, flag=wx.EXPAND | wx.ALL, border=5)
+        
+        # output panel layout
         self.output_panel.Layout()
 
+    # handle the collapsable pane changes
     def on_collapsible_pane_changed(self, event):
+        # redraw the layout of the output panel
         self.output_panel.Layout()
         
+    # Event handler for the clear button
     def OnClearButtonClick(self, event):
         """
         Handles the "Clear" button click.
@@ -604,6 +629,7 @@ class CompilerFrame(wx.Frame):
         # Refresh the layout to reflect the changes
         self.output_panel.Layout()
 
+    # Function to add the top level viz diagram/graphic of the AST
     def add_top_level_viz(self, ast):
         """
         Adds a top-level visualization of the AST to the output panel.
@@ -611,20 +637,24 @@ class CompilerFrame(wx.Frame):
         Args:
             ast: The root of the AST.
         """
+        
+        # add a collapsible pane for the top level visualisation
         collapsible_pane = wx.CollapsiblePane(
             self.output_panel,
             label="Top Level Visualisation",
             style=wx.CP_DEFAULT_STYLE | wx.CP_NO_TLW_RESIZE
         )
+        
+        # bind the top level viz collapsable pane to the gui    
         collapsible_pane.Bind(wx.EVT_COLLAPSIBLEPANE_CHANGED, self.on_collapsible_pane_changed)
 
         # Make the collapsible pane visible by default
-        collapsible_pane.Collapse(False)
+        collapsible_pane.Collapse(False) # is not collapsed by default
 
         # Create the visualization panel
         viz_panel = ASTVisualizerPanel(collapsible_pane.GetPane(), ast)
-        viz_panel.SetMinSize((800, 600))  # Set a minimum size for the visualization
-
+        viz_panel.SetMinSize((800, 600))  # set the top level viz pane to (800, 600) pixels
+        
         # Add the visualization panel to the collapsible pane
         pane_sizer = wx.BoxSizer(wx.VERTICAL)
         pane_sizer.Add(viz_panel, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
@@ -632,8 +662,11 @@ class CompilerFrame(wx.Frame):
 
         # Add the collapsible pane to the output panel
         self.output_sizer.Add(collapsible_pane, flag=wx.EXPAND | wx.ALL, border=5)
+        
+        # add the collapsable pane for the top level visualisation to the output panel
         self.output_panel.Layout()
         
+    # Event handler for the run button
     def OnRunButtonClick(self, event):
         """
         Handles the "Run" button click.
@@ -642,67 +675,95 @@ class CompilerFrame(wx.Frame):
         # Use the custom binary name if set, otherwise default to "output_binary"
         binary_name = getattr(self, "custom_binary_name", "output_binary")
 
+        # try and run the compiled binary
         try:
-            # Run the binary and capture the output
-            result = subprocess.run([f"./{binary_name}"], capture_output=True, text=True, check=True)
+            # get the executable binary from the current directory
+            result = subprocess.run([f"./{binary_name}"], capture_output=True, text=True, check=True) # will default to ./output_binary if no custom binary name is set by the user using the customise button
 
             # Display the output in a collapsible section
-            output = result.stdout.strip() if result.stdout else "No output."
+            output = result.stdout.strip() if result.stdout else "No output." # get the output from the binary
+            
+            # add the output to the output panel with the run output title
             self.add_collapsible_section("Run Output", output)
 
+        # handle any run binary errors
         except subprocess.CalledProcessError as e:
             # Handle errors during execution
-            error_message = f"Error running ./{binary_name}:\n{e.stderr.strip() if e.stderr else str(e)}"
+            error_message = f"Error running ./{binary_name}:\n{e.stderr.strip() if e.stderr else str(e)}" # get the error message from the binary
+            
+            # tell the user there was an error running the binary along with the above error message
             self.add_collapsible_section("Run Output (Error)", error_message)
+            
+        # handle file not found errors
         except FileNotFoundError:
             # Handle the case where the binary does not exist
-            self.add_collapsible_section("Run Output (Error)", f"Error: ./{binary_name} not found.")
+            self.add_collapsible_section("Run Output (Error)", f"Error: ./{binary_name} not found.") # tell the user the binary was not found
             
+    # Event handler for the show source button
     def OnShowSourceButtonClick(self, event):
         """
         Handles the "Show Source" button click.
         Displays the content of the input C source file in a collapsible section.
         """
+        
+        # get the filepath from the file picker
         filepath = self.file_picker.GetPath()
 
+        # check if no file was selected
         if not filepath:
+            # tell the user the to select a file as the filepicker is empty
             wx.MessageBox('Please select a file to display', 'Error', wx.OK | wx.ICON_ERROR)
+            # return back to the gui
             return
 
-        # Check if the file exists
+        # Check if the file does not exist
         if not os.path.isfile(filepath):
+            # tell the user the file does not exist
             wx.MessageBox('File does not exist', 'Error', wx.OK | wx.ICON_ERROR)
+            # return back to the gui
             return
 
+        # Check if the file can be read
         try:
+            # try and open the source file
             with open(filepath, 'r') as file:
+                # set the source code to the file being currently read
                 source_code = file.read()
 
             # Display the source code in a collapsible section
             self.add_collapsible_section("Source Code", source_code)
 
+        # handle io errors
         except IOError:
+            # tell the user there was an error reading the file
             wx.MessageBox('Error reading file', 'Error', wx.OK | wx.ICON_ERROR)
             
+    # Event handler for the show full log button
     def OnShowFullLogButtonClick(self, event):
         """
         Handles the "Show Full Log" button click.
         Runs sicher.py with the --debug flag and displays the full log in a collapsible section.
         """
+        # get the filepath from the file picker
         filepath = self.file_picker.GetPath()
 
+        # check if no file was selected
         if not filepath:
+            # tell the user the to select a file as the filepicker is empty
             wx.MessageBox('Please select a file to compile', 'Error', wx.OK | wx.ICON_ERROR)
             return
 
-        # Check if the file exists
+        # Check if the source file does not exists
         if not os.path.isfile(filepath):
+            # tell the user the file does not exist
             wx.MessageBox('File does not exist', 'Error', wx.OK | wx.ICON_ERROR)
+            
+            # return back to the gui
             return
 
+        # capture the full log output from sicher.py (the entry point)
         try:
-            # Run sicher.py as a subprocess with the --debug flag
-            import subprocess
+            # Run sicher.py as a subprocess with the --debug flag so I can capture the ouput
             result = subprocess.run(
                 ["python3", "src/sicher.py", filepath, "--debug"],
                 capture_output=True,
@@ -716,14 +777,19 @@ class CompilerFrame(wx.Frame):
             # Display the debug log in a collapsible section
             self.add_collapsible_section("Full Debug Log", debug_log)
 
+        # handle execution errors
         except subprocess.CalledProcessError as e:
             # Handle errors during execution
-            error_message = f"Error running sicher.py:\n{e.stderr.strip() if e.stderr else str(e)}"
+            error_message = f"Error running sicher.py:\n{e.stderr.strip() if e.stderr else str(e)}" # get the error message from the binary
+            # tell the user there was an error running sicher.py along with the above error message in the collapsable section
             self.add_collapsible_section("Full Debug Log (Error)", error_message)
+            
+        # handle file not found errors
         except FileNotFoundError:
-            # Handle the case where sicher.py is not found
+            # Handle the case where sicher.py is not found and the user is using the GUI
             self.add_collapsible_section("Full Debug Log (Error)", "Error: sicher.py not found.")
             
+    # Event handler for the help button
     def OnHelpButtonClick(self, event):
         """
         Handles the "Help" button click.
@@ -743,7 +809,7 @@ class CompilerFrame(wx.Frame):
             "- Help: Displays this help dialog.\n"
             "- Customise: Allows you to specify a custom output binary name.\n\n"
             
-            "How to Use:\n"
+            "How to Use Sicher:\n"
             "1. Use the file picker to select a C source file.\n"
             "2. Click 'Compile' to compile the file and view the output.\n"
             "3. Use other buttons to explore additional features.\n\n"
@@ -761,11 +827,13 @@ class CompilerFrame(wx.Frame):
         # add the help text to a message box using wx
         wx.MessageBox(help_text, "Help - Sicher C Compiler", wx.OK | wx.ICON_INFORMATION)
         
+    # Event handler for the customise button
     def OnCustomiseButtonClick(self, event):
         """
         Handles the "Customise" button click.
         Opens a popup dialog for the user to specify a custom output binary name.
         """
+        # Create a dialog for the user to enter a custom binary name
         dialog = wx.TextEntryDialog(
             self,
             "Enter a custom output binary name:",
@@ -773,18 +841,25 @@ class CompilerFrame(wx.Frame):
             value="output_binary"
         )
 
+        # check if the user clicked ok
         if dialog.ShowModal() == wx.ID_OK:
             # Get the custom binary name from the dialog
             self.custom_binary_name = dialog.GetValue().strip()
 
-            # Validate the input
+            # check if the custom binary name is empty
             if not self.custom_binary_name:
+                # tell the user the custom binary name cannot be empty
                 wx.MessageBox("Binary name cannot be empty.", "Error", wx.OK | wx.ICON_ERROR)
+                
+            # if the user entered a custom binary name
             else:
+                # tell the user the custom binary name has been set
                 wx.MessageBox(f"Custom binary name set to: {self.custom_binary_name}", "Success", wx.OK | wx.ICON_INFORMATION)
 
+        # remove the customise dialog/alert box as I no longer need it
         dialog.Destroy()
 
+# Class to modal the top level visualisation of the AST
 class ASTVisualizerPanel(wx.ScrolledWindow):
     def __init__(self, parent, ast):
         super(ASTVisualizerPanel, self).__init__(parent)
@@ -880,8 +955,7 @@ class ASTVisualizerPanel(wx.ScrolledWindow):
             dy = self.last_mouse_position.y - current_position.y
 
             # Scroll the window
-            self.Scroll(self.GetScrollPos(wx.HORIZONTAL) + dx // 20,
-                        self.GetScrollPos(wx.VERTICAL) + dy // 20)
+            self.Scroll(self.GetScrollPos(wx.HORIZONTAL) + dx // 20, self.GetScrollPos(wx.VERTICAL) + dy // 20)
 
             self.last_mouse_position = current_position
 
