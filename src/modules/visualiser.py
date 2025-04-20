@@ -25,6 +25,24 @@ class CompilerFrame(wx.Frame):
     def __init__(self, *args, **kw):
         super(CompilerFrame, self).__init__(*args, **kw, size=(800, 600 * 2))  # Declares the size of the window
         self.InitUI()  # Populates the GUI with the initial elements
+        
+        #Bind the event menu to quit the gui when pressed
+        self.Bind(wx.EVT_MENU, self.OnExit)
+
+        # macro for command q to be set as the exit key for macOS
+        accel_tbl = wx.AcceleratorTable([
+            (wx.ACCEL_CMD, ord('Q'), wx.ID_EXIT) # bind command q to the exit key
+        ])
+        
+        # use the command q macro
+        self.SetAcceleratorTable(accel_tbl)
+
+    # function to exit the Sicher Visualiser GUI
+    def OnExit(self, event):
+        """
+        Handles the Cmd+Q shortcut to exit the application.
+        """
+        self.Destroy()  # destroy the GUI window
 
     # Generate Visualisations button logic, getting the performance metrics of Sicher and plotting them
     def OnGenerateVisualisations(self, event):
@@ -861,102 +879,136 @@ class CompilerFrame(wx.Frame):
 
 # Class to modal the top level visualisation of the AST
 class ASTVisualizerPanel(wx.ScrolledWindow):
+    # constructor for the AST visualiser panel
     def __init__(self, parent, ast):
+        # use the parent class constructor to initialise the panel
         super(ASTVisualizerPanel, self).__init__(parent)
+        
+        # get the ast
         self.ast = ast
+        
+        # set the background colour of the panel to be the dark purple colour
         self.SetBackgroundColour("#1E1E3F")
 
-        # Enable scrolling
-        self.SetScrollbars(20, 20, 50, 50)  # Scroll step size and virtual size
-        self.virtual_size = (2000, 2000)  # Set a large virtual size for the canvas
+        # Enable scrolling of the panel
+        self.SetScrollbars(20, 20, 50, 50)  # create the scrollbars
+        self.virtual_size = (2000, 2000)  # a virtual size to allow for an expanded and scrollable area
         self.SetVirtualSize(self.virtual_size)
 
         # Variables for panning
-        self.is_panning = False
-        self.last_mouse_position = None
+        self.is_panning = False # check if the user is panning
+        self.last_mouse_position = None # get the last mouse position
 
         # Bind events
-        self.Bind(wx.EVT_PAINT, self.OnPaint)
-        self.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDown)
-        self.Bind(wx.EVT_LEFT_UP, self.OnLeftUp)
-        self.Bind(wx.EVT_MOTION, self.OnMouseMove)
+        self.Bind(wx.EVT_PAINT, self.OnPaint) # when user is panning
+        self.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDown) # get the left mouse button down
+        self.Bind(wx.EVT_LEFT_UP, self.OnLeftUp) # get the left mouse button up
+        self.Bind(wx.EVT_MOTION, self.OnMouseMove) # get the mouse moving
 
+    # function to create the visualisation of the AST
     def OnPaint(self, event):
+        # get the drawing context for the top level visualisation
         dc = wx.PaintDC(self)
+        
+        # allow for scrolling of the top level viz
         self.PrepareDC(dc)  # Adjust for scrolling
+        
+        # creat the graphic context visualiser for the drwing content of the top level viz
         gc = wx.GraphicsContext.Create(dc)
 
+        # if we have a graphic context
         if gc:
+            # set the yellow theme for the node 'box'/rectangle
             gc.SetBrush(wx.Brush("#FAD000"))  # Yellow theme color
             gc.SetPen(wx.Pen("#FAD000", 2))  # Yellow border
 
-            # Start drawing the AST
+            # Start drawing the AST nodes
             self.draw_node(gc, self.ast.root, 1000, 50, 200, 100)  # Centered in the virtual space
 
+    # function to draw a node
     def draw_node(self, gc, node, x, y, x_offset, y_offset, depth=0):
+        # check if we have a node
         if not node:
+            # if no node is stop the drawing
             return
 
         # Alternate colors based on depth (even: bright yellow, odd: darker yellow)
         color = "#FAD000" if depth % 2 == 0 else "#C9A000"  # Bright yellow for even layers, darker yellow for odd layers
 
         # Set the brush and pen color for the rectangle
-        gc.SetBrush(wx.Brush(color))
-        gc.SetPen(wx.Pen(color, 2))
+        gc.SetBrush(wx.Brush(color)) # use the alternating color for the node
+        gc.SetPen(wx.Pen(color, 2)) # use the alternating color for the node border
 
         # Draw the current node as a rectangle
-        rect_width, rect_height = 120, 50
-        gc.DrawRectangle(x - rect_width // 2, y, rect_width, rect_height)
+        rect_width, rect_height = 120, 50 # set the dimensions of the node rectangle
+        gc.DrawRectangle(x - rect_width // 2, y, rect_width, rect_height) # draw the node rectangle
 
         # Draw the node label
         label_lines = [node.node_type, node.value] if node.value else [node.node_type]
 
         # Draw the node type (bold)
-        gc.SetFont(wx.Font(10, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD), "#2D2B55")
-        gc.DrawText(label_lines[0], x - rect_width // 2 + 10, y + 10)
+        gc.SetFont(wx.Font(10, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD), "#2D2B55") # set font styling for the node
+        gc.DrawText(label_lines[0], x - rect_width // 2 + 10, y + 10) # draw the label of the box
 
         # Draw the node value (normal)
         if len(label_lines) > 1:
-            gc.SetFont(wx.Font(10, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL), "#2D2B55")
-            gc.DrawText(label_lines[1], x - rect_width // 2 + 10, y + 25)
+            gc.SetFont(wx.Font(10, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL), "#2D2B55") # set font styling for the node value
+            gc.DrawText(label_lines[1], x - rect_width // 2 + 10, y + 25) # draw the value of the box
 
         # Calculate positions for child nodes
+        # get number of children for a node
         num_children = len(node.children)
+        # check if we have children
         if num_children > 0:
-            child_y = y + y_offset + 20  # Add extra vertical padding
-            child_x_start = x - (x_offset * (num_children - 1)) // 2
+            child_y = y + y_offset + 20  # add some y padding
+            child_x_start = x - (x_offset * (num_children - 1)) // 2 # create the x position start for the child
 
+            # for the children draw child nodes rectangle boxes in the top lvel viz
             for i, child in enumerate(node.children):
+                # create the x position for the child node
                 child_x = child_x_start + i * x_offset
 
                 # Draw an arrow to the child node
                 gc.SetPen(wx.Pen("#FAD000", 2))  # Keep arrows bright yellow
-                gc.StrokeLine(x, y + rect_height, child_x, child_y)
+                gc.StrokeLine(x, y + rect_height, child_x, child_y) # create the arrow to both childs
 
-                # Recursively draw the child node, increasing the depth
-                self.draw_node(gc, child, child_x, child_y, x_offset, y_offset, depth + 1)
+                # Recursively draw the child node, increasing the depth for every child
+                self.draw_node(gc, child, child_x, child_y, x_offset, y_offset, depth + 1) # for all children draw a top level viz complete with arrows and alternating colours for each line depth
 
+    # get left click down
     def OnLeftDown(self, event):
         # Start panning
         self.is_panning = True
+        # capture the last mouse position
         self.last_mouse_position = event.GetPosition()
+        
+        # capture mouse data
         self.CaptureMouse()
 
+    # get left click up /stop panning
     def OnLeftUp(self, event):
         # Stop panning
         if self.is_panning:
+            # stop panning
             self.is_panning = False
+            
+            # release mouse data
             self.ReleaseMouse()
 
+    # function to calculate mouse movmeent
     def OnMouseMove(self, event):
+        # check if panning or dragging or left mouse button is down
         if self.is_panning and event.Dragging() and event.LeftIsDown():
+            # get the current mouse position
             current_position = event.GetPosition()
-            dx = self.last_mouse_position.x - current_position.x
-            dy = self.last_mouse_position.y - current_position.y
+            # modify the scroll position based on the mouse movement
+            dx = self.last_mouse_position.x - current_position.x # the difference in x position for the scroll
+            dy = self.last_mouse_position.y - current_position.y # the difference in y position for the scroll
 
             # Scroll the window
-            self.Scroll(self.GetScrollPos(wx.HORIZONTAL) + dx // 20, self.GetScrollPos(wx.VERTICAL) + dy // 20)
+            self.Scroll(self.GetScrollPos(wx.HORIZONTAL) + dx // 20, self.GetScrollPos(wx.VERTICAL) + dy // 20) # scroll using the above deltas plus some 20px padding
 
+            # update the last mouse position
             self.last_mouse_position = current_position
 
 # Main loop to run the GUI
