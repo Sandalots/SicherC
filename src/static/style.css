@@ -91,3 +91,67 @@ pre {
 .compile-new:hover {
     text-decoration: underline;
 }
+
+/* Form container styling */
+.form-container {
+    display: flex; /* Align items horizontally */
+    align-items: center; /* Vertically center the items */
+    gap: 10px; /* Add spacing between the elements */
+}
+
+/* Custom file input styling */
+.custom-file-input {
+    display: inline-block;
+    background-color: #FFA500; /* Orange background */
+    color: #2D2B55; /* Purple text */
+    padding: 10px 20px;
+    font-size: 1em;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.custom-file-input:hover {
+    background-color: #C97A00; /* Darker orange on hover */
+}
+
+.custom-file-input input[type="file"] {
+    display: none; /* Hide the default file input */
+}
+
+/* Upload button styling */
+.upload-button {
+    background-color: #FAD000; /* Purple background */
+    color: #2D2B55; /* Yellow text */
+    padding: 10px 20px;
+    font-size: 1em;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.upload-button:hover {
+    background-color: #1E1E3F;
+}
+
+.alert {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert-error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}

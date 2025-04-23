@@ -1,10 +1,9 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, flash
 import os
 from modules.tokeniser import tokenise
 from modules.parser import parse_tokens
 from modules.analyser import create_ast_from_tokens
 from modules.codegenerator import CodeGenerator
-from modules.visualiser import main as visualiser
 import time
 import psutil
 
@@ -12,6 +11,7 @@ app = Flask(__name__, template_folder='templates/')
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.secret_key = 'your_secret_key'
 
 compilation_history = {} 
 
@@ -26,18 +26,31 @@ def index():
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
+        flash('No file part in the request.', 'error')
         return redirect(url_for('index'))
     
     file = request.files['file']
     if file.filename == '':
+        flash('No file selected. Please choose a file to upload.', 'error')
         return redirect(url_for('index'))
     
-    if file and file.filename.endswith('.c'):
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+    if not file.filename.endswith('.c'):
+        flash('Invalid file type. Please upload a C source file.', 'error')
+        return redirect(url_for('index'))
+    
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+    try:
         file.save(filepath)
-        return redirect(url_for('compile_file', filename=file.filename))
-    else:
-        return "Invalid file type. Please upload a C source file."
+        # Check if the file is empty or unreadable
+        if os.stat(filepath).st_size == 0:
+            flash('The uploaded file is empty. Please upload a valid C source file.', 'error')
+            os.remove(filepath)  # Remove the empty file
+            return redirect(url_for('index'))
+    except Exception as e:
+        flash(f'Error saving the file: {str(e)}', 'error')
+        return redirect(url_for('index'))
+    
+    return redirect(url_for('compile_file', filename=file.filename))
 
 @app.route('/history')
 def history():
@@ -54,8 +67,7 @@ def view_history(filename):
 def compile_file(filename):
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     results = {}
-    debug = True  # Assume debug is always enabled by default
-
+    debug = True 
     try:
         # Tokeniser
         with open(filepath, 'r') as file:
@@ -90,7 +102,7 @@ def compile_file(filename):
         cpu_usages = []
 
         for _ in range(10):
-            start_time = time.perf_counter()  # High-precision timer
+            start_time = time.perf_counter() 
             process = psutil.Process()
             initial_memory = process.memory_info().rss
             initial_cpu_times = process.cpu_times()
@@ -109,25 +121,22 @@ def compile_file(filename):
             codegen.generate_code()
 
             # Measure end time and resource usage
-            end_time = time.perf_counter()  # High-precision timer
+            end_time = time.perf_counter() 
             final_memory = process.memory_info().rss
             final_cpu_times = process.cpu_times()
 
             # Calculate metrics
             compile_times.append(end_time - start_time)
-            memory_usages.append((final_memory - initial_memory) / (1024 * 1024))  # Convert to MB
+            memory_usages.append((final_memory - initial_memory) / (1024 * 1024))
             cpu_time_used = (
                 (final_cpu_times.user - initial_cpu_times.user) +
                 (final_cpu_times.system - initial_cpu_times.system)
             )
-            cpu_usages.append((cpu_time_used / (end_time - start_time)))  # Convert to percentage
+            cpu_usages.append((cpu_time_used / (end_time - start_time)))
 
-            # Generate performance plots
             from modules.performance_plotter import generate_performance_plots
             fig = generate_performance_plots(compile_times, memory_usages, cpu_usages)
 
-            # Save the plots as an image
-            # Save the plots as an image
             plot_path = os.path.join('src', 'static', 'performance_plots.png')
             fig.savefig(plot_path)
             results['performance_plot'] = plot_path
@@ -135,7 +144,6 @@ def compile_file(filename):
     except Exception as e:
         results['error'] = str(e)
 
-    # Save results to history
     compilation_history[filename] = results
 
     return render_template('results.html', filename=filename, results=results)

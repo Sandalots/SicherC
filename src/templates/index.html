@@ -1,11 +1,24 @@
-<!-- filepath: /Users/sandymacdonald/Documents/Clones/SicherC/src/templates/index.html -->
 {% extends "layout.html" %}
 
 {% block content %}
 <h1>Sicher Compiler Web Interface</h1>
-<form action="/upload" method="post" enctype="multipart/form-data">
-    <label for="file">Upload a C Source File:</label><br>
-    <input type="file" name="file" id="file" accept=".c"><br><br>
-    <button type="submit">Upload and Compile</button>
+<p>Complements the Sicher C Compiler GUI and CLI with a Flask hosted web-interface, allowing for the saving and capturing of source file compilation module outputs and performance plots.</p>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="alerts">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+<form action="/upload" method="post" enctype="multipart/form-data" class="form-container">
+    <label for="file" class="custom-file-input">
+        Choose a C Source File
+        <input type="file" name="file" id="file">
+    </label>
+    <button type="submit" class="upload-button">Upload and Compile</button>
 </form>
 {% endblock %}
