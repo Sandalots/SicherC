@@ -1,0 +1,32 @@
+<!-- filepath: /Users/sandymacdonald/Documents/Clones/SicherC/src/templates/results.html -->
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Compilation Results for {{ filename }}</h1>
+{% if results.error %}
+    <h2>Error</h2>
+    <p>{{ results.error }}</p>
+{% else %}
+    <h2>Tokens</h2>
+    <pre>{{ results.tokens }}</pre>
+
+    <h2>Tokeniser Debug Output</h2>
+    <pre>{{ results.tokeniser_log }}</pre>
+
+    <h2>Parser Debug Output</h2>
+    <pre>{{ results.parser_log }}</pre>
+
+    <h2>Abstract Syntax Tree (AST)</h2>
+    <pre>{{ results.ast }}</pre>
+
+    <h2>Analyser Debug Output</h2>
+    <pre>{{ results.analyser_log }}</pre>
+
+    <h2>Generated Code</h2>
+    <pre>{{ results.generated_code }}</pre>
+
+    <h2>Binary</h2>
+    <p>{{ results.binary }}</p>
+{% endif %}
+<a href="/">Back to Home</a>
+{% endblock %}

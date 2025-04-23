@@ -1,0 +1,11 @@
+<!-- filepath: /Users/sandymacdonald/Documents/Clones/SicherC/src/templates/index.html -->
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Welcome to Sicher C Compiler</h1>
+<form action="/upload" method="post" enctype="multipart/form-data">
+    <label for="file">Upload a C Source File:</label>
+    <input type="file" name="file" id="file" accept=".c">
+    <button type="submit">Upload and Compile</button>
+</form>
+{% endblock %}

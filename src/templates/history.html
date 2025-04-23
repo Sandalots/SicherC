@@ -1,0 +1,14 @@
+<!-- filepath: /Users/sandymacdonald/Documents/Clones/SicherC/src/templates/history.html -->
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Compilation History</h1>
+<ul>
+    {% for filename in history.keys() %}
+        <li>
+            <a href="/history/{{ filename }}">{{ filename }}</a>
+        </li>
+    {% endfor %}
+</ul>
+<a href="/">Back to Home</a>
+{% endblock %}

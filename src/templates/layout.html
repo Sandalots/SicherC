@@ -1,0 +1,24 @@
+<!-- filepath: /Users/sandymacdonald/Documents/Clones/SicherC/src/templates/layout.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sicher C Compiler{% endblock %}</title>
+    <!-- Link to the CSS file in the static directory -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Compilation History</h2>
+        <ul>
+            {% for filename in compilation_history.keys() %}
+                <li><a href="/history/{{ filename }}">{{ filename }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

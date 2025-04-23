@@ -1,0 +1,80 @@
+/* General Styling */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex; /* Use flexbox for layout */
+    height: 100vh; /* Full viewport height */
+    background-color: #2D2B55; /* Normal purple background */
+    color: #FAD000; /* Yellow text */
+}
+
+/* Sidebar Styling */
+.sidebar {
+    width: 20%; /* Fixed width for the sidebar */
+    background-color: #1E1E3F; /* Darker purple for the sidebar */
+    color: #FAD000; /* Yellow text */
+    padding: 20px;
+    box-sizing: border-box; /* Include padding in width/height calculations */
+    overflow-y: auto; /* Scrollable if content overflows */
+    height: 100%; /* Full height of the viewport */
+    position: fixed; /* Fix the sidebar to the left */
+}
+
+/* Content Styling */
+.content {
+    margin-left: 20%; /* Leave space for the sidebar */
+    padding: 20px;
+    background-color: #2D2B55; /* Normal purple background */
+    color: #FAD000; /* Yellow text */
+    height: 100%; /* Full height of the viewport */
+    overflow-y: auto; /* Scrollable if content overflows */
+}
+
+/* Links in Sidebar */
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 10px;
+}
+
+.sidebar ul li a {
+    color: #FAD000; /* Yellow links */
+    text-decoration: none;
+}
+
+.sidebar ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Headings */
+h1, h2 {
+    color: #FAD000; /* Yellow headings */
+}
+
+/* Buttons */
+button {
+    background-color: #FAD000; /* Yellow button background */
+    color: #2D2B55; /* Purple text */
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #C9A000; /* Slightly darker yellow on hover */
+}
+
+/* Ensure preformatted text wraps properly */
+pre {
+    white-space: pre-wrap; /* Wrap text */
+    word-wrap: break-word; /* Break long words */
+    background-color: #1E1E3F; /* Darker purple for better readability */
+    padding: 10px;
+    border-radius: 5px;
+    overflow-x: auto; /* Add horizontal scrolling if needed */
+    color: #FAD000; /* Yellow text */
+}
