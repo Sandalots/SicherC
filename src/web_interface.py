@@ -41,10 +41,9 @@ def upload_file():
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     try:
         file.save(filepath)
-        # Check if the file is empty or unreadable
         if os.stat(filepath).st_size == 0:
             flash('The uploaded file is empty. Please upload a valid C source file.', 'error')
-            os.remove(filepath)  # Remove the empty file
+            os.remove(filepath)
             return redirect(url_for('index'))
     except Exception as e:
         flash(f'Error saving the file: {str(e)}', 'error')
