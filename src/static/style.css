@@ -24,7 +24,7 @@ body {
 .content {
     margin-left: 20%; /* Leave space for the sidebar */
     padding: 20px;
-    background-color: #2D2B55; /* Normal purple background */
+    background-color: #2D2B55 !important; /* Normal purple background */
     color: #FAD000; /* Yellow text */
     height: 100%; /* Full height of the viewport */
     overflow-y: auto; /* Scrollable if content overflows */
@@ -77,4 +77,17 @@ pre {
     border-radius: 5px;
     overflow-x: auto; /* Add horizontal scrolling if needed */
     color: #FAD000; /* Yellow text */
+}
+
+/* Styling for the "Compile New" link */
+.compile-new {
+    color: #FFA500 !important; /* Orange color */
+    font-weight: bold;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 20px;
+}
+
+.compile-new:hover {
+    text-decoration: underline;
 }

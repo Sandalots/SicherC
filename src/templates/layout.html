@@ -11,6 +11,12 @@
 <body>
     <div class="sidebar">
         <h2>Sicher Compilation History</h2>
+        <!-- Add the "Compile New" link at the top -->
+        <ul>
+            <li>
+                <a href="/" class="compile-new">Compile New</a>
+            </li>
+        </ul>
         <ul>
             {% for filename in compilation_history.keys() %}
                 <li><a href="/history/{{ filename }}">{{ filename }}</a></li>

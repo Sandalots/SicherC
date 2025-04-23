@@ -5,6 +5,8 @@ from modules.parser import parse_tokens
 from modules.analyser import create_ast_from_tokens
 from modules.codegenerator import CodeGenerator
 from modules.visualiser import main as visualiser
+import time
+import psutil
 
 app = Flask(__name__, template_folder='templates/')
 UPLOAD_FOLDER = 'uploads'
@@ -81,6 +83,55 @@ def compile_file(filename):
         code_generator.compile_to_arm64('output.ll', 'output_binary')
 
         results['binary'] = "Compilation successful. Binary saved as 'output_binary'."
+
+        # Performance Metrics
+        compile_times = []
+        memory_usages = []
+        cpu_usages = []
+
+        # Compile the file multiple times to gather performance metrics
+        for _ in range(10):
+            start_time = time.time()
+            process = psutil.Process()
+            initial_memory = process.memory_info().rss
+            initial_cpu_times = process.cpu_times()
+
+            # Tokenisation
+            tokens, _ = tokenise(code, debug=True)
+
+            # Parsing
+            parse_tokens(tokens, debug=True)
+
+            # Analyser
+            ast = create_ast_from_tokens(tokens, debug=True)
+
+            # Code Generation
+            codegen = CodeGenerator(ast)
+            codegen.generate_code()
+
+            # Measure end time and resource usage
+            end_time = time.time()
+            final_memory = process.memory_info().rss
+            final_cpu_times = process.cpu_times()
+
+            # Calculate metrics
+            compile_times.append(end_time - start_time)
+            memory_usages.append((final_memory - initial_memory) / (1024 * 1024))  # Convert to MB
+            cpu_time_used = (
+                (final_cpu_times.user - initial_cpu_times.user) +
+                (final_cpu_times.system - initial_cpu_times.system)
+            )
+            cpu_usages.append((cpu_time_used / (end_time - start_time)) * 100)
+
+        # Generate performance plots
+        from modules.performance_plotter import generate_performance_plots
+        fig = generate_performance_plots(compile_times, memory_usages, cpu_usages)
+
+        # Save the plots as an image
+        # Save the plots as an image
+        plot_path = os.path.join('src', 'static', 'performance_plots.png')
+        fig.savefig(plot_path)
+        results['performance_plot'] = plot_path
 
     except Exception as e:
         results['error'] = str(e)

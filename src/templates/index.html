@@ -4,8 +4,8 @@
 {% block content %}
 <h1>Sicher Compiler Web Interface</h1>
 <form action="/upload" method="post" enctype="multipart/form-data">
-    <label for="file">Upload a C Source File:</label>
-    <input type="file" name="file" id="file" accept=".c">
+    <label for="file">Upload a C Source File:</label><br>
+    <input type="file" name="file" id="file" accept=".c"><br><br>
     <button type="submit">Upload and Compile</button>
 </form>
 {% endblock %}

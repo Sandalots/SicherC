@@ -19,14 +19,13 @@
     <h2>Abstract Syntax Tree (AST)</h2>
     <pre>{{ results.ast }}</pre>
 
-    <h2>Analyser Debug Output</h2>
-    <pre>{{ results.analyser_log }}</pre>
-
     <h2>Generated Code</h2>
     <pre>{{ results.generated_code }}</pre>
+
+    <h2>Performance Metrics</h2>
+    <img src="{{ url_for('static', filename='performance_plots.png') }}" alt="Performance Plots">
 
     <h2>Binary Status</h2>
     <p>{{ results.binary }}</p>
 {% endif %}
-<a href="/">Back to Home</a>
 {% endblock %}
