@@ -2,7 +2,7 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h1>Compilation Results for {{ filename }}</h1>
+<h1>Sicher Compilation Results for {{ filename }}</h1>
 {% if results.error %}
     <h2>Error</h2>
     <p>{{ results.error }}</p>
@@ -25,7 +25,7 @@
     <h2>Generated Code</h2>
     <pre>{{ results.generated_code }}</pre>
 
-    <h2>Binary</h2>
+    <h2>Binary Status</h2>
     <p>{{ results.binary }}</p>
 {% endif %}
 <a href="/">Back to Home</a>
