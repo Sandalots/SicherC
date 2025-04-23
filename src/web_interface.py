@@ -116,12 +116,12 @@ def compile_file(filename):
 
             # Calculate metrics
             compile_times.append(end_time - start_time)
-            memory_usages.append((final_memory - initial_memory) / (1024 * 1024))  # Convert to MB
+            memory_usages.append((final_memory - initial_memory) / (1024 * 1024))
             cpu_time_used = (
                 (final_cpu_times.user - initial_cpu_times.user) +
                 (final_cpu_times.system - initial_cpu_times.system)
             )
-            cpu_usages.append((cpu_time_used / (end_time - start_time)) * 100)
+            cpu_usages.append((cpu_time_used / (end_time - start_time)))
 
         # Generate performance plots
         from modules.performance_plotter import generate_performance_plots

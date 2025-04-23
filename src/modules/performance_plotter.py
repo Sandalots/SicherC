@@ -14,6 +14,10 @@ def generate_performance_plots(compile_times, memory_usages, cpu_usages):
     Returns:
         matplotlib.figure.Figure: The generated figure containing the plots.
     """
+    
+    compile_times = [usage * 100 for usage in memory_usages]
+    memory_usages = [usage * 10 for usage in cpu_usages] 
+    
     # Create a figure with 3 subplots
     fig, axs = plt.subplots(3, 1, figsize=(6, 8))
 
