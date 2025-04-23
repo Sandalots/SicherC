@@ -89,9 +89,8 @@ def compile_file(filename):
         memory_usages = []
         cpu_usages = []
 
-        # Compile the file multiple times to gather performance metrics
         for _ in range(10):
-            start_time = time.time()
+            start_time = time.perf_counter()  # High-precision timer
             process = psutil.Process()
             initial_memory = process.memory_info().rss
             initial_cpu_times = process.cpu_times()
@@ -110,28 +109,28 @@ def compile_file(filename):
             codegen.generate_code()
 
             # Measure end time and resource usage
-            end_time = time.time()
+            end_time = time.perf_counter()  # High-precision timer
             final_memory = process.memory_info().rss
             final_cpu_times = process.cpu_times()
 
             # Calculate metrics
             compile_times.append(end_time - start_time)
-            memory_usages.append((final_memory - initial_memory) / (1024 * 1024))
+            memory_usages.append((final_memory - initial_memory) / (1024 * 1024))  # Convert to MB
             cpu_time_used = (
                 (final_cpu_times.user - initial_cpu_times.user) +
                 (final_cpu_times.system - initial_cpu_times.system)
             )
-            cpu_usages.append((cpu_time_used / (end_time - start_time)))
+            cpu_usages.append((cpu_time_used / (end_time - start_time)))  # Convert to percentage
 
-        # Generate performance plots
-        from modules.performance_plotter import generate_performance_plots
-        fig = generate_performance_plots(compile_times, memory_usages, cpu_usages)
+            # Generate performance plots
+            from modules.performance_plotter import generate_performance_plots
+            fig = generate_performance_plots(compile_times, memory_usages, cpu_usages)
 
-        # Save the plots as an image
-        # Save the plots as an image
-        plot_path = os.path.join('src', 'static', 'performance_plots.png')
-        fig.savefig(plot_path)
-        results['performance_plot'] = plot_path
+            # Save the plots as an image
+            # Save the plots as an image
+            plot_path = os.path.join('src', 'static', 'performance_plots.png')
+            fig.savefig(plot_path)
+            results['performance_plot'] = plot_path
 
     except Exception as e:
         results['error'] = str(e)
