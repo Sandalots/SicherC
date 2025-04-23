@@ -19,7 +19,6 @@ from modules.analyser import create_ast_from_tokens # for modelling the given c 
 from modules.codegenerator import CodeGenerator # for generating actual assembly code from the AST
 from modules.visualiser import main as visualiser # for visualising the AST through the sicher GUI
 
-
 # Sicher Main Function (Entry Point)
 def main():
     """
@@ -201,6 +200,44 @@ def main():
             
             # exit the program to avoid further errors
             sys.exit(1)
+            
+def get_diagnostics():
+        """
+        Retrieves system and Sicher-specific diagnostics.
+
+        Returns:
+            dict: A dictionary containing diagnostic data.
+        """
+        # Gather system information
+        os_info = os.uname() if hasattr(os, "uname") else "Unknown OS"
+        cpu_info = os.cpu_count()
+        process = psutil.Process()
+
+        # Gather diagnostic data
+        diagnostics = {
+            "Operating System": os_info.sysname if hasattr(os_info, "sysname") else os_info,
+            "OS Version": os_info.release if hasattr(os_info, "release") else "Unknown",
+            "CPU Cores": cpu_info,
+            "CPU Frequency": f"{psutil.cpu_freq().current} MHz" if psutil.cpu_freq() else "Unknown",
+            "Memory Usage": f"{process.memory_info().rss / (1024 * 1024):.2f} MB",
+            "CPU Usage": f"{process.cpu_percent(interval=1)}%",
+            "Python Version": f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
+            "Sicher Version": "1.0.0",
+            "Sicher Path": os.path.abspath(__file__),
+            "Number of Threads": process.num_threads(),
+            "Process Name": process.name(),
+            "Process Status": process.status(),
+            "Process Creation Time": time.ctime(process.create_time()),
+            "Process Memory Usage": f"{process.memory_info().rss / (1024 * 1024):.2f} MB",
+            "Process CPU Time": f"{process.cpu_times().user + process.cpu_times().system:.2f} seconds",
+            "Process Command Line": " ".join(process.cmdline()),
+            "Process Working Directory": process.cwd(),
+            "Process Environment Variables": dict(process.environ()),
+            "Process ID": process.pid,
+            "Executable Path": process.exe(),
+        }
+
+        return diagnostics
 
 # Run the Sicher (entry point) if run as a script
 if __name__ == '__main__':

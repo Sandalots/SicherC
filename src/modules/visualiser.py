@@ -168,7 +168,7 @@ class CompilerFrame(wx.Frame):
 
         # Embed the figure into a collapsible section
         self.add_visualisation_section(fig)
-            
+                
     # method to add the plots to a collapsable section in the visualiser GUI
     def add_visualisation_section(self, figure):
         """

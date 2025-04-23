@@ -8,6 +8,7 @@ int main() {
     // Defone the values of the two numbers
     int num1 = 2; // first number
     int num2 = 3; // second number
+    int num3 = 0; // unused variable
 
     // Testing the printf function(s)
     printf(num1);

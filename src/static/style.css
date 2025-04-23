@@ -155,3 +155,14 @@ pre {
     background-color: #d4edda;
     border-color: #c3e6cb;
 }
+
+/* style the lists so they have the same background colour and styling as the other items also add word wrapping and hide bullets */
+ul, ol {
+    list-style-type: none; /* Remove bullets */
+    padding: 0; /* Remove padding */
+    margin: 0; /* Remove margin */
+    background-color: #1E1E3F; /* Darker purple for better readability */
+    color: #FAD000; /* Yellow text */
+    border-radius: 5px;
+    overflow-x: auto; /* Add horizontal scrolling if needed */
+}

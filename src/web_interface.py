@@ -6,12 +6,13 @@ from modules.analyser import create_ast_from_tokens
 from modules.codegenerator import CodeGenerator
 import time
 import psutil
+from sicher import get_diagnostics
 
 app = Flask(__name__, template_folder='templates/')
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.secret_key = 'your_secret_key'
+app.secret_key = 'sicher'
 
 compilation_history = {} 
 
@@ -139,7 +140,11 @@ def compile_file(filename):
             plot_path = os.path.join('src', 'static', 'performance_plots.png')
             fig.savefig(plot_path)
             results['performance_plot'] = plot_path
-
+            
+        # Visualiser Diagnostics
+        diagnostics = get_diagnostics()
+        results['diagnostics'] = diagnostics
+        
     except Exception as e:
         results['error'] = str(e)
 
