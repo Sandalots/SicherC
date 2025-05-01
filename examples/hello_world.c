@@ -8,7 +8,7 @@
 // Simple Hello World Test.
 int main() {
    // printf() displays the string inside quotation
-   printf("Hello, World!");
+   printf("Hello, World!\n");
 
    // integer identifier
    int i = 4;
