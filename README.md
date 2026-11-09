@@ -1,4 +1,4 @@
-## Sicher C Memory Safe Compiler
+## Sicher C Memory Safe(ish) Compiler
 
 ### Abstract
 The Sicher C Compiler is an attempt to rectify many of the common-place Memory-safety issues that plague the C Programming Language and its compilers.
@@ -19,7 +19,7 @@ Sicher contains 5 core modules that perform the complete workings of the Sicher 
 4. Code Generator
 5. Visualiser
 
-### Sub-Modules
+### Sub-Modules
 1. Buffer Sizer
 2. Prevent Double Free
 3. Prevent Use after Free
@@ -43,7 +43,7 @@ All 5 main sicher modules fully implemented.
 
 A testing suite consiting of several c source files for which the Sicher C Compiler is to be tested on is provided in the examples directory.
 
-### Strucuture
+### Structure
 Testing Suite in examples/ directory.
 Sicher Source Code in src/ directory.
 Dependencies installation shell script in /requirements.sh.
@@ -66,11 +66,11 @@ A shell script is also given to both allow for installing dependencies and runni
 * Python3
 * Unix environment 
 
-### Targets 
+### Targets 
 * macOS 15.4
 * AArch64 aka ARM64
 
-### Sicher Features
+### Sicher Features
 * Sicher Tokeniser
 * Sicher Parser
 * Sicher Analyser
