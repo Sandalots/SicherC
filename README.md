@@ -10,6 +10,9 @@ Sicher C State as of 19/04/2025.
 
 Sicher contains 5 core modules that perform the complete workings of the Sicher Compiler, as-well as optional extendable submodules. A GUI visualiser is included to present all the workings of the Sicher C Compiler and allow for easy compilations.
 
+### Plugins
+
+
 ### Modules
 1. Tokeniser (Scanner)
 2. Parser
